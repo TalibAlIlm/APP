@@ -1,0 +1,1152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Talib Al-Ilm — Islamic Sciences Curriculum</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=IBM+Plex+Mono:wght@300;400;500&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#07080f;--surface:#0d0e1a;--border:rgba(255,255,255,0.06);
+  --gold:#c9a84c;--cream:#ddd6cc;--dim:#4a4840;--muted:#7a7468;
+  --arabic:#4fc3f7;--quran:#69c98d;--aqeedah:#ffb74d;
+  --fiqh:#e57373;--adhkar:#a5d6a7;--history:#90caf9;
+  --hanbali:#ce93d8;--shafii:#4dd0e1;--maliki:#ffd54f;--hanafi:#ff8a65;
+}
+html,body{width:100%;height:100%;overflow:hidden;background:var(--bg)}
+body{font-family:'IBM Plex Sans',sans-serif}
+
+/* ── BACKGROUND GRID ── */
+body::before{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:
+    linear-gradient(rgba(201,168,76,0.025) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(201,168,76,0.025) 1px,transparent 1px);
+  background-size:48px 48px;
+}
+
+/* ── HEADER ── */
+#hdr{
+  position:fixed;top:0;left:0;right:0;height:52px;z-index:100;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 20px;
+  background:rgba(7,8,15,0.95);
+  border-bottom:1px solid var(--border);
+  backdrop-filter:blur(12px);
+}
+.hdr-left{display:flex;align-items:center;gap:14px}
+.hdr-gem{
+  width:28px;height:28px;flex-shrink:0;
+  background:conic-gradient(from 0deg,#8b6914,#c9a84c,#e8c96d,#c9a84c,#8b6914);
+  clip-path:polygon(50% 0%,100% 50%,50% 100%,0% 50%);
+  filter:drop-shadow(0 0 8px rgba(201,168,76,0.4));
+}
+.hdr-title{font-family:'Cinzel',serif;font-size:14px;font-weight:700;color:var(--gold);letter-spacing:3px}
+.hdr-sub{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:2px;margin-top:2px}
+.hdr-sep{width:1px;height:24px;background:var(--border)}
+.hdr-legend{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.leg{display:flex;align-items:center;gap:5px;font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:0.3px}
+.leg-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.b{display:inline-block;padding:1px 5px;border-radius:2px;font-size:8px;font-weight:500;letter-spacing:0.5px;font-family:'IBM Plex Mono',monospace}
+.b-c{background:rgba(201,168,76,0.12);color:var(--gold);border:1px solid rgba(201,168,76,0.25)}
+.b-m{background:rgba(105,201,141,0.12);color:#69c98d;border:1px solid rgba(105,201,141,0.25)}
+.b-e{background:rgba(206,147,216,0.12);color:#ce93d8;border:1px solid rgba(206,147,216,0.25)}
+
+.hdr-right{display:flex;align-items:center;gap:10px}
+.hdr-count{text-align:right}
+.hdr-count-n{font-family:'Cinzel',serif;font-size:16px;color:var(--gold);line-height:1}
+.hdr-count-l{font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--muted);letter-spacing:1.5px}
+
+/* ── SEARCH ── */
+#sbar{
+  position:fixed;top:64px;left:50%;transform:translateX(-50%);z-index:99;
+  display:flex;align-items:center;gap:7px;
+  background:rgba(13,14,26,0.96);border:1px solid var(--border);
+  border-radius:20px;padding:5px 12px;
+  box-shadow:0 4px 20px rgba(0,0,0,0.5);
+  transition:border-color 0.2s;
+}
+#sbar:focus-within{border-color:rgba(201,168,76,0.3)}
+#sbar-icon{opacity:0.35;flex-shrink:0;color:var(--gold)}
+#srch{
+  background:none;border:none;outline:none;
+  color:var(--cream);font-family:'IBM Plex Mono',monospace;
+  font-size:11px;width:180px;letter-spacing:0.3px;
+}
+#srch::placeholder{color:var(--dim)}
+#srch-clr{background:none;border:none;color:var(--muted);cursor:pointer;font-size:12px;display:none;padding:0 2px}
+#srch-clr:hover{color:var(--cream)}
+
+/* ── CONTROLS ── */
+#ctrl{position:fixed;bottom:20px;left:20px;z-index:99;display:flex;flex-direction:column;gap:6px}
+.cbtn{
+  padding:6px 12px;background:rgba(13,14,26,0.9);
+  border:1px solid var(--border);color:var(--muted);
+  border-radius:4px;cursor:pointer;
+  font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.3px;
+  transition:all 0.15s;
+}
+.cbtn:hover{border-color:rgba(201,168,76,0.3);color:var(--cream);background:rgba(20,22,40,0.95)}
+
+/* ── HINT ── */
+#hint{position:fixed;bottom:20px;right:20px;z-index:99;font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--dim);text-align:right;line-height:2;letter-spacing:0.3px}
+
+/* ── TOOLTIP ── */
+#tip{
+  position:fixed;z-index:200;pointer-events:none;
+  background:rgba(10,11,20,0.97);border:1px solid rgba(201,168,76,0.18);
+  border-radius:8px;padding:12px 14px;max-width:280px;
+  opacity:0;transition:opacity 0.15s;
+  box-shadow:0 8px 30px rgba(0,0,0,0.6);
+}
+#tip.on{opacity:1}
+.tip-name{font-size:12px;font-weight:600;color:var(--cream);line-height:1.4;margin-bottom:4px}
+.tip-auth{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--gold);margin-bottom:6px;font-style:italic}
+.tip-note{font-size:10px;color:#7a7060;line-height:1.6;margin-bottom:6px}
+.tip-tags{display:flex;gap:4px;flex-wrap:wrap}
+
+/* ── SVG ── */
+#main-svg{position:fixed;top:0;left:0;width:100%;height:100%;z-index:1}
+#main-svg *{transition:opacity 0.3s ease}
+
+/* Node styles via SVG classes */
+.n-circle{cursor:pointer}
+.n-text{cursor:pointer;font-family:'IBM Plex Sans',sans-serif}
+.n-hit{fill:transparent;cursor:pointer}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div id="hdr">
+  <div class="hdr-left">
+    <div class="hdr-gem"></div>
+    <div>
+      <div class="hdr-title">TALIB AL-ILM</div>
+      <div class="hdr-sub">ISLAMIC SCIENCES CURRICULUM MAP</div>
+    </div>
+    <div class="hdr-sep"></div>
+    <div class="hdr-legend">
+      <div class="leg"><span class="b b-c">C</span>Core Book</div>
+      <div class="leg"><span class="b b-m">M</span>Memorize</div>
+      <div class="leg"><span class="b b-e">★</span>Expert</div>
+      <div class="hdr-sep"></div>
+      <div class="leg"><span class="leg-dot" style="background:#4fc3f7"></span>Arabic</div>
+      <div class="leg"><span class="leg-dot" style="background:#69c98d"></span>Qur'an</div>
+      <div class="leg"><span class="leg-dot" style="background:#ffb74d"></span>Aqeedah</div>
+      <div class="leg"><span class="leg-dot" style="background:#e57373"></span>Fiqh &amp; Hadith</div>
+      <div class="leg"><span class="leg-dot" style="background:#ce93d8"></span>Hanbali</div>
+      <div class="leg"><span class="leg-dot" style="background:#4dd0e1"></span>Shafi'i</div>
+      <div class="leg"><span class="leg-dot" style="background:#ffd54f"></span>Maliki</div>
+      <div class="leg"><span class="leg-dot" style="background:#ff8a65"></span>Hanafi</div>
+      <div class="leg"><span class="leg-dot" style="background:#a5d6a7"></span>Adhkar</div>
+      <div class="leg"><span class="leg-dot" style="background:#90caf9"></span>History</div>
+    </div>
+  </div>
+  <div class="hdr-right">
+    <div class="hdr-count"><div class="hdr-count-n">216+</div><div class="hdr-count-l">TEXTS</div></div>
+  </div>
+</div>
+
+<!-- SEARCH -->
+<div id="sbar">
+  <svg id="sbar-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+  <input id="srch" type="text" placeholder="Search books or authors…" autocomplete="off" spellcheck="false">
+  <button id="srch-clr">✕</button>
+</div>
+
+<!-- CONTROLS -->
+<div id="ctrl">
+  <button class="cbtn" id="btn-expand">⊕ Expand All</button>
+  <button class="cbtn" id="btn-collapse">⊖ Collapse All</button>
+  <button class="cbtn" id="btn-reset">⌖ Reset View</button>
+</div>
+
+<!-- HINT -->
+<div id="hint">
+  Click nodes to expand / collapse<br>
+  Scroll to zoom · Drag to pan
+</div>
+
+<!-- TOOLTIP -->
+<div id="tip"></div>
+
+<!-- SVG CANVAS -->
+<svg id="main-svg">
+  <g id="viewport">
+    <g id="links-layer"></g>
+    <g id="nodes-layer"></g>
+  </g>
+</svg>
+
+<script>
+'use strict';
+
+// ═══════════════════════════════════════════════════════
+// DATA
+// ═══════════════════════════════════════════════════════
+function bk(n,a,f){return{n,a,type:'book',m:f&&f.includes('M'),c:f&&f.includes('C'),e:f&&f.includes('E'),nt:f&&typeof f==='object'?f.note:undefined}}
+function nb(n,a,note){return{n,a,type:'book',nt:note}}
+function br(n,col,kids){return{n,type:'branch',col,kids}}
+function di(n,col,kids){return{n,type:'discipline',col,kids}}
+function sub(n,kids,expert){return{n,type:expert?'sub-expert':'sub',kids}}
+
+const RAW = {n:'Islamic Sciences',type:'root',col:'#c9a84c',kids:[
+
+di('Arabic Language','#4fc3f7',[
+  br('Nahw — Grammar','#4fc3f7',[
+    sub('Standard',[
+      nb('Madinah Books','V. Abdur Rahim','For non-native speakers; native speakers begin at Al-Nahw Al-Wadih'),
+      {n:'Al-Nahw Al-Wadih',a:'Ali Al-Jarim & Mustafa Amin',type:'book'},
+      bk('Al-Ajrumiyyah','Ibn Ajurum','M'),
+      bk('Mutammimah Al-Ajrumiyyah','Al-Ra\'ini Al-Hattab','M'),
+      {n:'Qatr Al-Nada wa Ball Al-Sada',a:'Ibn Hisham',type:'book'},
+      nb('Shudhur Al-Dhahab','Ibn Hisham','Critical bridge between Qatr Al-Nada and the Alfiyyah. Do not skip.'),
+      bk('Alfiyyah Ibn Malik','Ibn Malik Al-Andalusi','MC'),
+    ]),
+    sub('Expert',[
+      nb('Mughni Al-Labib','Ibn Hisham','Encyclopedia of Arabic particles and grammar — the reference beyond the Alfiyyah.'),
+      {n:'Al-Kafiyah',a:'Ibn Al-Hajib',type:'book',e:true},
+      nb('Al-Kitab','Sibawayh','The origin of all Arabic grammar. For true specialists only.'),
+    ],true),
+  ]),
+  br('Sarf — Morphology','#29b6f6',[
+    nb('Al-Tasrif Al-Izzi','Al-Taftazani','Essential beginner sarf. Complete before Laamiyyah.'),
+    bk('Laamiyyat Al-Af\'al','Ibn Malik','MC'),
+    sub('Expert',[
+      {n:'Al-Shafiyah',a:'Ibn Al-Hajib',type:'book',e:true},
+      nb('Al-Mumti\' fi Al-Tasrif','Ibn Usfur Al-Ishbili','The great encyclopedia of Arabic morphology.'),
+    ],true),
+  ]),
+  br('Mantiq — Logic','#0288d1',[
+    nb('Al-Sullam Al-Munawraq','Al-Akhdari','Standard in all Saudi university curricula. Foundation for usool and aqeedah.'),
+    bk('Isaghuji','Al-Abhari','C'),
+    sub('Expert',[
+      nb('Al-Risalah Al-Shamsiyyah','Al-Katibi','The standard advanced logic text in classical Islamic education.'),
+      nb('Sharh Al-Mawaqif','Al-Jurjani','Combines kalam and logic at the highest level.'),
+    ],true),
+  ]),
+  br('Arabic Literature','#4dd0e1',[
+    bk('Banat Su\'ad','Ka\'b ibn Zuhayr','M'),
+    bk('Lamiyyat Al-Arab','Al-Shanfara','M'),
+    bk('Al-Mu\'allaqat','The Seven Pre-Islamic Poets','M'),
+    bk('Al-Maqamat Al-Hariri','Al-Hariri Al-Basri','MC'),
+    sub('Expert',[
+      nb('Al-Hamasa','Abu Tammam','The greatest anthology of classical Arabic poetry.'),
+      {n:'Diwan Al-Mutanabbi',a:'Al-Mutanabbi',type:'book',e:true},
+      nb('Kitab Al-Aghani','Al-Asfahani','Encyclopedia of Arabic literature and culture.'),
+    ],true),
+  ]),
+  br('Balagha — Rhetoric','#26c6da',[
+    {n:'Al-Jawhar Al-Maknoon',a:'Al-Akhdari',type:'book'},
+    bk('Uqud Al-Juman','Al-Suyuti','MC'),
+    sub('Expert',[
+      nb('Talhis Al-Miftah','Al-Qazwini','Essential advanced balagha text.'),
+      nb('Dala\'il Al-I\'jaz','Al-Jurjani','Revolutionized understanding of Arabic eloquence.'),
+      nb('Asrar Al-Balagha','Al-Jurjani','Companion to Dala\'il. The pinnacle of balagha theory.'),
+      nb('Miftah Al-Ulum','Al-Sakkaki','Core reference encyclopedia of balagha sciences.'),
+    ],true),
+  ]),
+  br('Lexicology','#006064',[
+    sub('Expert',[
+      nb('Maqayis Al-Lughah','Ibn Faris','Root-based dictionary. The origins of Arabic words.'),
+      nb('Al-Mufradat fi Gharib Al-Quran','Al-Raghib Al-Asfahani','Primary reference for Quranic vocabulary.'),
+      nb('Lisan Al-Arab','Ibn Manzur','The great Arabic dictionary. 20 volumes.'),
+      {n:'Taj Al-Arus',a:'Al-Zabidi',type:'book',e:true},
+    ],true),
+  ]),
+  br('Arud wal-Qawafi','#004d40',[
+    bk('Al-Kafi fi Al-Arud wal-Qawafi','Al-Tibrizi','MC'),
+  ]),
+]),
+
+di('Qur\'an Sciences','#69c98d',[
+  br('Tajweed','#69c98d',[
+    bk('Tuhfat Al-Atfal','Sulayman Al-Jamzuri','M'),
+    bk('Al-Jazariyyah','Ibn Al-Jazari','MC'),
+  ]),
+  br('Tafsir','#4caf50',[
+    sub('Standard',[
+      nb('Tafsir Al-Sa\'di','Abd Al-Rahman Al-Sa\'di','Taysir Al-Karim Al-Rahman. Accessible Athari methodology.'),
+      {n:'Tafsir Al-Jalalayn',a:'Al-Suyuti & Al-Mahalli',type:'book'},
+      {n:'Ma\'alim Al-Tanzil',a:'Al-Baghawi',type:'book'},
+      {n:'Tafsir Ibn Kathir',a:'Ibn Kathir',type:'book'},
+      nb('Tafsir Al-Tabari','Ibn Jarir Al-Tabari','The ultimate classical tafsir reference. 26 volumes.'),
+    ]),
+    sub('Expert',[
+      nb('Tafsir Al-Qurtubi','Al-Qurtubi','Al-Jami\' li Ahkam Al-Quran. The great fiqh tafsir.'),
+      nb('Mafatih Al-Ghayb','Fakhr Al-Din Al-Razi','Theological and philosophical depth. 32 volumes.'),
+      nb('Al-Bahr Al-Muhit','Abu Hayyan Al-Andalusi','The apex of grammatical and linguistic tafsir.'),
+      nb('Al-Kashaf','Al-Zamakhshari','Critical for balagha. Note Mu\'tazili positions.'),
+      nb('Al-Tahrir wal-Tanwir','Ibn Ashur','Modern masterpiece. Synthesis of all tafsir traditions. 30 volumes.'),
+    ],true),
+  ]),
+  br('Uloom Al-Quran','#388e3c',[
+    sub('Standard',[
+      {n:'Muqaddimah fi Usool Al-Tafseer',a:'Ibn Taymiyyah',type:'book'},
+      {n:'Al-Nuqayah',a:'Al-Suyuti',type:'book'},
+      bk('Mandhumat Al-Zamzami','Al-Zamzami','M'),
+      nb('Al-Itqan fi Ulum Al-Quran','Al-Suyuti','The great encyclopedia of Quranic sciences.'),
+    ]),
+    sub('Expert',[
+      nb('Al-Burhan fi Ulum Al-Quran','Al-Zarkashi','Companion encyclopedia to Al-Itqan.'),
+      nb('Mabahith fi Ulum Al-Quran','Manna\' Al-Qattan','Modern standard university text.'),
+      nb('I\'jaz Al-Quran','Al-Baqillani','Foundational work on Quranic inimitability.'),
+      {n:'Al-Mufradat fi Gharib Al-Quran',a:'Al-Raghib',type:'book',e:true},
+    ],true),
+  ]),
+  br('Qira\'aat','#1b5e20',[
+    sub('Standard',[
+      bk('Ad-Durrah Al-Mudiyyah','Ibn Al-Jazari','M'),
+      nb('Al-Shatibiyyah','Al-Shatibiy','Covers the 7 Mutawatir Qira\'aat in 1,173 lines.'),
+    ]),
+    sub('Expert',[
+      nb('Tayyibat Al-Nashr','Ibn Al-Jazari','Covers all 10 Qira\'aat in poetry.'),
+      nb('Ibraz Al-Ma\'ani','Abu Shama Al-Maqdisi','Commentary on the Shatibiyyah.'),
+      nb('Al-Nashr fi Al-Qira\'aat Al-Ashr','Ibn Al-Jazari','The encyclopedia of all 10 Qira\'aat.'),
+    ],true),
+  ]),
+]),
+
+di('Aqeedah','#ffb74d',[
+  br('Aqeedah','#ffb74d',[
+    sub('Standard',[
+      nb('Lum\'at Al-I\'tiqad','Ibn Qudamah','Standard Saudi beginner aqeedah text. Do not skip.'),
+      {n:'Al-Wasitiyyah',a:'Ibn Taymiyyah',type:'book'},
+      {n:'Al-Fatawa Al-Hamawiyyah',a:'Ibn Taymiyyah',type:'book'},
+      {n:'Al-Risalah Al-Tadmuriyyah',a:'Ibn Taymiyyah',type:'book'},
+      bk('Sullam Al-Wusool','Hafidh Al-Hakami','M'),
+      nb('Sharh Al-Aqeedah Al-Tahawiyyah','Ibn Abi Al-Izz','Together with Fath Al-Majid, solidifies your entire foundation.'),
+    ]),
+    sub('Expert',[
+      nb('Minhaj Al-Sunnah','Ibn Taymiyyah','Refutation of Shi\'a theology. 9 volumes.'),
+      nb('Dar\' Ta\'arud Al-\'Aql wal-Naql','Ibn Taymiyyah','The great epistemological work on reason vs. revelation.'),
+      {n:'Al-Sawa\'iq Al-Mursalah',a:'Ibn Al-Qayyim',type:'book',e:true},
+      {n:'Bayan Talbis Al-Jahmiyyah',a:'Ibn Taymiyyah',type:'book',e:true},
+      {n:'Ijtima\' Al-Juyush Al-Islamiyyah',a:'Ibn Al-Qayyim',type:'book',e:true},
+      nb('Majmu\' Al-Fatawa','Ibn Taymiyyah','37 volumes. The encyclopedia of Athari theology.'),
+    ],true),
+  ]),
+  br('Tawheed','#ffa726',[
+    sub('Standard',[
+      bk('Thalathah Al-Usool','Muhammad ibn Abd Al-Wahhab','M'),
+      bk('Al-Qawa\'id Al-Arba\'','Muhammad ibn Abd Al-Wahhab','M'),
+      {n:'Kashf Al-Shubuhat',a:'Muhammad ibn Abd Al-Wahhab',type:'book'},
+      {n:'Al-Qawl Al-Mufid Sharh Kitab Al-Tawhid',a:'Ibn Uthaymin',type:'book'},
+      nb('Fath Al-Majid','Abd Al-Rahman ibn Hasan Al Al-Shaykh','Together with Sharh Al-Tahawiyyah, solidifies your entire Tawheed foundation.'),
+    ]),
+    sub('Expert',[
+      nb('Al-Durr Al-Nadhid','Al-Shawkani','Important refutation of shirk.'),
+      nb('Iqtida\' Al-Sirat Al-Mustaqeem','Ibn Taymiyyah','On avoiding bid\'ah and imitation of non-Muslims.'),
+    ],true),
+  ]),
+]),
+
+di('Fiqh & Hadith','#e57373',[
+  br('Mustalah Al-Hadith','#ef9a9a',[
+    sub('Standard',[
+      nb('Taysir Mustalah Al-Hadith','Mahmud Al-Tahhan','Modern intro. Widely used in Saudi universities.'),
+      bk('Al-Bayquniyyah','Al-Bayquni','M'),
+      bk('Nukhbat Al-Fikr','Ibn Hajar Al-Asqalani','M'),
+      {n:'Ikhtisar Ulum Al-Hadith',a:'Ibn Kathir',type:'book'},
+      nb('Muqaddimah Ibn Al-Salah','Ibn Al-Salah','The mother text of all mustalah works.'),
+      bk('Alfiyyat Al-Hadith','Al-Iraqi','M'),
+      nb('Fath Al-Mughith','Al-Sakhawi','The comprehensive commentary on Al-Iraqi\'s Alfiyyah.'),
+    ]),
+    sub('Expert',[
+      nb('Tadrib Al-Rawi','Al-Suyuti','Standard advanced mustalah text.'),
+      {n:'Shurut Al-A\'immah Al-Sitta',a:'Ibn Tahir Al-Maqdisi',type:'book',e:true},
+      {n:'Shurut Al-A\'immah Al-Khamsa',a:'Al-Hazimi',type:'book',e:true},
+      nb('Al-Muqidhah','Al-Dhahabi','Concise but deep. Excellent alongside Nukhbah.'),
+    ],true),
+  ]),
+  br('Hadith','#e57373',[
+    sub('Standard',[
+      bk('Al-Arba\'een + Ziyadat Ibn Rajab','Al-Nawawi & Ibn Rajab','M'),
+      bk('Umdat Al-Ahkam','Abd Al-Ghani Al-Maqdisi','M'),
+      nb('Riyad Al-Salihin','Imam Al-Nawawi','Memorize this and you will never need to prepare a lecture or Khutbah from scratch.'),
+      bk('Al-Lu\'lu\' wal-Marjan','Muhammad Fuad Abd Al-Baqi','M'),
+      nb('Bulugh Al-Maram','Ibn Hajar Al-Asqalani','Memorize this with a madhab text and you will be a faqih.'),
+    ]),
+    sub('Kutub Al-Sunnah',[
+      nb('Sahih Al-Bukhari + Fath Al-Bari','Al-Bukhari / Ibn Hajar','Fath Al-Bari is the greatest hadith commentary in Islamic history.'),
+      {n:'Sahih Muslim + Sharh Al-Nawawi',a:'Muslim / Al-Nawawi',type:'book',e:true},
+      {n:'Sunan Abu Dawud + Awn Al-Ma\'bud',a:'Abu Dawud / Al-Azimabadi',type:'book',e:true},
+      {n:'Jami\' Al-Tirmidhi + Tuhfat Al-Ahwadhi',a:'Al-Tirmidhi / Al-Mubarakfuri',type:'book',e:true},
+      {n:'Sunan Al-Nasa\'i',a:'Al-Nasa\'i',type:'book',e:true},
+      {n:'Sunan Ibn Majah',a:'Ibn Majah',type:'book',e:true},
+      nb('Muwatta\' Imam Malik + Al-Tamhid','Imam Malik / Ibn Abd Al-Barr','Al-Dhahabi ranked Al-Tamhid among the best books ever written.'),
+      {n:'Musnad Al-Imam Ahmad',a:'Imam Ahmad ibn Hanbal',type:'book',e:true},
+    ],true),
+  ]),
+  br('Jarh wa Ta\'deel','#c62828',[
+    sub('Expert (Specialist)',[
+      {n:'Al-Jarh wal-Ta\'deel',a:'Ibn Abi Hatim Al-Razi',type:'book',e:true},
+      {n:'Ma\'rifat Al-Thiqat',a:'Al-Ijli',type:'book',e:true},
+      {n:'Al-Thiqat',a:'Ibn Hibban',type:'book',e:true},
+      {n:'Tarikh Al-Kabir',a:'Imam Al-Bukhari',type:'book',e:true},
+      nb('Mizan Al-I\'tidal','Al-Dhahabi','Core reference for weak and criticized narrators.'),
+      nb('Tahdhib Al-Kamal fi Asma Al-Rijal','Al-Mizzi','Core biographical dictionary for Kutub Al-Sitta narrators. 35 volumes.'),
+      nb('Taqrib Al-Tahdhib','Ibn Hajar Al-Asqalani','Concise summary of Tahdhib Al-Kamal. Daily-use reference.'),
+      nb('Lisan Al-Mizan','Ibn Hajar Al-Asqalani','Additions and corrections to Al-Dhahabi\'s Mizan.'),
+    ],true),
+  ]),
+  br('Takhreej Al-Hadith','#b71c1c',[
+    sub('Expert',[
+      {n:'Usool Al-Takhreej wa Dirasat Al-Asanid',a:'Mahmud Al-Tahhan',type:'book',e:true},
+      nb('Nasb Al-Rayah','Al-Zaylai Al-Hanafi','Tracks hadiths used in Hanafi fiqh. Valuable for all schools.'),
+      nb('Majma\' Al-Zawa\'id','Al-Haythami','Collects hadiths not in the Kutub Al-Sitta.'),
+    ],true),
+  ]),
+  br('Illal Al-Hadith','#880e4f',[
+    {n:'Al-Ilal wa Qara\'in Al-Tarjih',a:'Various',type:'book'},
+    {n:'Sharh Ilal Al-Tirmidhi',a:'Ibn Rajab Al-Hanbali',type:'book'},
+    nb('Ilal Al-Daraqutni','Al-Daraqutni','The deepest and most thorough work on hadith defects.'),
+    sub('Expert',[
+      {n:'Al-Ilal Al-Kabir',a:'Al-Tirmidhi',type:'book',e:true},
+      {n:'Al-Ilal',a:'Ibn Abi Hatim Al-Razi',type:'book',e:true},
+      {n:'Ta\'wil Mukhtalaf Al-Hadith',a:'Ibn Qutaybah',type:'book',e:true},
+      {n:'Mushkil Al-Athar',a:'Al-Tahawi',type:'book',e:true},
+    ],true),
+  ]),
+  br('Usool Al-Fiqh','#f48fb1',[
+    sub('Standard',[
+      nb('Al-Waraqat','Al-Juwayni','Universal starting point for usool al-fiqh.'),
+      nb('Ma\'alim Usool Al-Fiqh','Muhammad Al-Jizani','Standard Saudi text. Clear Hanbali usool methodology.'),
+      {n:'Al-Qawa\'id wal-Usool Al-Jami\'ah',a:'Al-Sa\'di',type:'book'},
+      nb('Maraqi Al-Su\'ud','Al-Shinqiti','Widely taught across Saudi institutions.'),
+      nb('Rawdat Al-Nadhir','Ibn Qudamah','The Hanbali usool reference text.'),
+    ]),
+    sub('Expert',[
+      nb('Al-Risalah','Imam Al-Shafi\'i','The first book of usool al-fiqh ever written.'),
+      nb('Al-Mustasfa','Al-Ghazali','One of the greatest works in usool al-fiqh.'),
+      nb('Al-Ihkam fi Usool Al-Ahkam','Al-Amidi','Systematic and analytical. Comprehensive.'),
+      nb('Irshad Al-Fuhul','Al-Shawkani','Comprehensive comparative usool al-fiqh.'),
+      nb('Al-Muwafaqat','Al-Shatibi','Revolutionary maqasid-based approach. The core expert usool reference.'),
+    ],true),
+  ]),
+  br('Fiqh — Hanbali','#ce93d8',[
+    sub('Standard',[
+      nb('Al-Umdah','Ibn Qudamah','The relied-upon rulings of the school. Beginner text.'),
+      nb('Daleel Al-Talib','Mar\'i Al-Karmi','Step up from Al-Umdah. Basis of fatwa in Sham.'),
+      {n:'Akhsar Al-Mukhtasarat',a:'Ibn Balban Al-Ba\'li',type:'book'},
+      nb('Zad Al-Mustaqni','Al-Hajjawi','The core memorization text of the Hanbali school.'),
+      {n:'Al-Rawdul-Murbi Sharh Zad',a:'Al-Buhuti',type:'book'},
+      nb('Al-Iqna\'','Al-Hajjawi','When Al-Iqna\' and Muntaha agree, their conclusion is the uncontested mu\'tamad.'),
+      nb('Muntaha Al-Iradat','Ibn Al-Najjar','Twin pillar alongside Al-Iqna\'.'),
+      nb('Al-Insaf','Al-Mardawi','For knowing the internal khilaf within the Hanbali school.'),
+      nb('Al-Mughni','Ibn Qudamah','Includes positions of all schools with their evidences. 15 volumes.'),
+    ]),
+    sub('Expert',[
+      nb('Kashaf Al-Qina\'','Al-Buhuti','The most detailed Hanbali fiqh reference with evidences. 6 volumes.'),
+      nb('Sharh Muntaha Al-Iradat','Al-Buhuti','Daqaiq Uli Al-Nuha.'),
+      nb('Al-Sharh Al-Mumti\'','Ibn Uthaymin','Modern masterpiece on Zad Al-Mustaqni. 15 volumes.'),
+      {n:'Al-Kafi',a:'Ibn Qudamah',type:'book',e:true},
+      {n:'Al-Muqni',a:'Ibn Qudamah',type:'book',e:true},
+      nb('Masa\'il Al-Imam Ahmad','Students of Ahmad','The direct recorded rulings of Imam Ahmad ibn Hanbal.'),
+    ],true),
+  ]),
+  br('Fiqh — Shafi\'i','#4dd0e1',[
+    sub('Standard',[
+      bk('Matn Al-Ghayat wal-Taqrib','Abu Shuja Al-Asfahani','M'),
+      nb('Fath Al-Qarib','Ibn Qasim Al-Ghazzi','The essential commentary on Abu Shuja\'s matn.'),
+      bk('Matn Al-Zubad','Ibn Raslan','M'),
+      {n:'Umdat Al-Salik',a:'Ibn Naqib Al-Masri',type:'book'},
+      nb('Minhaj Al-Talibin','Imam Al-Nawawi','The mu\'tamad text of the later Shafi\'i school.'),
+    ]),
+    sub('Expert',[
+      nb('Rawdat Al-Talibin','Al-Nawawi','Abridgment of Al-Rafi\'i\'s Fath Al-Aziz. 12 volumes.'),
+      nb('Al-Majmu\' Sharh Al-Muhadhdhab','Al-Nawawi','The greatest Shafi\'i fiqh work with evidence. 23+ volumes.'),
+      nb('Nihayat Al-Matlab','Al-Juwayni','Al-Juwayni\'s masterpiece. Foundation for later Shafi\'i fiqh.'),
+      nb('Al-Hawi Al-Kabir','Al-Mawardi','Encyclopedic. Includes different schools\' views.'),
+      {n:'Mukhtasar Al-Muzani',a:'Al-Muzani',type:'book',e:true},
+      nb('Al-Umm','Imam Al-Shafi\'i','The foundational primary text of the school. 8 volumes.'),
+    ],true),
+  ]),
+  br('Fiqh — Maliki','#ffd54f',[
+    sub('Standard',[
+      nb('Al-Ashmawiyyah','Al-Ashmawi','Clear categorization. Best starting point for Maliki fiqh.'),
+      bk('Mukhtasar Al-Akhdari','Al-Akhdari','M'),
+      nb('Al-Murshid Al-Mu\'in','Ibn Ashir','Covers aqeedah, fiqh, and tazkiyah. Widely memorized in the Maliki tradition.'),
+      nb('Al-Risalah Al-Fiqhiyyah','Ibn Abi Zayd Al-Qayrawani','One of the early foundational texts of the school.'),
+      bk('Ashal Al-Masalik','Al-Jazuli','M'),
+      {n:'Aqrab Al-Masalik',a:'Al-Dardir',type:'book'},
+      nb('Mukhtasar Khalil','Khalil ibn Ishaq','The mu\'tamad text of the Maliki school. 348 surviving manuscript copies.'),
+    ]),
+    sub('Expert',[
+      nb('Al-Sharh Al-Kabir','Al-Dardir','The most important commentary on Mukhtasar Khalil.'),
+      nb('Hashiyat Al-Dasuqi','Al-Dasuqi','Standard Maliki reference. Comprehensive annotation on Al-Sharh Al-Kabir.'),
+      nb('Al-Dhakhirah','Al-Qarafi','Monumental encyclopedic Maliki fiqh. 14 volumes.'),
+      nb('Al-Qawanin Al-Fiqhiyyah','Ibn Juzayy Al-Kalbi','Good for comparative fiqh from a Maliki base.'),
+      nb('Bidayat Al-Mujtahid','Ibn Rushd Al-Hafid','Comparative fiqh masterpiece. Traces Maliki positions across all schools.'),
+      nb('Mawahib Al-Jalil','Al-Hattab Al-Ru\'ayni','Detailed commentary on Mukhtasar Khalil. 6 volumes.'),
+      nb('Al-Tamhid + Al-Istidhkar','Ibn Abd Al-Barr','Foundation of Maliki evidential fiqh. Al-Dhahabi ranked Al-Tamhid among the best books ever written.'),
+      nb('Al-Mudawwanah','Imam Malik via Sahnun','The founding primary source of the Maliki school. 4 volumes.'),
+    ],true),
+  ]),
+  br('Fiqh — Hanafi','#ff8a65',[
+    sub('Standard',[
+      nb('Nur Al-Idah + Maraqi Al-Falah','Al-Shurunbulali','Main Hanafi fiqh of worship text with its own commentary.'),
+      nb('Mukhtasar Al-Quduri','Al-Quduri','The oldest and most widely copied Hanafi matn.'),
+      nb('Matn Al-Wiqayah','Sadr Al-Shari\'ah Al-Asghar','Outlines all rulings in Al-Hidayah without evidences.'),
+      nb('Multaqa Al-Abhur','Ibrahim Al-Halabi','Most frequently hand-copied fiqh manuscript of any school in the Ottoman period.'),
+      nb('Al-Hidayah','Al-Marghinani','Called \'the pride of the Hanafis.\' Took 13 years to write while fasting in secret.'),
+    ]),
+    sub('Expert',[
+      nb('Fath Al-Qadir','Ibn Al-Humam','The greatest commentary on Al-Hidayah. Required for advanced study.'),
+      nb('Al-Bahr Al-Ra\'iq','Ibn Nujaym Al-Masri','Major Hanafi reference based on Kanz Al-Daqa\'iq.'),
+      {n:'Kanz Al-Daqa\'iq + Tabyin Al-Haqa\'iq',a:'Al-Nasafi / Al-Zaylai',type:'book',e:true},
+      nb('Bada\'i\' Al-Sana\'i\'','Al-Kasani','Outstanding for legal reasoning and ta\'lil.'),
+      nb('Al-Mabsut','Al-Sarakhsi','The greatest classical Hanafi encyclopedia. 30 volumes.'),
+      nb('Radd Al-Muhtar (Ibn Abidin)','Muhammad Amin Ibn Abidin','The ultimate Ottoman-era Hanafi fatwa reference. Known as Al-Shami.'),
+    ],true),
+  ]),
+  br('Qawa\'id Al-Fiqhiyyah','#f06292',[
+    {n:'Al-Qawa\'id Al-Fiqhiyyah',a:'Al-Sa\'di',type:'book'},
+    {n:'Manthumat Al-Qawa\'id Al-Fiqhiyyah',a:'Ibn Uthaymin',type:'book'},
+    bk('Al-Fara\'id Al-Bahiyyah','Al-Hamawi','MC'),
+    sub('Expert',[
+      nb('Al-Ashbah wal-Naza\'ir','Al-Suyuti (Shafi\'i)','One of the most famous qawa\'id works.'),
+      nb('Al-Ashbah wal-Naza\'ir','Ibn Nujaym (Hanafi)','Hanafi equivalent of Al-Suyuti\'s work.'),
+      {n:'Al-Qawa\'id',a:'Ibn Rajab Al-Hanbali',type:'book',e:true},
+      {n:'Al-Qawa\'id',a:'Al-Maqqari Al-Maliki',type:'book',e:true},
+    ],true),
+  ]),
+  br('Maqasid Al-Shari\'ah','#ad1457',[
+    sub('Expert',[
+      {n:'Maqasid Al-Shari\'ah Al-Islamiyyah',a:'Ibn Ashur',type:'book',e:true},
+      nb('Al-Muwafaqat','Al-Shatibi','Revolutionary maqasid-based approach. Also the core expert usool reference.'),
+    ],true),
+  ]),
+  br('Siyasah Shar\'iyyah','#880e4f',[
+    sub('Expert',[
+      {n:'Al-Siyasah Al-Shar\'iyyah',a:'Ibn Taymiyyah',type:'book',e:true},
+      {n:'Al-Ahkam Al-Sultaniyyah',a:'Al-Mawardi (Shafi\'i)',type:'book',e:true},
+      {n:'Al-Ahkam Al-Sultaniyyah',a:'Abu Ya\'la Al-Farra\' (Hanbali)',type:'book',e:true},
+    ],true),
+  ]),
+  br('Al-Fara\'id — Inheritance','#4a148c',[
+    bk('Al-Rahabiyyah fi Ilm Al-Fara\'id','Al-Rahabi','MC'),
+    sub('Expert',[
+      bk('Al-Sirajiyyah','Al-Sajawandi (Hanafi)','ME'),
+    ],true),
+  ]),
+]),
+
+di('Adhkar & Adab','#a5d6a7',[
+  br('Du\'a & Adhkar','#a5d6a7',[
+    bk('Hisnul Muslim','Sa\'id ibn Ali Al-Qahtani','M'),
+    {n:'Kitab Al-Adhkar',a:'Imam Al-Nawawi',type:'book'},
+    nb('Al-Wabil Al-Sayyib','Ibn Al-Qayyim','The comprehensive treatment of remembrance of Allah and its virtues.'),
+  ]),
+  br('Adab — Etiquettes of Learning','#81c784',[
+    nb('Hilyat Talib Al-Ilm','Bakr Abu Zayd','The definitive guide for the student of knowledge.'),
+    bk('Manthumat Abi Ishaq Al-Ilbiri','Al-Ilbiri','M'),
+    bk('Manthumat Al-Adab Al-Shar\'iyyah Al-Sughra','Al-Mardawi','MC'),
+  ]),
+]),
+
+di('Islamic History','#90caf9',[
+  br('Seerah','#90caf9',[
+    sub('Standard',[
+      {n:'Al-Urjuzah Al-Mi\'iyyah',a:'Ibn Abi Zayd Al-Qayrawani',type:'book'},
+      {n:'Rawdat Al-Anwar fi Sirat Al-Nabi',a:'Safi Al-Din Al-Ansari',type:'book'},
+      {n:'Al-Fusool fi Sirat Al-Rasool',a:'Ibn Kathir',type:'book'},
+      bk('Alfiyyat Al-Sirah Al-Nabawiyyah','Al-Iraqi','MC'),
+    ]),
+    sub('Expert',[
+      nb('Zad Al-Ma\'ad','Ibn Al-Qayyim','The most comprehensive Hanbali seerah with fiqh derived from it. 5 volumes.'),
+      nb('Al-Seerah Al-Nabawiyyah','Ibn Hisham (based on Ibn Ishaq)','The classic detailed seerah; the most widely read seerah in history.'),
+      nb('Subul Al-Huda wal-Rashad','Al-Salihi Al-Shami','The most comprehensive seerah encyclopedia. 12 volumes.'),
+    ],true),
+  ]),
+  br('Islamic History','#64b5f6',[
+    sub('Standard',[
+      {n:'Siyar A\'lam Al-Nubala\'',a:'Al-Dhahabi',type:'book'},
+      {n:'Al-Bidayah wal-Nihayah',a:'Ibn Kathir',type:'book'},
+      nb('Tarikh Al-Tabari','Ibn Jarir Al-Tabari','The foundational chronicle of Islamic and world history.'),
+    ]),
+    sub('Expert',[
+      nb('Tabaqat Ibn Sa\'d','Muhammad ibn Sa\'d','The earliest systematic biographical dictionary in Islam.'),
+      nb('Shadharaat Al-Dhahab','Ibn Al-Imad Al-Hanbali','Year-by-year chronicle of scholars\' deaths.'),
+      nb('Al-Wafi bil-Wafayat','Al-Safadi','Comprehensive biographical dictionary. 29 volumes.'),
+    ],true),
+  ]),
+]),
+
+]};
+
+// ═══════════════════════════════════════════════════════
+// PREPARE DATA — assign IDs, parents, colors, expanded
+// ═══════════════════════════════════════════════════════
+let _uid = 0;
+const allNodes = [];
+const byId = {};
+
+function prep(node, parent, depth) {
+  node.id = `nd${_uid++}`;
+  node.parent = parent;
+  node.depth = depth;
+  node.expanded = depth === 0; // only root starts expanded
+  // inherit color
+  node.color = node.col || (parent ? parent.color : '#888');
+  // normalize children
+  if(node.kids) { node.children = node.kids; delete node.kids; }
+  allNodes.push(node);
+  byId[node.id] = node;
+  if(node.children) node.children.forEach(c => prep(c, node, depth+1));
+}
+prep(RAW, null, 0);
+
+// ═══════════════════════════════════════════════════════
+// LAYOUT ENGINE
+// ═══════════════════════════════════════════════════════
+const LW = 230; // level width (horizontal spacing)
+const RH = 22;  // row height (per leaf)
+
+function countLeaves(node) {
+  if(!node.children || !node.expanded) return 1;
+  return node.children.reduce((s, c) => s + countLeaves(c), 0);
+}
+
+function buildLayout(node, x, yStart, out) {
+  node._x = x;
+  if(!node.children || !node.expanded) {
+    node._y = yStart + RH/2;
+    out[node.id] = {x: node._x, y: node._y};
+    return yStart + RH;
+  }
+  let y = yStart;
+  for(const child of node.children) {
+    y = buildLayout(child, x + LW, y, out);
+  }
+  // center parent between first and last child
+  const fc = node.children[0], lc = node.children[node.children.length-1];
+  node._y = (fc._y + lc._y) / 2;
+  out[node.id] = {x: node._x, y: node._y};
+  return y;
+}
+
+function getLayout() {
+  const out = {};
+  buildLayout(RAW, 80, 0, out);
+  return out;
+}
+
+// ═══════════════════════════════════════════════════════
+// SVG DOM CREATION
+// ═══════════════════════════════════════════════════════
+const SVG_NS = 'http://www.w3.org/2000/svg';
+const svgEl = document.getElementById('main-svg');
+const viewport = document.getElementById('viewport');
+const linksLayer = document.getElementById('links-layer');
+const nodesLayer = document.getElementById('nodes-layer');
+
+const nodeEls = {}; // id → SVG <g>
+const linkEls = {}; // parentId-childId → SVG <path>
+
+function nodeRadius(node) {
+  if(node.type === 'root') return 9;
+  if(node.type === 'discipline') return 6.5;
+  if(node.type === 'branch') return 5;
+  if(node.type === 'sub' || node.type === 'sub-expert') return 4;
+  return 3.5; // book
+}
+
+function nodeFontSize(node) {
+  if(node.type === 'root') return 14;
+  if(node.type === 'discipline') return 12;
+  if(node.type === 'branch') return 11;
+  if(node.type === 'sub' || node.type === 'sub-expert') return 10;
+  return 10; // book
+}
+
+function nodeFontWeight(node) {
+  if(node.type === 'root') return 700;
+  if(node.type === 'discipline') return 700;
+  if(node.type === 'branch') return 600;
+  return 400;
+}
+
+function nodeTextColor(node) {
+  if(node.type === 'root') return '#c9a84c';
+  if(node.type === 'discipline') return node.color;
+  if(node.type === 'book' && node.e) return '#ce93d8';
+  if(node.type === 'book' && node.c) return '#c9a84c';
+  if(node.type === 'sub-expert') return '#9e7ab5';
+  return '#d0c8be';
+}
+
+function createAllElements() {
+  // Create links first (behind nodes)
+  for(const node of allNodes) {
+    if(node.parent) {
+      const path = document.createElementNS(SVG_NS, 'path');
+      path.setAttribute('fill', 'none');
+      path.setAttribute('stroke', node.color);
+      path.setAttribute('stroke-width', node.type === 'book' ? '0.7' : '1');
+      path.setAttribute('opacity', '0');
+      path.style.transition = 'opacity 0.3s ease';
+      linksLayer.appendChild(path);
+      linkEls[`${node.parent.id}-${node.id}`] = path;
+    }
+  }
+
+  // Create nodes
+  for(const node of allNodes) {
+    const g = document.createElementNS(SVG_NS, 'g');
+    g.setAttribute('id', `svg-node-${node.id}`);
+    g.setAttribute('opacity', '0');
+    g.style.transition = 'opacity 0.3s ease';
+
+    // Invisible hit area (bigger)
+    const hit = document.createElementNS(SVG_NS, 'circle');
+    hit.setAttribute('r', 15); // Larger circular hit area for better click detection
+    hit.setAttribute('fill', 'transparent');
+    hit.setAttribute('class', 'n-hit');
+    g.appendChild(hit);
+
+    // Circle
+    const r = nodeRadius(node);
+    const circ = document.createElementNS(SVG_NS, 'circle');
+    circ.setAttribute('r', r);
+    circ.setAttribute('class', 'n-circle');
+
+    // Fill logic
+    const hasKids = !!(node.children && node.children.length > 0);
+    if(node.c) {
+      circ.setAttribute('fill', '#c9a84c');
+      circ.setAttribute('stroke', '#c9a84c');
+    } else if(node.type === 'book') {
+      circ.setAttribute('fill', 'transparent');
+      circ.setAttribute('stroke', node.color);
+    } else {
+      circ.setAttribute('fill', node.color);
+      circ.setAttribute('stroke', node.color);
+    }
+    circ.setAttribute('stroke-width', node.c ? '0' : '1.5');
+    g.appendChild(circ);
+
+    // Toggle ring (shows when expanded)
+    if(hasKids) {
+      const ring = document.createElementNS(SVG_NS, 'circle');
+      ring.setAttribute('r', r + 2.5);
+      ring.setAttribute('fill', 'transparent');
+      ring.setAttribute('stroke', node.color);
+      ring.setAttribute('stroke-width', '0.8');
+      ring.setAttribute('opacity', '0.4');
+      ring.setAttribute('class', 'n-ring');
+      g.insertBefore(ring, circ);
+    }
+
+    // Label
+    const label = document.createElementNS(SVG_NS, 'text');
+    label.setAttribute('x', r + 7);
+    label.setAttribute('y', '0.35em');
+    label.setAttribute('font-family', "'IBM Plex Sans', sans-serif");
+    label.setAttribute('font-size', nodeFontSize(node));
+    label.setAttribute('font-weight', nodeFontWeight(node));
+    label.setAttribute('fill', nodeTextColor(node));
+    label.setAttribute('class', 'n-text');
+    label.setAttribute('letter-spacing', '0.2');
+
+    // Truncate name
+    const maxLen = node.type === 'book' ? 36 : (node.type === 'discipline' ? 22 : 28);
+    let txt = node.n.length > maxLen ? node.n.slice(0, maxLen) + '…' : node.n;
+    label.textContent = txt;
+    g.appendChild(label);
+
+    // Badges row
+    if(node.c || node.m || node.e) {
+      let bx = r + 7 + (txt.length * nodeFontSize(node) * 0.48) + 6;
+      if(node.c) {
+        const bt = document.createElementNS(SVG_NS, 'text');
+        bt.setAttribute('x', bx);
+        bt.setAttribute('y', '0.35em');
+        bt.setAttribute('font-family', "'IBM Plex Mono', monospace");
+        bt.setAttribute('font-size', '7.5');
+        bt.setAttribute('font-weight', '500');
+        bt.setAttribute('fill', '#c9a84c');
+        bt.setAttribute('opacity', '0.9');
+        bt.textContent = '[C]';
+        g.appendChild(bt);
+        bx += 18;
+      }
+      if(node.m) {
+        const bt = document.createElementNS(SVG_NS, 'text');
+        bt.setAttribute('x', bx);
+        bt.setAttribute('y', '0.35em');
+        bt.setAttribute('font-family', "'IBM Plex Mono', monospace");
+        bt.setAttribute('font-size', '7.5');
+        bt.setAttribute('font-weight', '500');
+        bt.setAttribute('fill', '#69c98d');
+        bt.setAttribute('opacity', '0.9');
+        bt.textContent = '[M]';
+        g.appendChild(bt);
+        bx += 18;
+      }
+      if(node.e) {
+        const bt = document.createElementNS(SVG_NS, 'text');
+        bt.setAttribute('x', bx);
+        bt.setAttribute('y', '0.35em');
+        bt.setAttribute('font-family', "'IBM Plex Mono', monospace");
+        bt.setAttribute('font-size', '7.5');
+        bt.setAttribute('font-weight', '500');
+        bt.setAttribute('fill', '#ce93d8');
+        bt.setAttribute('opacity', '0.8');
+        bt.textContent = '[★]';
+        g.appendChild(bt);
+      }
+    }
+
+    // Expand indicator (small chevron)
+    if(hasKids) {
+      const chev = document.createElementNS(SVG_NS, 'text');
+      chev.setAttribute('x', -r - 5);
+      chev.setAttribute('y', '0.35em');
+      chev.setAttribute('font-size', '8');
+      chev.setAttribute('font-family', "'IBM Plex Mono', monospace");
+      chev.setAttribute('fill', node.color);
+      chev.setAttribute('opacity', '0.5');
+      chev.setAttribute('text-anchor', 'middle');
+      chev.setAttribute('class', 'n-chev');
+      chev.textContent = '▶';
+      g.appendChild(chev);
+    }
+
+    // Events
+    if(hasKids) {
+      g.style.cursor = 'pointer';
+      g.addEventListener('click', (e) => { e.stopPropagation(); handleToggle(node.id); });
+      g.addEventListener('mouseenter', () => highlightBranch(node.id, true));
+      g.addEventListener('mouseleave', () => highlightBranch(node.id, false));
+    } else {
+      g.addEventListener('mouseenter', (e) => showTip(e, node));
+      g.addEventListener('mouseleave', hideTip);
+    }
+
+    nodesLayer.appendChild(g);
+    nodeEls[node.id] = g;
+  }
+}
+
+// ═══════════════════════════════════════════════════════
+// RENDER — position all elements based on layout
+// ═══════════════════════════════════════════════════════
+function renderFrame(lyt) {
+  for(const node of allNodes) {
+    const el = nodeEls[node.id];
+    if(!el) continue;
+    const pos = lyt[node.id];
+    if(pos) {
+      el.setAttribute('transform', `translate(${pos.x},${pos.y})`);
+      el.setAttribute('opacity', '1');
+      // Update chevron direction
+      const chev = el.querySelector('.n-chev');
+      if(chev) {
+        chev.setAttribute('transform', node.expanded ? 'rotate(90,0,0)' : '');
+      }
+    } else {
+      el.setAttribute('opacity', '0');
+    }
+  }
+
+  // Draw links
+  for(const node of allNodes) {
+    if(!node.parent) continue;
+    const key = `${node.parent.id}-${node.id}`;
+    const el = linkEls[key];
+    if(!el) continue;
+    const src = lyt[node.parent.id];
+    const tgt = lyt[node.id];
+    if(src && tgt) {
+      const cpx = src.x + (tgt.x - src.x) / 2;
+      el.setAttribute('d', `M${src.x},${src.y} C${cpx},${src.y} ${cpx},${tgt.y} ${tgt.x},${tgt.y}`);
+      el.setAttribute('opacity', node.type === 'book' ? '0.25' :
+                                  node.type === 'sub' || node.type === 'sub-expert' ? '0.3' : '0.4');
+    } else {
+      el.setAttribute('opacity', '0');
+    }
+  }
+}
+
+// ═══════════════════════════════════════════════════════
+// ANIMATION SYSTEM
+// ═══════════════════════════════════════════════════════
+let currentLayout = {};
+let animId = null;
+
+function easeInOutCubic(t) {
+  return t < 0.5 ? 4*t*t*t : 1 - Math.pow(-2*t+2, 3)/2;
+}
+
+function lerp(a, b, t) { return a + (b - a) * t; }
+
+function animate(fromLyt, toLyt, duration) {
+  if(animId) cancelAnimationFrame(animId);
+  const start = performance.now();
+  const allIds = new Set([...Object.keys(fromLyt), ...Object.keys(toLyt)]);
+
+  function frame(now) {
+    const raw = Math.min((now - start) / duration, 1);
+    const t = easeInOutCubic(raw);
+    const cur = {};
+
+    for(const id of allIds) {
+      const f = fromLyt[id];
+      const to = toLyt[id];
+      const node = byId[id];
+      if(!node) continue;
+
+      if(f && to) {
+        // Existing node: interpolate
+        cur[id] = { x: lerp(f.x, to.x, t), y: lerp(f.y, to.y, t) };
+        const el = nodeEls[id];
+        if(el) el.setAttribute('opacity', '1');
+      } else if(!f && to) {
+        // New node: appear from parent position
+        const pp = node.parent ? (fromLyt[node.parent.id] || to) : to;
+        cur[id] = { x: lerp(pp.x, to.x, t), y: lerp(pp.y, to.y, t) };
+        const el = nodeEls[id];
+        if(el) el.setAttribute('opacity', String(t));
+      } else if(f && !to) {
+        // Removed node: collapse to parent position
+        const pp = node.parent ? (toLyt[node.parent.id] || f) : f;
+        cur[id] = { x: lerp(f.x, pp.x, t), y: lerp(f.y, pp.y, t) };
+        const el = nodeEls[id];
+        if(el) el.setAttribute('opacity', String(1 - t));
+      }
+    }
+
+    renderFrame(cur);
+
+    if(raw < 1) {
+      animId = requestAnimationFrame(frame);
+    } else {
+      renderFrame(toLyt);
+      // Final opacity cleanup
+      for(const id of allIds) {
+        if(!toLyt[id]) {
+          const el = nodeEls[id];
+          if(el) el.setAttribute('opacity', '0');
+        }
+      }
+      currentLayout = toLyt;
+      animId = null;
+    }
+  }
+
+  animId = requestAnimationFrame(frame);
+}
+
+// ═══════════════════════════════════════════════════════
+// TOGGLE
+// ═══════════════════════════════════════════════════════
+function handleToggle(id) {
+  const node = byId[id];
+  if(!node || !node.children) return;
+  const prev = Object.assign({}, currentLayout);
+  node.expanded = !node.expanded;
+  const next = getLayout();
+  animate(prev, next, 480);
+}
+
+// ═══════════════════════════════════════════════════════
+// BRANCH HIGHLIGHT
+// ═══════════════════════════════════════════════════════
+function highlightBranch(id, on) {
+  const node = byId[id];
+  if(!node) return;
+  function walk(n) {
+    const el = nodeEls[n.id];
+    if(!el) return;
+    const circ = el.querySelector('.n-circle');
+    if(circ) {
+      if(on) {
+        circ.style.filter = `drop-shadow(0 0 5px ${n.color})`;
+      } else {
+        circ.style.filter = '';
+      }
+    }
+    if(n.expanded && n.children) n.children.forEach(walk);
+  }
+  walk(node);
+}
+
+// ═══════════════════════════════════════════════════════
+// TOOLTIP
+// ═══════════════════════════════════════════════════════
+const tipEl = document.getElementById('tip');
+function showTip(e, node) {
+  let html = `<div class="tip-name">${node.n}</div>`;
+  if(node.a) html += `<div class="tip-auth">— ${node.a}</div>`;
+  if(node.nt) html += `<div class="tip-note">${node.nt}</div>`;
+  html += '<div class="tip-tags">';
+  if(node.c) html += '<span class="b b-c">CORE BOOK</span>';
+  if(node.m) html += '<span class="b b-m">MEMORIZE</span>';
+  if(node.e) html += '<span class="b b-e">★ EXPERT</span>';
+  if(!node.c && !node.m && !node.e) html += '<span style="font-size:9px;color:#4a4840;font-family:\'IBM Plex Mono\',monospace">STANDARD</span>';
+  html += '</div>';
+  tipEl.innerHTML = html;
+  tipEl.classList.add('on');
+  moveTip(e);
+}
+function moveTip(e) {
+  const x = Math.min(e.clientX + 16, window.innerWidth - 300);
+  const y = Math.min(e.clientY - 10, window.innerHeight - 180);
+  tipEl.style.left = x + 'px';
+  tipEl.style.top = y + 'px';
+}
+function hideTip() { tipEl.classList.remove('on'); }
+document.addEventListener('mousemove', (e) => { if(tipEl.classList.contains('on')) moveTip(e); });
+
+// ═══════════════════════════════════════════════════════
+// PAN & ZOOM
+// ═══════════════════════════════════════════════════════
+let tx = 40, ty = window.innerHeight / 2 - 30, sc = 0.85;
+let isPanning = false, panSX = 0, panSY = 0, panTX = 0, panTY = 0;
+
+function applyTransform() {
+  viewport.setAttribute('transform', `translate(${tx},${ty}) scale(${sc})`);
+}
+applyTransform();
+
+svgEl.addEventListener('wheel', (e) => {
+  e.preventDefault();
+  const rect = svgEl.getBoundingClientRect();
+  const mx = e.clientX - rect.left;
+  const my = e.clientY - rect.top;
+  const delta = e.deltaY < 0 ? 1.12 : 0.89;
+  const newSc = Math.max(0.08, Math.min(5, sc * delta));
+  tx = mx - (mx - tx) * (newSc / sc);
+  ty = my - (my - ty) * (newSc / sc);
+  sc = newSc;
+  applyTransform();
+}, {passive: false});
+
+svgEl.addEventListener('mousedown', (e) => {
+  if(e.target === svgEl || e.target === viewport ||
+     e.target.id === 'links-layer' || e.target.id === 'nodes-layer') {
+    isPanning = true;
+    panSX = e.clientX; panSY = e.clientY;
+    panTX = tx; panTY = ty;
+    svgEl.style.cursor = 'grabbing';
+    e.preventDefault();
+  }
+});
+document.addEventListener('mousemove', (e) => {
+  if(!isPanning) return;
+  tx = panTX + (e.clientX - panSX);
+  ty = panTY + (e.clientY - panSY);
+  applyTransform();
+});
+document.addEventListener('mouseup', () => {
+  isPanning = false;
+  svgEl.style.cursor = 'default';
+});
+
+// Touch support
+let touchStart = null;
+svgEl.addEventListener('touchstart', (e) => {
+  if(e.touches.length === 1) {
+    touchStart = {x: e.touches[0].clientX, y: e.touches[0].clientY, tx, ty};
+  }
+});
+svgEl.addEventListener('touchmove', (e) => {
+  e.preventDefault();
+  if(e.touches.length === 1 && touchStart) {
+    tx = touchStart.tx + (e.touches[0].clientX - touchStart.x);
+    ty = touchStart.ty + (e.touches[0].clientY - touchStart.y);
+    applyTransform();
+  }
+}, {passive: false});
+
+// ═══════════════════════════════════════════════════════
+// CONTROLS
+// ═══════════════════════════════════════════════════════
+document.getElementById('btn-expand').addEventListener('click', () => {
+  const prev = Object.assign({}, currentLayout);
+  allNodes.forEach(n => { if(n.children && n.children.length) n.expanded = true; });
+  const next = getLayout();
+  animate(prev, next, 600);
+});
+
+document.getElementById('btn-collapse').addEventListener('click', () => {
+  const prev = Object.assign({}, currentLayout);
+  allNodes.forEach(n => { if(n.depth > 0) n.expanded = false; });
+  RAW.expanded = true;
+  const next = getLayout();
+  animate(prev, next, 480);
+});
+
+document.getElementById('btn-reset').addEventListener('click', () => {
+  tx = 40; ty = window.innerHeight/2 - 30; sc = 0.85;
+  applyTransform();
+});
+
+// ═══════════════════════════════════════════════════════
+// SEARCH
+// ═══════════════════════════════════════════════════════
+const srchInput = document.getElementById('srch');
+const srchClr = document.getElementById('srch-clr');
+
+srchInput.addEventListener('input', function() {
+  const q = this.value.trim().toLowerCase();
+  srchClr.style.display = q ? 'block' : 'none';
+  if(!q) {
+    nodesLayer.querySelectorAll('g').forEach(el => {
+      el.setAttribute('opacity', '1');
+      el.style.filter = '';
+    });
+    linksLayer.querySelectorAll('path').forEach(el => el.setAttribute('opacity', el._baseOpacity || '0.3'));
+    return;
+  }
+  // Expand all
+  const prev = Object.assign({}, currentLayout);
+  allNodes.forEach(n => { if(n.children && n.children.length) n.expanded = true; });
+  const next = getLayout();
+  animate(prev, next, 400);
+
+  setTimeout(() => {
+    allNodes.forEach(node => {
+      const match = node.n.toLowerCase().includes(q) || (node.a && node.a.toLowerCase().includes(q));
+      const el = nodeEls[node.id];
+      if(!el) return;
+      if(match) {
+        el.setAttribute('opacity', '1');
+        const circ = el.querySelector('.n-circle');
+        if(circ) circ.style.filter = `drop-shadow(0 0 8px ${node.color})`;
+      } else {
+        el.setAttribute('opacity', '0.06');
+        const circ = el.querySelector('.n-circle');
+        if(circ) circ.style.filter = '';
+      }
+    });
+  }, 450);
+});
+
+srchClr.addEventListener('click', () => {
+  srchInput.value = '';
+  srchClr.style.display = 'none';
+  nodesLayer.querySelectorAll('g').forEach(el => {
+    el.setAttribute('opacity', '1');
+    el.style.filter = '';
+    el.querySelectorAll('circle').forEach(c => c.style.filter = '');
+  });
+});
+
+// ═══════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════
+createAllElements();
+currentLayout = getLayout();
+renderFrame(currentLayout);
+
+window.addEventListener('resize', () => {
+  ty = window.innerHeight / 2 - 30;
+  applyTransform();
+});
+</script>
+</body>
+</html>
