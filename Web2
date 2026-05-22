@@ -3,687 +3,867 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ṭālib al-ʿIlm — Islamic Studies Tree</title>
+<title>Talib al-Ilm — Islamic Studies Roadmap</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=IBM+Plex+Mono:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
-* { margin:0; padding:0; box-sizing:border-box; }
-
-body {
-  background: #080705;
-  font-family: 'IBM Plex Mono', monospace;
-  overflow: hidden;
-  width: 100vw;
-  height: 100vh;
-  color: #c9a84c;
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#07060a;--bg2:#0f0d14;--bg3:#161422;
+  --gold:#c9a84c;--gold2:#e8c97a;--muted:#4a4260;
+  --border:#1e1b2e;--text:#d4cce8;
 }
+body{background:var(--bg);font-family:'IBM Plex Mono',monospace;overflow:hidden;width:100vw;height:100vh;color:var(--text)}
 
-#canvas {
-  width: 100%;
-  height: 100%;
-  cursor: grab;
+/* ── HEADER ── */
+#header{position:fixed;top:0;left:0;right:0;height:46px;background:rgba(7,6,10,.95);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 16px;gap:14px;z-index:200;backdrop-filter:blur(10px)}
+#header h1{font-family:'Cinzel',serif;font-size:12px;letter-spacing:.18em;color:var(--gold);white-space:nowrap;text-transform:uppercase}
+.hsep{width:1px;height:18px;background:var(--border)}
+.legend{display:flex;align-items:center;gap:10px;flex-wrap:wrap;overflow:hidden}
+.li{display:flex;align-items:center;gap:4px;font-size:9px;letter-spacing:.04em;color:var(--muted);white-space:nowrap}
+.ld{width:7px;height:7px;border-radius:50%}
+.hbtn{margin-left:auto;display:flex;gap:6px;flex-shrink:0}
+.hbtn button{background:transparent;border:1px solid var(--border);color:var(--muted);font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.1em;padding:4px 9px;cursor:pointer;text-transform:uppercase;transition:all .2s}
+.hbtn button:hover,.hbtn button.active{border-color:var(--gold);color:var(--gold);background:rgba(201,168,76,.08)}
+
+/* ── CANVAS ── */
+#canvas{width:100%;height:100%;cursor:grab}
+#canvas:active{cursor:grabbing}
+
+/* ── BREADCRUMB ── */
+#breadcrumb{position:fixed;top:56px;left:16px;font-size:9px;letter-spacing:.1em;color:var(--muted);z-index:150;pointer-events:none;text-transform:uppercase;transition:opacity .3s;opacity:0}
+#breadcrumb.show{opacity:1}
+#breadcrumb span{color:var(--gold)}
+
+/* ── BOOK PANEL ── */
+#panel{position:fixed;right:-320px;top:46px;bottom:0;width:300px;background:var(--bg2);border-left:1px solid var(--border);z-index:300;display:flex;flex-direction:column;transition:right .3s cubic-bezier(.4,0,.2,1)}
+#panel.open{right:0}
+#panel-close{position:absolute;top:12px;right:12px;background:none;border:none;color:var(--muted);font-size:18px;cursor:pointer;line-height:1}
+#panel-close:hover{color:var(--gold)}
+#panel-path{padding:16px 16px 0;font-size:9px;letter-spacing:.1em;color:var(--muted);text-transform:uppercase;line-height:1.8}
+#panel-path span{color:var(--gold)}
+#panel-title{padding:12px 16px 8px;font-family:'Cinzel',serif;font-size:14px;color:var(--gold2);line-height:1.35;border-bottom:1px solid var(--border)}
+#panel-mem{padding:8px 16px 0;font-size:10px;letter-spacing:.1em;color:#c9a84c}
+#panel-btns{padding:20px 16px;display:flex;flex-direction:column;gap:10px}
+.pbtn{display:flex;align-items:center;gap:10px;padding:12px 14px;border:1px solid var(--border);background:transparent;color:var(--text);font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.06em;cursor:pointer;text-align:left;transition:all .2s;text-decoration:none}
+.pbtn:hover{border-color:var(--gold);color:var(--gold);background:rgba(201,168,76,.06)}
+.pbtn .icon{font-size:14px;width:20px;text-align:center;flex-shrink:0}
+#panel-note{padding:0 16px;font-size:10px;color:var(--muted);line-height:1.6;border-top:1px solid var(--border);padding-top:14px}
+
+/* ── CONTROLS ── */
+#controls{position:fixed;bottom:16px;right:16px;display:flex;gap:5px;z-index:150}
+.cbtn{width:30px;height:30px;background:var(--bg2);border:1px solid var(--border);color:var(--muted);font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.cbtn:hover{border-color:var(--gold);color:var(--gold)}
+
+#hint{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);font-size:9px;letter-spacing:.1em;color:var(--muted);pointer-events:none;text-transform:uppercase;transition:opacity .5s}
+
+/* ── MOBILE LIST VIEW ── */
+#listview{position:fixed;top:46px;left:0;right:0;bottom:0;overflow-y:auto;background:var(--bg);display:none;z-index:50}
+#listview.show{display:block}
+#listview::-webkit-scrollbar{width:4px}
+#listview::-webkit-scrollbar-track{background:var(--bg)}
+#listview::-webkit-scrollbar-thumb{background:var(--border)}
+
+.lv-level{border-bottom:1px solid var(--border)}
+.lv-level-hdr{padding:14px 16px;font-family:'Cinzel',serif;font-size:12px;letter-spacing:.15em;text-transform:uppercase;cursor:pointer;display:flex;align-items:center;justify-content:space-between;user-select:none}
+.lv-level-hdr:hover{background:rgba(255,255,255,.02)}
+.lv-level-hdr .caret{font-size:10px;transition:transform .25s;color:var(--muted)}
+.lv-level-hdr.open .caret{transform:rotate(90deg)}
+.lv-level-body{display:none}
+.lv-level-body.open{display:block}
+
+.lv-subject{border-top:1px solid var(--border)}
+.lv-subj-hdr{padding:10px 24px;font-size:10px;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;display:flex;align-items:center;justify-content:space-between;user-select:none;color:var(--muted)}
+.lv-subj-hdr:hover{background:rgba(255,255,255,.02)}
+.lv-subj-hdr.open .caret{transform:rotate(90deg)}
+.lv-subj-body{display:none;padding:0 32px 8px}
+.lv-subj-body.open{display:block}
+
+.lv-book{padding:8px 0;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,.03);cursor:pointer}
+.lv-book:hover .lv-book-name{opacity:1}
+.lv-book-name{font-size:10px;color:var(--text);opacity:.7;transition:opacity .2s;line-height:1.4}
+.lv-book-mem{font-size:8px;color:var(--gold);margin-left:8px;white-space:nowrap}
+.lv-book-arrow{font-size:10px;color:var(--muted);margin-left:8px;flex-shrink:0}
+
+/* ── D3 styles ── */
+.link{fill:none;stroke-width:.8px}
+.node{cursor:pointer}
+.node circle{stroke-width:1.5px}
+.node text{pointer-events:none;dominant-baseline:middle}
+.dimmed{opacity:.06!important;transition:opacity .3s}
+.focused{opacity:1!important;transition:opacity .3s}
+
+@media(max-width:680px){
+  .legend{display:none}
+  #header h1{font-size:10px}
 }
-#canvas:active { cursor: grabbing; }
-
-/* Header bar */
-#header {
-  position: fixed;
-  top: 0; left: 0; right: 0;
-  height: 48px;
-  background: rgba(8,7,5,0.92);
-  border-bottom: 1px solid #2a2010;
-  display: flex;
-  align-items: center;
-  padding: 0 20px;
-  gap: 20px;
-  z-index: 100;
-  backdrop-filter: blur(8px);
-}
-
-#header h1 {
-  font-family: 'Cinzel', serif;
-  font-size: 14px;
-  letter-spacing: 0.15em;
-  color: #c9a84c;
-  white-space: nowrap;
-}
-
-.header-sep {
-  width: 1px;
-  height: 20px;
-  background: #2a2010;
-}
-
-.legend {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  flex-wrap: wrap;
-}
-
-.legend-item {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  font-size: 10px;
-  letter-spacing: 0.05em;
-  color: #7a6840;
-}
-
-.legend-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-}
-
-/* Instructions */
-#hint {
-  position: fixed;
-  bottom: 16px;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 10px;
-  letter-spacing: 0.1em;
-  color: #3a3020;
-  text-transform: uppercase;
-  pointer-events: none;
-}
-
-/* Tooltip */
-#tooltip {
-  position: fixed;
-  background: #100e08;
-  border: 1px solid #3a2e18;
-  border-left: 2px solid #c9a84c;
-  padding: 10px 14px;
-  font-size: 11px;
-  line-height: 1.7;
-  max-width: 260px;
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity 0.15s;
-  z-index: 200;
-}
-
-#tooltip .tt-title {
-  font-family: 'Cinzel', serif;
-  font-size: 12px;
-  color: #c9a84c;
-  margin-bottom: 4px;
-}
-
-#tooltip .tt-arabic {
-  font-size: 13px;
-  color: #e8c97a;
-  margin-bottom: 4px;
-  direction: rtl;
-}
-
-#tooltip .tt-author {
-  color: #7a6840;
-  font-size: 10px;
-  margin-bottom: 4px;
-}
-
-#tooltip .tt-meta {
-  color: #9a8860;
-  font-size: 10px;
-}
-
-#tooltip .tt-mem {
-  color: #c9a84c;
-  font-size: 10px;
-}
-
-/* SVG node/link styles */
-.link {
-  fill: none;
-  stroke-width: 1px;
-  opacity: 0.35;
-}
-
-.node circle {
-  stroke-width: 1.5px;
-  cursor: pointer;
-  transition: r 0.2s, opacity 0.2s;
-}
-
-.node circle:hover {
-  opacity: 0.85;
-}
-
-.node text {
-  font-family: 'IBM Plex Mono', monospace;
-  pointer-events: none;
-  dominant-baseline: middle;
-}
-
-.node.root circle { cursor: default; }
-
-/* Reset / zoom controls */
-#controls {
-  position: fixed;
-  bottom: 16px;
-  right: 16px;
-  display: flex;
-  gap: 6px;
-  z-index: 100;
-}
-
-.ctrl-btn {
-  width: 32px;
-  height: 32px;
-  background: #120f08;
-  border: 1px solid #2a2010;
-  color: #c9a84c;
-  font-size: 16px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: 'IBM Plex Mono', monospace;
-  transition: background 0.15s;
-}
-.ctrl-btn:hover { background: #1e1a10; }
 </style>
 </head>
 <body>
 
+<!-- HEADER -->
 <div id="header">
-  <h1>ṬĀLIB AL-ʿILM — ISLAMIC STUDIES ROADMAP</h1>
-  <div class="header-sep"></div>
+  <h1>Talib al-&#x2018;Ilm</h1>
+  <div class="hsep"></div>
   <div class="legend">
-    <div class="legend-item"><div class="legend-dot" style="background:#ef9a9a"></div>ʿAqīdah</div>
-    <div class="legend-item"><div class="legend-dot" style="background:#80cbc4"></div>Fiqh</div>
-    <div class="legend-item"><div class="legend-dot" style="background:#ffcc80"></div>Ḥadīth</div>
-    <div class="legend-item"><div class="legend-dot" style="background:#a5d6a7"></div>Naḥw</div>
-    <div class="legend-item"><div class="legend-dot" style="background:#90caf9"></div>Tajwīd/Qirāʾāt</div>
-    <div class="legend-item"><div class="legend-dot" style="background:#ce93d8"></div>Uṣūl</div>
-    <div class="legend-item"><div class="legend-dot" style="background:#fff59d"></div>Tafsīr</div>
-    <div class="legend-item"><div class="legend-dot" style="background:#c5e1a5"></div>Farāʾiḍ</div>
-    <div class="legend-item"><div class="legend-dot" style="background:#ffe082"></div>Balāgha</div>
-    <div class="legend-item"><div class="legend-dot" style="background:#bcaaa4"></div>Ādāb</div>
-    <div class="legend-item"><div class="legend-dot" style="background:#f48fb1"></div>Sīra</div>
-    <div class="legend-item"><div class="legend-dot" style="background:#b39ddb"></div>Muṣṭalaḥ</div>
+    <div class="li"><div class="ld" style="background:#a8d5e2"></div>Entry Poems</div>
+    <div class="li"><div class="ld" style="background:#ef9a9a"></div>Aqeedah</div>
+    <div class="li"><div class="ld" style="background:#80cbc4"></div>Fiqh</div>
+    <div class="li"><div class="ld" style="background:#ffcc80"></div>Hadith</div>
+    <div class="li"><div class="ld" style="background:#a5d6a7"></div>Nahw</div>
+    <div class="li"><div class="ld" style="background:#80deea"></div>Tajweed</div>
+    <div class="li"><div class="ld" style="background:#ce93d8"></div>Usool</div>
+    <div class="li"><div class="ld" style="background:#fff59d"></div>Tafsir</div>
+    <div class="li"><div class="ld" style="background:#c5e1a5"></div>Fara'id</div>
+    <div class="li"><div class="ld" style="background:#ffe082"></div>Balagha</div>
+    <div class="li"><div class="ld" style="background:#bcaaa4"></div>Adab</div>
+    <div class="li"><div class="ld" style="background:#f48fb1"></div>Seerah</div>
+    <div class="li"><div class="ld" style="background:#b39ddb"></div>Mustalah</div>
+    <div class="li"><div class="ld" style="background:#b2dfdb"></div>Qawa'id</div>
+    <div class="li"><div class="ld" style="background:#e6ee9c"></div>Literature</div>
+  </div>
+  <div class="hbtn">
+    <button id="btn-tree" class="active" onclick="setView('tree')">Tree</button>
+    <button id="btn-list" onclick="setView('list')">List</button>
+    <button onclick="expandAll()">Expand</button>
+    <button onclick="collapseToLevels()">Collapse</button>
+    <button onclick="resetZoom()">Reset</button>
   </div>
 </div>
 
+<div id="breadcrumb"></div>
 <svg id="canvas"></svg>
-<div id="tooltip"></div>
-<div id="hint">CLICK node to expand · SCROLL to zoom · DRAG to pan</div>
 
-<div id="controls">
-  <button class="ctrl-btn" onclick="resetZoom()">⌂</button>
-  <button class="ctrl-btn" onclick="expandAll()">+</button>
-  <button class="ctrl-btn" onclick="collapseAll()">−</button>
+<!-- BOOK PANEL -->
+<div id="panel">
+  <button id="panel-close" onclick="closePanel()">&#x2715;</button>
+  <div id="panel-path"></div>
+  <div id="panel-title"></div>
+  <div id="panel-mem"></div>
+  <div id="panel-btns">
+    <a class="pbtn" id="btn-info" href="#" target="_blank">
+      <span class="icon">&#9432;</span> Book Information
+    </a>
+    <a class="pbtn" id="btn-pdf" href="#" target="_blank">
+      <span class="icon">&#128196;</span> Read / Download PDF
+    </a>
+    <a class="pbtn" id="btn-video" href="#" target="_blank">
+      <span class="icon">&#9654;</span> Watch Reading / Lesson
+    </a>
+  </div>
+  <div id="panel-note">Links will be added for each text. Click outside panel or press Esc to close.</div>
 </div>
 
+<!-- LIST VIEW (MOBILE) -->
+<div id="listview"></div>
+
+<!-- CONTROLS -->
+<div id="controls">
+  <button class="cbtn" onclick="zoom.scaleBy(svg,1.3)" title="Zoom In">+</button>
+  <button class="cbtn" onclick="zoom.scaleBy(svg,.77)" title="Zoom Out">&#8722;</button>
+</div>
+<div id="hint">Click level/subject to expand &nbsp;&#x2022;&nbsp; Click book for details &nbsp;&#x2022;&nbsp; Drag to pan &nbsp;&#x2022;&nbsp; Scroll to zoom</div>
+
 <script>
-// ═══════════ DATA ═══════════
-const treeData = {
-  name: "Ṭālib al-ʿIlm", arabic: "طالب العلم", type: "root",
-  children: [
-    {
-      name: "LEVEL I", subtitle: "Foundation · المبتدئ", type: "level", level: 1,
-      children: [
-        { name: "ʿAqīdah", type: "subject", color: "#ef9a9a", children: [
-          { name: "Nawāqiḍ al-Islām", arabic: "نواقض الإسلام", author: "Ibn ʿAbd al-Wahhāb", size: "17 lines", mem: true, type: "book", color: "#ef9a9a" },
-          { name: "al-Uṣūl al-Thalātha", arabic: "الأصول الثلاثة", author: "Ibn ʿAbd al-Wahhāb", size: "Short", mem: true, type: "book", color: "#ef9a9a" },
-          { name: "al-Qawāʿid al-Arbaʿ", arabic: "القواعد الأربع", author: "Ibn ʿAbd al-Wahhāb", size: "Short", mem: true, type: "book", color: "#ef9a9a" },
-        ]},
-        { name: "Fiqh", type: "subject", color: "#80cbc4", children: [
-          { name: "Shurūṭ al-Ṣalāh", arabic: "شروط الصلاة وأركانها", author: "Ibn ʿAbd al-Wahhāb", size: "92 lines", mem: true, type: "book", color: "#80cbc4" },
-        ]},
-        { name: "Ḥadīth", type: "subject", color: "#ffcc80", children: [
-          { name: "Arbaʿūn al-Nawawiyya", arabic: "الأربعون النووية", author: "Imam al-Nawawī", size: "42 ḥadīths", mem: true, type: "book", color: "#ffcc80" },
-        ]},
-        { name: "Naḥw", type: "subject", color: "#a5d6a7", children: [
-          { name: "al-Ājurrūmiyya", arabic: "الآجرومية", author: "Ibn Ājarrum", size: "103 lines", mem: true, type: "book", color: "#a5d6a7" },
-        ]},
-        { name: "Tajwīd", type: "subject", color: "#90caf9", children: [
-          { name: "Tuḥfat al-Aṭfāl", arabic: "تحفة الأطفال", author: "al-Jamzūrī", size: "61 verses", mem: true, type: "book", color: "#90caf9" },
-        ]},
-        { name: "Uṣūl al-Fiqh", type: "subject", color: "#ce93d8", children: [
-          { name: "al-Waraqāt", arabic: "الورقات", author: "al-Juwaynī", size: "Short prose", mem: true, type: "book", color: "#ce93d8" },
-        ]},
-        { name: "Tafsīr", type: "subject", color: "#fff59d", children: [
-          { name: "Muqaddima Uṣūl al-Tafsīr", arabic: "خلاصة مقدمة أصول التفسير", author: "Ibn Taymiyya (summary)", size: "81 lines", type: "book", color: "#fff59d" },
-        ]},
-        { name: "Farāʾiḍ", type: "subject", color: "#c5e1a5", children: [
-          { name: "al-Raḥabiyya", arabic: "الرحبية في علم الفرائض", author: "Muḥammad al-Raḥabī", size: "176 verses", mem: true, type: "book", color: "#c5e1a5" },
-        ]},
-        { name: "Ādāb", type: "subject", color: "#bcaaa4", children: [
-          { name: "Ḥilyat Ṭālib al-ʿIlm", arabic: "حلية طالب العلم", author: "Bakr Abū Zayd", size: "Essential", type: "book", color: "#bcaaa4" },
-        ]},
-        { name: "Qawāʾid", type: "subject", color: "#b2dfdb", children: [
-          { name: "Zubdat al-Qawāʾid", arabic: "زبدة القواعد الفقهية", author: "Classical text", size: "64 verses", mem: true, type: "book", color: "#b2dfdb" },
-        ]},
-      ]
-    },
-    {
-      name: "LEVEL II", subtitle: "Elementary · الابتدائي", type: "level", level: 2,
-      children: [
-        { name: "ʿAqīdah", type: "subject", color: "#ef9a9a", children: [
-          { name: "Kitāb al-Tawḥīd", arabic: "كتاب التوحيد", author: "Ibn ʿAbd al-Wahhāb", size: "1692 lines", type: "book", color: "#ef9a9a" },
-        ]},
-        { name: "Naḥw", type: "subject", color: "#a5d6a7", children: [
-          { name: "Mutammima al-Ājurrūmiyya", arabic: "متممة الآجرومية", author: "Ḥanbalī schools", size: "760 lines", mem: true, type: "book", color: "#a5d6a7" },
-        ]},
-        { name: "Ḥadīth", type: "subject", color: "#ffcc80", children: [
-          { name: "ʿUmdat al-Aḥkām", arabic: "عمدة الأحكام", author: "al-Maqdisī", size: "414 ḥadīths", mem: true, type: "book", color: "#ffcc80" },
-        ]},
-        { name: "Muṣṭalaḥ", type: "subject", color: "#b39ddb", children: [
-          { name: "al-Bayqūniyya", arabic: "البيقونية", author: "al-Bayqūnī", size: "34 verses", mem: true, type: "book", color: "#b39ddb" },
-        ]},
-        { name: "Fiqh", type: "subject", color: "#80cbc4", children: [
-          { name: "Akhṣar al-Mukhtaṣarāt", arabic: "أخصر المختصرات", author: "Ibn Balbān al-Ḥanbalī", size: "1102 lines", mem: true, type: "book", color: "#80cbc4" },
-        ]},
-        { name: "Tajwīd/Qirāʾāt", type: "subject", color: "#90caf9", children: [
-          { name: "al-Muqaddima al-Jazariyya", arabic: "المقدمة الجزرية", author: "Ibn al-Jazarī", size: "107 verses", mem: true, type: "book", color: "#90caf9" },
-          { name: "Naʿt al-Darajāt", arabic: "نعت الدرجات", author: "Classical text", size: "99 verses", type: "book", color: "#90caf9" },
-        ]},
-        { name: "Tafsīr", type: "subject", color: "#fff59d", children: [
-          { name: "Manẓūmat al-Zamzamī", arabic: "منظومة الزمزمي", author: "al-Zamzamī", size: "158 verses", mem: true, type: "book", color: "#fff59d" },
-        ]},
-        { name: "Ādāb", type: "subject", color: "#bcaaa4", children: [
-          { name: "Maḥārim al-Lisān", arabic: "محارم اللسان", author: "Classical text", size: "147 verses", mem: true, type: "book", color: "#bcaaa4" },
-        ]},
-      ]
-    },
-    {
-      name: "LEVEL III", subtitle: "Intermediate · المتوسط", type: "level", level: 3,
-      children: [
-        { name: "ʿAqīdah", type: "subject", color: "#ef9a9a", children: [
-          { name: "al-ʿAqīda al-Wāsiṭiyya", arabic: "العقيدة الواسطية", author: "Ibn Taymiyya", size: "257 lines", mem: true, type: "book", color: "#ef9a9a" },
-          { name: "Luma al-Iʿtiqād", arabic: "لمعة الاعتقاد", author: "Ibn Qudāma", size: "184 lines", mem: true, type: "book", color: "#ef9a9a" },
-        ]},
-        { name: "Naḥw", type: "subject", color: "#a5d6a7", children: [
-          { name: "Qaṭr al-Nadā", arabic: "قطر الندى وبل الصدى", author: "Ibn Hishām", size: "231 lines", type: "book", color: "#a5d6a7" },
-          { name: "Shudhūr al-Dhahab", arabic: "شذور الذهب", author: "Ibn Hishām", size: "229 lines", type: "book", color: "#a5d6a7" },
-        ]},
-        { name: "Ḥadīth", type: "subject", color: "#ffcc80", children: [
-          { name: "Bulūgh al-Marām", arabic: "بلوغ المرام", author: "Ibn Ḥajar al-ʿAsqalānī", size: "1352 ḥadīths", mem: true, type: "book", color: "#ffcc80" },
-        ]},
-        { name: "Muṣṭalaḥ", type: "subject", color: "#b39ddb", children: [
-          { name: "Nukhbat al-Fikar", arabic: "نخبة الفكر", author: "Ibn Ḥajar al-ʿAsqalānī", size: "Prose", mem: true, type: "book", color: "#b39ddb" },
-        ]},
-        { name: "Fiqh", type: "subject", color: "#80cbc4", children: [
-          { name: "Dalīl al-Ṭālib", arabic: "دليل الطالب لنيل المطالب", author: "al-Karmī al-Ḥanbalī", size: "2437 lines", type: "book", color: "#80cbc4" },
-        ]},
-        { name: "Qirāʾāt", type: "subject", color: "#90caf9", children: [
-          { name: "al-Shāṭibiyya", arabic: "الشاطبية (حرز الأماني)", author: "al-Shāṭibī", size: "1173 verses", mem: true, type: "book", color: "#90caf9" },
-        ]},
-        { name: "Uṣūl al-Fiqh", type: "subject", color: "#ce93d8", children: [
-          { name: "al-Naẓm al-Ṣaghīr", arabic: "النظم الصغير — الحنبلي", author: "Ḥanbalī school", size: "90 verses", mem: true, type: "book", color: "#ce93d8" },
-          { name: "Bidāyat al-Maʾmūl", arabic: "بداية المأمول", author: "Ḥanbalī text", size: "272 verses", type: "book", color: "#ce93d8" },
-        ]},
-        { name: "Balāgha", type: "subject", color: "#ffe082", children: [
-          { name: "al-Jawhar al-Maknūn", arabic: "الجوهر المكنون", author: "al-Akhdharī", size: "291 verses", type: "book", color: "#ffe082" },
-        ]},
-        { name: "Ādāb / Tazkiyya", type: "subject", color: "#bcaaa4", children: [
-          { name: "Muṭahharat al-Qulūb", arabic: "مطهرة القلوب", author: "al-Sanūsī", size: "384 verses", mem: true, type: "book", color: "#bcaaa4" },
-        ]},
-        { name: "Qawāʾid", type: "subject", color: "#b2dfdb", children: [
-          { name: "Manẓūmat al-Qawāʾid (Ibn ʿUthaymīn)", arabic: "منظومة القواعد الفقهية", author: "Ibn ʿUthaymīn", size: "49 verses", mem: true, type: "book", color: "#b2dfdb" },
-        ]},
-      ]
-    },
-    {
-      name: "LEVEL IV", subtitle: "Advanced · المتقدم", type: "level", level: 4,
-      children: [
-        { name: "ʿAqīdah", type: "subject", color: "#ef9a9a", children: [
-          { name: "al-ʿAqīda al-Ṭaḥāwiyya", arabic: "العقيدة الطحاوية", author: "al-Ṭaḥāwī + Sharḥ Ibn Abi al-ʿIzz", size: "134 points", type: "book", color: "#ef9a9a" },
-          { name: "al-ʿAqīda al-Ḥamawiyya", arabic: "الفتوى الحموية", author: "Ibn Taymiyya", size: "Advanced", type: "book", color: "#ef9a9a" },
-        ]},
-        { name: "Naḥw", type: "subject", color: "#a5d6a7", children: [
-          { name: "Alfiyyat Ibn Mālik", arabic: "ألفية ابن مالك", author: "Ibn Mālik al-Andalusī", size: "1002 verses", mem: true, type: "book", color: "#a5d6a7" },
-        ]},
-        { name: "Ḥadīth", type: "subject", color: "#ffcc80", children: [
-          { name: "Riyāḍ al-Ṣāliḥīn", arabic: "رياض الصالحين", author: "Imam al-Nawawī", size: "1936 ḥadīths", mem: true, type: "book", color: "#ffcc80" },
-          { name: "al-Muḥarrar fī al-Ḥadīth", arabic: "المحرر في الحديث", author: "Ibn ʿAbd al-Hādī", size: "1268 ḥadīths", type: "book", color: "#ffcc80" },
-        ]},
-        { name: "Muṣṭalaḥ", type: "subject", color: "#b39ddb", children: [
-          { name: "Alfiyyat al-ʿIrāqī", arabic: "ألفية العراقي", author: "Zayn al-Dīn al-ʿIrāqī", size: "~1000 verses", mem: true, type: "book", color: "#b39ddb" },
-        ]},
-        { name: "Fiqh", type: "subject", color: "#80cbc4", children: [
-          { name: "Zād al-Mustaqniʿ", arabic: "زاد المستقنع", author: "al-Ḥajjāwī", size: "1884 lines", mem: true, type: "book", color: "#80cbc4" },
-          { name: "al-ʿUmda fī al-Fiqh", arabic: "العمدة في الفقه", author: "Ibn Qudāma", size: "1804 lines", type: "book", color: "#80cbc4" },
-        ]},
-        { name: "Qirāʾāt", type: "subject", color: "#90caf9", children: [
-          { name: "Ṭayyibat al-Nashr", arabic: "طيبة النشر", author: "Ibn al-Jazarī", size: "1014 verses", mem: true, type: "book", color: "#90caf9" },
-          { name: "al-Durra al-Muḍiyya", arabic: "الدرة المضية", author: "Ibn al-Jazarī", size: "241 verses", mem: true, type: "book", color: "#90caf9" },
-        ]},
-        { name: "Uṣūl al-Fiqh", type: "subject", color: "#ce93d8", children: [
-          { name: "Mukhtaṣar al-Taḥrīr", arabic: "مختصر التحرير", author: "Ibn al-Najjār al-Ḥanbalī", size: "815 lines", type: "book", color: "#ce93d8" },
-        ]},
-        { name: "Qawāʾid", type: "subject", color: "#b2dfdb", children: [
-          { name: "al-Farāʾid al-Bahiyya", arabic: "الفرائد البهية", author: "Abū Bakr al-Ahdal", size: "526 verses", mem: true, type: "book", color: "#b2dfdb" },
-        ]},
-        { name: "Tafsīr", type: "subject", color: "#fff59d", children: [
-          { name: "Sābik al-Bukhārī (500 ḥadīth in Tafsīr)", arabic: "سبائك البخاري", author: "al-Bukhārī selection", size: "500 ḥadīths", type: "book", color: "#fff59d" },
-        ]},
-        { name: "Sīra", type: "subject", color: "#f48fb1", children: [
-          { name: "al-Fuṣūl fī Sīrat al-Rasūl", arabic: "الفصول في سيرة الرسول", author: "Ibn Kathīr", size: "Concise", type: "book", color: "#f48fb1" },
-        ]},
-      ]
-    },
-    {
-      name: "LEVEL V", subtitle: "Mastery · الإتقان", type: "level", level: 5,
-      children: [
-        { name: "ʿAqīdah", type: "subject", color: "#ef9a9a", children: [
-          { name: "Aʿlām al-Sunna al-Mansūra", arabic: "أعلام السنة المنشورة", author: "al-Ḥakamī", size: "1349 lines", type: "book", color: "#ef9a9a" },
-          { name: "al-Qaṣīda al-Nūniyya", arabic: "القصيدة النونية", author: "Ibn al-Qayyim", size: "5842 verses", type: "book", color: "#ef9a9a" },
-          { name: "al-Kāfiya al-Shāfiya", arabic: "الكافية الشافية", author: "Ibn al-Qayyim", size: "Advanced", type: "book", color: "#ef9a9a" },
-        ]},
-        { name: "Fiqh", type: "subject", color: "#80cbc4", children: [
-          { name: "al-Mughnī (Ibn Qudāma)", arabic: "المغني", author: "Ibn Qudāma al-Maqdisī", size: "10 volumes", type: "book", color: "#80cbc4" },
-          { name: "Malḥ al-Nād fī Naẓm al-Zād", arabic: "ملح الناد في نظم الزاد", author: "Ḥanbalī scholars", size: "2660 verses", type: "book", color: "#80cbc4" },
-        ]},
-        { name: "Ḥadīth", type: "subject", color: "#ffcc80", children: [
-          { name: "Ṣaḥīḥ al-Bukhārī (Full)", arabic: "صحيح البخاري", author: "al-Bukhārī", size: "7563 ḥadīths", type: "book", color: "#ffcc80" },
-          { name: "Ṣaḥīḥ Muslim (Full)", arabic: "صحيح مسلم", author: "Imam Muslim", size: "7563 ḥadīths", type: "book", color: "#ffcc80" },
-          { name: "al-Kutub al-Arbaʿa", arabic: "السنن الأربعة", author: "Abū Dāwūd, al-Tirmidhī, al-Nasāʾī, Ibn Māja", size: "Encyclopedic", type: "book", color: "#ffcc80" },
-        ]},
-        { name: "ʿIlal al-Ḥadīth", type: "subject", color: "#b39ddb", children: [
-          { name: "Sharḥ ʿIlal al-Tirmidhī", arabic: "شرح علل الترمذي", author: "Ibn Rajab al-Ḥanbalī", size: "Advanced", type: "book", color: "#b39ddb" },
-          { name: "al-ʿIlal al-Dāraquṭnī", arabic: "العلل للدارقطني", author: "al-Dāraquṭnī", size: "Encyclopedic", type: "book", color: "#b39ddb" },
-        ]},
-        { name: "Uṣūl al-Fiqh", type: "subject", color: "#ce93d8", children: [
-          { name: "Rawḍat al-Nāẓir", arabic: "روضة الناظر", author: "Ibn Qudāma", size: "Grad level", type: "book", color: "#ce93d8" },
-        ]},
-        { name: "Tafsīr", type: "subject", color: "#fff59d", children: [
-          { name: "Tafsīr Ibn Kathīr (Full)", arabic: "تفسير ابن كثير الكامل", author: "Ibn Kathīr", size: "4 volumes", type: "book", color: "#fff59d" },
-          { name: "Maʿālim al-Tanzīl (Baghawī)", arabic: "معالم التنزيل", author: "al-Baghawī", size: "4 volumes", type: "book", color: "#fff59d" },
-        ]},
-        { name: "Naḥw — Mastery", type: "subject", color: "#a5d6a7", children: [
-          { name: "Sharḥ Ibn ʿAqīl", arabic: "شرح ابن عقيل على الألفية", author: "Ibn ʿAqīl", size: "Commentary", type: "book", color: "#a5d6a7" },
-          { name: "al-Kāfiya fī ʿIlm al-Naḥw", arabic: "الكافية في علم النحو", author: "Ibn al-Ḥājib", size: "Advanced", type: "book", color: "#a5d6a7" },
-        ]},
-        { name: "History", type: "subject", color: "#ffab91", children: [
-          { name: "al-Bidāya wa al-Nihāya", arabic: "البداية والنهاية", author: "Ibn Kathīr", size: "14 volumes", type: "book", color: "#ffab91" },
-          { name: "Siyar Aʿlām al-Nubalāʾ", arabic: "سير أعلام النبلاء", author: "al-Dhahabī", size: "25 volumes", type: "book", color: "#ffab91" },
-        ]},
-        { name: "Tazkiyya", type: "subject", color: "#bcaaa4", children: [
-          { name: "al-Wābil al-Ṣayyib", arabic: "الوابل الصيب", author: "Ibn al-Qayyim", size: "Advanced", type: "book", color: "#bcaaa4" },
-        ]},
-      ]
-    }
+// ══════════════════════════════════════════════
+// DATA
+// ══════════════════════════════════════════════
+const SC = {
+  poems:   "#a8d5e2", aqeedah:"#ef9a9a", fiqh:"#80cbc4",
+  hadith:  "#ffcc80", nahw:"#a5d6a7",   tajweed:"#80deea",
+  usool:   "#ce93d8", tafsir:"#fff59d", faraid:"#c5e1a5",
+  balagha: "#ffe082", adab:"#bcaaa4",   seerah:"#f48fb1",
+  mustalah:"#b39ddb", qawaid:"#b2dfdb", lit:"#e6ee9c",
+  sarf:    "#a5d6a7", illal:"#b39ddb",  history:"#ffab91",
+  poetry:  "#ffe082"
+};
+
+const LC = {0:"#e0c97a",1:"#4caf50",2:"#42a5f5",3:"#ce93d8",4:"#ff8a65",5:"#c9a84c"};
+
+// book(name, mem, info_link, pdf_link, video_link)
+const b = (name, mem=false, i="#", p="#", v="#") => ({name, mem, type:"book", info:i, pdf:p, video:v});
+// subject(name, color, books[])
+const s = (name, color, books) => ({name, color, type:"subject", children:books});
+
+const TREE = {
+  name:"Talib al-Ilm", type:"root",
+  children:[
+
+  // ─────────────────────────────────────
+  // LEVEL 0 — Entry Point
+  // ─────────────────────────────────────
+  { name:"Entry Level", subtitle:"First Steps · al-Bidaya", level:0, type:"level",
+    children:[
+      s("Short Poems — Amir Bahjat", SC.poems,[
+        b("Mandhuma: Pillars of Islam",true),
+        b("Mandhuma: Articles of Faith",true),
+        b("Mandhuma: Attributes of Allah",true),
+        b("Mandhuma: The Prophet's Character",true),
+        b("Mandhuma: Ablution (al-Wudu')",true),
+        b("Mandhuma: The Prayer (al-Salah)",true),
+        b("Mandhuma: Names of Allah (al-Asma' al-Husna)",true),
+        b("Mandhuma: The Shahadatayn",true),
+        b("Mandhuma: Deeds of the Heart",true),
+        b("Mandhuma: Islamic Ethics for Beginners",true),
+      ]),
+      s("Adab — Entry", SC.adab,[
+        b("Hisnul Muslim — Fortress of the Muslim",false),
+        b("Adhkar wal-Adaab — Mutoon Series"),
+        b("Mukhtasar Ta'dhim al-Ilm"),
+      ]),
+    ]
+  },
+
+  // ─────────────────────────────────────
+  // LEVEL 1 — Foundation
+  // ─────────────────────────────────────
+  { name:"Level I", subtitle:"Foundation · al-Mubtadi'", level:1, type:"level",
+    children:[
+      s("Aqeedah", SC.aqeedah,[
+        b("Nawaqid al-Islam — Nullifiers of Islam"),
+        b("Al-Usul al-Thalatha — The Three Fundamentals"),
+        b("Al-Qawa'id al-Arba'a — The Four Principles"),
+      ]),
+      s("Fiqh", SC.fiqh,[
+        b("Shurut al-Salah — Conditions & Pillars of Prayer"),
+      ]),
+      s("Hadith", SC.hadith,[
+        b("Al-Arba'un al-Nawawiyya — Forty Hadiths",true),
+      ]),
+      s("Nahw — Arabic Grammar", SC.nahw,[
+        b("Madinah Arabic Books (1–3)"),
+        b("Al-Nahw al-Wadih (for beginners)"),
+        b("Al-Ajurrumiyya"),
+      ]),
+      s("Tajweed", SC.tajweed,[
+        b("Tuhfat al-Atfal"),
+      ]),
+      s("Usool al-Fiqh", SC.usool,[
+        b("Al-Waraqat — al-Juwayni"),
+      ]),
+      s("Usool al-Tafsir", SC.tafsir,[
+        b("Muqaddima fi Usool al-Tafsir — Ibn Taymiyya (Summary)"),
+      ]),
+      s("Fara'id — Inheritance", SC.faraid,[
+        b("Al-Rahabiyya",true),
+      ]),
+      s("Adab & Adhkar", SC.adab,[
+        b("Hilyat Talib al-Ilm — Bakr Abu Zayd"),
+      ]),
+    ]
+  },
+
+  // ─────────────────────────────────────
+  // LEVEL 2 — Elementary
+  // ─────────────────────────────────────
+  { name:"Level II", subtitle:"Elementary · al-Ibtida'i", level:2, type:"level",
+    children:[
+      s("Aqeedah / Tawheed", SC.aqeedah,[
+        b("Kitab al-Tawhid — Ibn Abd al-Wahhab"),
+        b("Kashf al-Shubuhat — Removing Doubts"),
+        b("Sullam al-Wusool ila Ilm al-Usool",true),
+      ]),
+      s("Nahw — Arabic Grammar", SC.nahw,[
+        b("Mutammima al-Ajurrumiyya"),
+      ]),
+      s("Hadith", SC.hadith,[
+        b("Umdat al-Ahkam — al-Maqdisi",true),
+      ]),
+      s("Mustalah al-Hadith", SC.mustalah,[
+        b("Al-Mandhuma al-Bayquniyya"),
+      ]),
+      s("Fiqh — Hanbali", SC.fiqh,[
+        b("Akhsar al-Mukhtasarat — Ibn Balban"),
+      ]),
+      s("Fiqh — Shafi'i", SC.fiqh,[
+        b("Matn al-Ghaya wal-Taqrib — Abu Shuja'"),
+      ]),
+      s("Fiqh — Hanafi", SC.fiqh,[
+        b("Mukhtasar al-Quduri"),
+      ]),
+      s("Tajweed / Qira'at", SC.tajweed,[
+        b("Al-Muqaddima al-Jazariyya"),
+        b("Na't al-Darajat fi Hukm al-Qira'at"),
+      ]),
+      s("Usool al-Tafsir", SC.tafsir,[
+        b("Mandhuma al-Zamzami fi Usool al-Tafsir",true),
+      ]),
+      s("Usool al-Fiqh", SC.usool,[
+        b("Al-Qawa'id wal-Usool al-Jami'a"),
+      ]),
+      s("Qawa'id Fiqhiyya", SC.qawaid,[
+        b("Zubdat al-Qawa'id al-Fiqhiyya"),
+      ]),
+      s("Adab", SC.adab,[
+        b("Mandhuma Abi Ishaq al-Ilbiri"),
+        b("Mandhuma al-Adab al-Shar'iyya al-Sughra",true),
+      ]),
+      s("Seerah", SC.seerah,[
+        b("Al-Urjuza al-Mi'iyya — on the Prophet's Life"),
+      ]),
+    ]
+  },
+
+  // ─────────────────────────────────────
+  // LEVEL 3 — Intermediate
+  // ─────────────────────────────────────
+  { name:"Level III", subtitle:"Intermediate · al-Mutawassit", level:3, type:"level",
+    children:[
+      s("Aqeedah", SC.aqeedah,[
+        b("Al-Aqida al-Wasitiyya — Ibn Taymiyya"),
+        b("Al-Fatawa al-Hamawiyya — Ibn Taymiyya"),
+        b("Al-Qawl al-Mufid Sharh Kitab al-Tawhid — Ibn Uthaymin"),
+        b("Fath al-Majid Sharh Kitab al-Tawhid"),
+      ]),
+      s("Nahw — Arabic Grammar", SC.nahw,[
+        b("Qatr al-Nada wa Ball al-Sada — Ibn Hisham"),
+        b("Shudhur al-Dhahab — Ibn Hisham"),
+      ]),
+      s("Sarf — Morphology", SC.sarf,[
+        b("Lamiyyat al-Af'al — Ibn Malik"),
+      ]),
+      s("Hadith", SC.hadith,[
+        b("Bulugh al-Maram — Ibn Hajar al-Asqalani",true),
+        b("Saba'ik al-Bukhari — 500 Hadiths"),
+      ]),
+      s("Mustalah al-Hadith", SC.mustalah,[
+        b("Nukhbat al-Fikar — Ibn Hajar al-Asqalani",true),
+        b("Ikhtisar Ulum al-Hadith — Ibn Kathir"),
+      ]),
+      s("Fiqh — Hanbali", SC.fiqh,[
+        b("Dalil al-Talib li-Nayl al-Matalib"),
+      ]),
+      s("Fiqh — No Madhab", SC.fiqh,[
+        b("Al-Durar al-Bahiyya — al-Shawkani",true),
+      ]),
+      s("Fiqh — Shafi'i", SC.fiqh,[
+        b("Al-Yaqut al-Nafis — al-Hadrami"),
+      ]),
+      s("Fiqh — Maliki", SC.fiqh,[
+        b("Al-Umdah fi al-Ahkam"),
+      ]),
+      s("Fiqh — Maliki / Al-Qayrawaniyya", SC.fiqh,[
+        b("Al-Qayrawaniyya — Ibn Abi Zayd"),
+      ]),
+      s("Tajweed / Qira'at", SC.tajweed,[
+        b("Hirz al-Amani — Al-Shatibiyya (7 Qira'at)",true),
+      ]),
+      s("Tafsir", SC.tafsir,[
+        b("Tafsir al-Jalalayn — Jalal al-Din al-Suyuti & al-Mahalli"),
+        b("Tafsir al-Sidi"),
+      ]),
+      s("Usool al-Tafsir", SC.tafsir,[
+        b("Al-Niqaya fi Ulum al-Quran — al-Suyuti"),
+      ]),
+      s("Usool al-Fiqh — Hanbali", SC.usool,[
+        b("Al-Nadhm al-Saghir fi Usool al-Fiqh"),
+        b("Bidayat al-Ma'mul fi Usool al-Fiqh"),
+      ]),
+      s("Balagha — Rhetoric", SC.balagha,[
+        b("Al-Jawhar al-Maknun — al-Akhdhori"),
+      ]),
+      s("Qawa'id Fiqhiyya", SC.qawaid,[
+        b("Mandhuma al-Qawa'id al-Fiqhiyya — Ibn Uthaymin"),
+        b("Al-Qawa'id al-Fiqhiyya — al-Sidi"),
+      ]),
+      s("Adab / Tazkiyya", SC.adab,[
+        b("Mutahharat al-Qulub — al-Sanusi"),
+        b("Kitab al-Adhkar — Ibn Taymiyya"),
+        b("Mandhuma Asbab Hayat al-Qulub"),
+      ]),
+      s("Seerah", SC.seerah,[
+        b("Rawdat al-Anwar fi Sirati al-Nabi al-Mukhtar"),
+        b("Al-Fusool fi Seerat al-Rasool — Ibn Kathir"),
+      ]),
+      s("Arabic Literature", SC.lit,[
+        b("Banat Su'ad — Ka'b ibn Zuhayr",true),
+        b("Lamiyyat al-Arab — al-Shanfara",true),
+      ]),
+    ]
+  },
+
+  // ─────────────────────────────────────
+  // LEVEL 4 — Advanced
+  // ─────────────────────────────────────
+  { name:"Level IV", subtitle:"Advanced · al-Mutaqaddim", level:4, type:"level",
+    children:[
+      s("Aqeedah", SC.aqeedah,[
+        b("Al-Aqida al-Tahawiyya + Sharh Ibn Abi al-Izz"),
+        b("Al-Risala al-Tadmuriyya — Ibn Taymiyya"),
+        b("Ar-Risala al-Hamawiyya — Ibn Taymiyya"),
+      ]),
+      s("Nahw — Arabic Grammar", SC.nahw,[
+        b("Alfiyyat Ibn Malik — 1002 verses",true),
+      ]),
+      s("Hadith", SC.hadith,[
+        b("Riyad al-Salihin — Imam al-Nawawi",true),
+        b("Al-Lu'lu' wal-Marjan — al-Fuad Abd al-Baqi",true),
+        b("Al-Muharrar fi al-Hadith — Ibn Abd al-Hadi"),
+      ]),
+      s("Mustalah al-Hadith", SC.mustalah,[
+        b("Alfiyyat al-Hadith al-Iraqi",true),
+      ]),
+      s("Fiqh — Hanbali", SC.fiqh,[
+        b("Zad al-Mustaqni' — al-Hajjawi",true),
+        b("Ar-Rawdul-Murbi' Matn Zad al-Mustaqni' — al-Bahuti",true),
+        b("Al-Umdah fi al-Fiqh — Ibn Qudama"),
+      ]),
+      s("Fiqh — Shafi'i", SC.fiqh,[
+        b("Matn al-Zubad — Ibn Raslan"),
+        b("Umdat al-Salik wa Uddat al-Nasik"),
+        b("Minhaj al-Talibin — Imam al-Nawawi",true),
+      ]),
+      s("Fiqh — Hanafi", SC.fiqh,[
+        b("Al-Hidaya — al-Marghinani",true),
+      ]),
+      s("Tajweed / Qira'at", SC.tajweed,[
+        b("Tayyibat al-Nashr fi al-Qira'at al-Ashr — Ibn al-Jazari",true),
+        b("Al-Durra al-Mudiyya — Ibn al-Jazari",true),
+        b("Al-Khaqaniyya"),
+        b("Al-Salsabil al-Shafi"),
+      ]),
+      s("Tafsir", SC.tafsir,[
+        b("Ma'alim al-Tanzil — al-Baghawi"),
+      ]),
+      s("Usool al-Tafsir", SC.tafsir,[
+        b("Al-Itqan fi Ulum al-Quran — al-Suyuti"),
+      ]),
+      s("Usool al-Fiqh — Hanbali", SC.usool,[
+        b("Mukhtasar al-Tahrir — Ibn al-Najjar"),
+        b("Maraqi al-Su'ud — al-Shinqiti",true),
+        b("Murtaqa al-Su'ud — Hanbali usool poem"),
+      ]),
+      s("Balagha — Rhetoric", SC.balagha,[
+        b("Uqud al-Juman — al-Suyuti",true),
+        b("Mi'at al-Ma'ani wal-Bayan"),
+      ]),
+      s("Science of Poetry", SC.poetry,[
+        b("Al-Kafi fi al-Arud wal-Qawafi"),
+        b("Hidayat al-Murtab fi Mutashabihat al-Kitab"),
+      ]),
+      s("Qawa'id Fiqhiyya", SC.qawaid,[
+        b("Al-Fara'id al-Bahiyya — Abu Bakr al-Ahdal",true),
+        b("Al-Mandhuma al-Fadghariyya"),
+        b("Al-Musakka al-Kawthariyya"),
+      ]),
+      s("Seerah", SC.seerah,[
+        b("Alfiyyat al-Sirat al-Nabawiyya — al-Iraqi",true),
+        b("Al-Urjuza al-Mi'iyya — Dhikr Ahwal Ashraf al-Bariyya"),
+      ]),
+      s("Arabic Literature", SC.lit,[
+        b("Al-Maqamat al-Hariri — al-Hariri",true),
+        b("Al-Mu'allaqat — Pre-Islamic Odes",true),
+      ]),
+    ]
+  },
+
+  // ─────────────────────────────────────
+  // LEVEL 5 — Mastery
+  // ─────────────────────────────────────
+  { name:"Level V", subtitle:"Mastery · al-Itqan", level:5, type:"level",
+    children:[
+      s("Aqeedah — Encyclopedic", SC.aqeedah,[
+        b("A'lam al-Sunna al-Mansura — al-Hakami"),
+        b("Al-Qasida al-Nuniyya — Ibn al-Qayyim"),
+        b("Al-Kafiya al-Shafiya — Ibn al-Qayyim (5842 verses)"),
+        b("Arwa al-Iman wa Dhura al-Jinan — 300 verses"),
+      ]),
+      s("Nahw — Mastery", SC.nahw,[
+        b("Sharh Ibn Aqil ala al-Alfiyya — Ibn Aqil"),
+        b("Al-Kafiya fi Ilm al-Nahw — Ibn al-Hajib"),
+        b("Al-Nahw al-Saghir — advanced"),
+        b("Nuzhat al-Huloom — morphology"),
+      ]),
+      s("Hadith — Full Collections", SC.hadith,[
+        b("Sahih al-Bukhari — Full (7563 hadiths)"),
+        b("Sahih Muslim — Full"),
+        b("Sunan Abu Dawud"),
+        b("Sunan al-Tirmidhi"),
+        b("Sunan al-Nasa'i"),
+        b("Sunan Ibn Maja"),
+        b("Mukhtasar al-Mundhiri li-Sahih Muslim"),
+        b("Mukhtasar al-Zubaidi li-Sahih al-Bukhari"),
+        b("Al-Jam' bayn al-Sahihayn — al-Hamidi"),
+        b("Al-Wafi fi al-Jam' bayn al-Sahihayn"),
+        b("Al-Jam' bayn al-Sahihayn — Shaykh Yahya"),
+        b("Muntaqa al-Akhbar — Ibn Taymiyya"),
+        b("Mukhtasar Ibn Abi Jamra"),
+      ]),
+      s("Ilal al-Hadith", SC.illal,[
+        b("Al-Ilal wa Qara'in al-Tarjih"),
+        b("Sharh Ilal al-Tirmidhi — Ibn Rajab al-Hanbali"),
+        b("Al-Ilal al-Daraqutni"),
+      ]),
+      s("Mustalah — Advanced", SC.mustalah,[
+        b("Fath al-Mughith Sharh Alfiyyat al-Hadith — al-Sakhawi"),
+      ]),
+      s("Fiqh — Advanced", SC.fiqh,[
+        b("Al-Mughni — Ibn Qudama (10 volumes)"),
+        b("Malh al-Nad fi Nadhm Zad al-Mustaqni' — 2660 verses"),
+        b("Al-Nadhm al-Jali ma al-Ahmirar — 971 verses"),
+        b("Ma la Yasi' al-Hanbali Jahluhu — 95 verses"),
+        b("Balaght al-Wusool — Hanbali usool"),
+        b("Rasm al-Mufti al-Hanbali"),
+      ]),
+      s("Usool al-Fiqh — Advanced", SC.usool,[
+        b("Rawdat al-Nadhir — Ibn Qudama"),
+        b("Hanbalat Tashil al-Turuqat — 233 verses"),
+        b("Bidayat al-Ma'mool — 272 verses"),
+      ]),
+      s("Tafsir — Complete", SC.tafsir,[
+        b("Tafsir Ibn Kathir — Full (4 volumes)"),
+        b("Tafsir al-Tabari — Full (Jami' al-Bayan)"),
+        b("Al-Shatibiyya — Hirz al-Amani — advanced reading"),
+      ]),
+      s("Qawa'id Fiqhiyya — Advanced", SC.qawaid,[
+        b("Nadhm al-Qawa'id wal-Usool al-Jami'a — 70 verses"),
+        b("Al-Mandhuma al-Usool al-Fiqh wa Qawa'iduhu — 103 verses"),
+        b("Taqrib al-Mutaba'id — 32 verses"),
+      ]),
+      s("Islamic History", SC.history,[
+        b("Al-Bidaya wal-Nihaya — Ibn Kathir (14 volumes)"),
+        b("Tarikh al-Tabari — al-Tabari"),
+        b("Siyar A'lam al-Nubala' — al-Dhahabi (25 volumes)"),
+      ]),
+      s("Adab / Tazkiyya", SC.adab,[
+        b("Al-Wabil al-Sayyib — Ibn al-Qayyim"),
+      ]),
+      s("Arabic Literature — Advanced", SC.lit,[
+        b("Al-Maqamat al-Hariri — deep study & memorization"),
+      ]),
+    ]
+  }
+
   ]
 };
 
-// ═══════════ LEVEL COLORS ═══════════
-const levelColors = {
-  1: "#4caf50",
-  2: "#42a5f5",
-  3: "#ce93d8",
-  4: "#ff8a65",
-  5: "#c9a84c"
-};
-
-// ═══════════ D3 TREE SETUP ═══════════
-const svg = d3.select("#canvas");
-const width = window.innerWidth;
-const height = window.innerHeight;
-
-const g = svg.append("g").attr("transform", `translate(${width * 0.06}, ${height / 2})`);
-
-// Zoom behavior
-const zoom = d3.zoom()
-  .scaleExtent([0.15, 3])
-  .on("zoom", (event) => {
-    g.attr("transform", event.transform);
-  });
-
-svg.call(zoom).call(zoom.transform, d3.zoomIdentity.translate(width * 0.06, height / 2));
-
-// Tree layout — horizontal (left to right)
-const tree = d3.tree().nodeSize([22, 280]);
-
-let root = d3.hierarchy(treeData);
-
-// Collapse all except first two levels initially
-root.descendants().forEach(d => {
-  if (d.depth >= 2) {
-    d._children = d.children;
-    d.children = null;
-  }
-});
-
-function getNodeColor(d) {
-  if (d.data.type === "root") return "#c9a84c";
-  if (d.data.type === "level") return levelColors[d.data.level] || "#c9a84c";
-  if (d.data.type === "subject") return d.data.color || "#888";
-  if (d.data.type === "book") return d.data.color || "#888";
-  return "#888";
-}
-
-function getNodeRadius(d) {
-  if (d.data.type === "root") return 14;
-  if (d.data.type === "level") return 10;
-  if (d.data.type === "subject") return 7;
-  return 5;
-}
-
-function getLinkColor(d) {
-  const target = d.target;
-  if (target.data.type === "level") return levelColors[target.data.level] || "#444";
-  if (target.data.type === "subject") return target.data.color || "#444";
-  if (target.data.type === "book") return target.data.color || "#444";
-  return "#444";
-}
-
-// Text labels — trim to fit
-function getLabel(d) {
-  const name = d.data.name;
-  if (d.data.type === "root") return "Ṭālib al-ʿIlm";
-  if (d.data.type === "level") return d.data.name + " · " + (d.data.subtitle || "");
-  if (d.data.type === "subject") {
-    const hasChildren = (d.children || d._children);
-    const count = hasChildren ? ` [${(d.children || d._children).length}]` : "";
-    return name + count;
-  }
-  // book
-  const short = name.length > 32 ? name.substring(0, 30) + "…" : name;
-  return (d.data.mem ? "★ " : "") + short;
-}
-
+// ══════════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════════
+let currentView = 'tree';
+let selectedBook = null;
+let focusedIds = null;
 let nodeId = 0;
 
-function update(source) {
-  const treeData = tree(root);
-  const nodes = treeData.descendants();
-  const links = treeData.links();
+// ══════════════════════════════════════════════
+// D3 TREE
+// ══════════════════════════════════════════════
+const W = window.innerWidth, H = window.innerHeight;
+const svg = d3.select("#canvas").attr("width",W).attr("height",H);
+const g = svg.append("g");
 
-  // ── LINKS ──
-  const link = g.selectAll(".link")
-    .data(links, d => d.target.id);
+const zoom = d3.zoom().scaleExtent([0.08,4]).on("zoom",e => {
+  g.attr("transform",e.transform);
+  closePanel();
+});
+svg.call(zoom).on("dblclick.zoom",null);
+svg.on("click",()=>{ if(focusedIds){ clearFocus(); closePanel(); }});
 
-  const linkEnter = link.enter().append("path")
-    .attr("class", "link")
-    .attr("d", d => {
-      const o = {x: source.x0 || 0, y: source.y0 || 0};
-      return diagonal({source: o, target: o});
+const treeFn = d3.tree().nodeSize([20,260]);
+let root = d3.hierarchy(TREE);
+
+// Collapse all except root and levels initially
+root.descendants().forEach(d=>{
+  if(d.depth >= 2){ d._children = d.children; d.children = null; }
+});
+root.x0 = 0; root.y0 = 0;
+
+function getNodeColor(d){
+  if(d.data.type==="root") return "#c9a84c";
+  if(d.data.type==="level") return LC[d.data.level]||"#c9a84c";
+  if(d.data.type==="subject") return d.data.color||"#888";
+  // book — inherit parent subject color
+  return (d.parent&&d.parent.data.color)||"#a0a0c0";
+}
+
+function getR(d){
+  if(d.data.type==="root") return 13;
+  if(d.data.type==="level") return 9;
+  if(d.data.type==="subject") return 6;
+  return 4;
+}
+
+function getLabel(d){
+  if(d.data.type==="root") return "Talib al-'Ilm";
+  if(d.data.type==="level") return d.data.name + (d.data.subtitle?" · "+d.data.subtitle.split(" · ")[0]:"");
+  if(d.data.type==="subject"){
+    const n = d.children||d._children;
+    return d.data.name + (n?` [${n.length}]`:"");
+  }
+  const nm = d.data.name.length>36?d.data.name.slice(0,34)+"…":d.data.name;
+  return (d.data.mem?"★ ":"")+nm;
+}
+
+function diag(d){
+  return `M${d.source.y},${d.source.x}C${(d.source.y+d.target.y)/2},${d.source.x} ${(d.source.y+d.target.y)/2},${d.target.x} ${d.target.y},${d.target.x}`;
+}
+
+function update(src){
+  const td = treeFn(root);
+  const nodes = td.descendants();
+  const links = td.links();
+
+  // links
+  const link = g.selectAll(".link").data(links, d=>d.target.id);
+  const le = link.enter().insert("path",".node")
+    .attr("class","link")
+    .attr("d",()=>{const o={x:src.x0||0,y:src.y0||0};return diag({source:o,target:o});})
+    .attr("stroke", d=>{
+      const t=d.target;
+      if(t.data.type==="level") return LC[t.data.level]||"#444";
+      if(t.data.type==="book") return (t.parent&&t.parent.data.color)||"#444";
+      return (t.data.color||"#444");
     })
-    .attr("stroke", d => getLinkColor(d))
-    .attr("opacity", 0);
-
-  link.merge(linkEnter)
-    .transition().duration(350)
-    .attr("d", diagonal)
-    .attr("stroke", d => getLinkColor(d))
-    .attr("opacity", 0.3);
-
-  link.exit().transition().duration(350)
-    .attr("d", d => {
-      const o = {x: source.x, y: source.y};
-      return diagonal({source: o, target: o});
+    .attr("opacity",0);
+  link.merge(le).transition().duration(300)
+    .attr("d",diag)
+    .attr("stroke", d=>{
+      const t=d.target;
+      if(t.data.type==="level") return LC[t.data.level]||"#444";
+      if(t.data.type==="book") return (t.parent&&t.parent.data.color)||"#444";
+      return (t.data.color||"#444");
     })
-    .attr("opacity", 0)
-    .remove();
+    .attr("opacity", d => {
+      if(!focusedIds) return 0.2;
+      return (focusedIds.has(d.source.id)&&focusedIds.has(d.target.id)) ? 0.7 : 0.04;
+    });
+  link.exit().transition().duration(300)
+    .attr("d",()=>{const o={x:src.x,y:src.y};return diag({source:o,target:o});})
+    .attr("opacity",0).remove();
 
-  // ── NODES ──
-  const node = g.selectAll(".node")
-    .data(nodes, d => d.id || (d.id = ++nodeId));
+  // nodes
+  const node = g.selectAll(".node").data(nodes, d=>d.id||(d.id=++nodeId));
+  const ne = node.enter().append("g")
+    .attr("class","node")
+    .attr("transform",()=>`translate(${src.y0||0},${src.x0||0})`)
+    .attr("opacity",0)
+    .on("click", handleNodeClick);
 
-  const nodeEnter = node.enter().append("g")
-    .attr("class", d => "node node-" + d.data.type)
-    .attr("transform", d => `translate(${source.y0 || 0},${source.x0 || 0})`)
-    .attr("opacity", 0)
-    .on("click", (event, d) => {
-      event.stopPropagation();
-      if (d.data.type === "book") return;
-      if (d.children) {
-        d._children = d.children;
-        d.children = null;
-      } else {
-        d.children = d._children;
-        d._children = null;
-      }
-      update(d);
+  ne.append("circle")
+    .attr("r", getR)
+    .attr("fill", d=>{
+      const c=getNodeColor(d);
+      if(d.data.type==="book") return c+"18";
+      if(d.data.type==="subject") return c+"28";
+      return c+"3a";
     })
-    .on("mouseover", (event, d) => {
-      if (d.data.type === "root" || d.data.type === "level") return;
-      const tt = document.getElementById("tooltip");
-      let html = "";
-      if (d.data.type === "subject") {
-        html = `<div class="tt-title">${d.data.name}</div>`;
-        const count = (d.children || d._children || []).length;
-        html += `<div class="tt-meta">${count} text${count !== 1 ? "s" : ""} in this subject</div>`;
-      } else {
-        html = `<div class="tt-title">${d.data.name}</div>`;
-        if (d.data.arabic) html += `<div class="tt-arabic">${d.data.arabic}</div>`;
-        if (d.data.author) html += `<div class="tt-author">${d.data.author}</div>`;
-        if (d.data.size) html += `<div class="tt-meta">Size: ${d.data.size}</div>`;
-        if (d.data.mem) html += `<div class="tt-mem">★ Memorize</div>`;
-      }
-      tt.innerHTML = html;
-      tt.style.opacity = "1";
-      tt.style.left = (event.clientX + 14) + "px";
-      tt.style.top = (event.clientY - 10) + "px";
+    .attr("stroke", getNodeColor)
+    .attr("stroke-width", d=>d.data.type==="root"?2:1.5);
+
+  // collapse dot
+  ne.append("circle").attr("class","cdot").attr("r",2).attr("fill",getNodeColor).attr("opacity",0);
+
+  ne.append("text")
+    .attr("dy","0.31em")
+    .attr("font-size", d=>{
+      if(d.data.type==="root") return "12px";
+      if(d.data.type==="level") return "10px";
+      if(d.data.type==="subject") return "9px";
+      return "8.5px";
     })
-    .on("mousemove", (event) => {
-      const tt = document.getElementById("tooltip");
-      tt.style.left = (event.clientX + 14) + "px";
-      tt.style.top = (event.clientY - 10) + "px";
+    .attr("fill", d=>{
+      const c=getNodeColor(d);
+      if(d.data.type==="root"||d.data.type==="level") return c;
+      if(d.data.type==="subject") return c+"cc";
+      return d.data.mem?c:c+"99";
     })
-    .on("mouseout", () => {
-      document.getElementById("tooltip").style.opacity = "0";
+    .attr("letter-spacing", d=>d.data.type==="level"?"0.1em":"0.03em")
+    .text(getLabel);
+
+  const merged = node.merge(ne);
+  merged.transition().duration(300)
+    .attr("transform", d=>`translate(${d.y},${d.x})`)
+    .attr("opacity", d=>{
+      if(!focusedIds) return 1;
+      return focusedIds.has(d.id)?1:0.06;
     });
 
-  nodeEnter.append("circle")
-    .attr("r", d => getNodeRadius(d))
-    .attr("fill", d => {
-      const c = getNodeColor(d);
-      if (d.data.type === "book") return c + "22";
-      if (d.data.type === "subject") return c + "33";
-      return c + "44";
-    })
-    .attr("stroke", d => getNodeColor(d))
-    .attr("stroke-width", d => d.data.type === "root" ? 2 : 1.5);
+  // update text anchor and collapse dot
+  merged.select("text")
+    .attr("x", d=>{const r=getR(d);return (d.children||d._children)?-(r+5):(r+5);})
+    .attr("text-anchor", d=>(d.children||d._children)?"end":"start");
+  merged.select(".cdot")
+    .attr("opacity", d=>d._children&&d.data.type!=="book"?.7:0);
 
-  // Collapse indicator
-  nodeEnter.append("circle")
-    .attr("class", "collapse-indicator")
-    .attr("r", 2.5)
-    .attr("fill", d => getNodeColor(d))
-    .attr("opacity", d => (d._children || d.children) && d.data.type !== "book" ? 0.7 : 0);
+  node.exit().transition().duration(300)
+    .attr("transform",`translate(${src.y},${src.x})`)
+    .attr("opacity",0).remove();
 
-  nodeEnter.append("text")
-    .attr("dy", "0.31em")
-    .attr("x", d => {
-      const r = getNodeRadius(d);
-      return (d.children || d._children) ? -(r + 5) : (r + 5);
-    })
-    .attr("text-anchor", d => (d.children || d._children) ? "end" : "start")
-    .attr("font-size", d => {
-      if (d.data.type === "root") return "13px";
-      if (d.data.type === "level") return "11px";
-      if (d.data.type === "subject") return "10px";
-      return "9px";
-    })
-    .attr("fill", d => {
-      if (d.data.type === "root") return "#c9a84c";
-      if (d.data.type === "level") return levelColors[d.data.level] || "#c9a84c";
-      if (d.data.type === "subject") return (d.data.color || "#888") + "cc";
-      return d.data.mem ? "#c9a84c" : (d.data.color || "#888") + "99";
-    })
-    .attr("letter-spacing", d => d.data.type === "level" ? "0.1em" : "0.03em")
-    .text(d => getLabel(d));
-
-  // Merge and transition
-  node.merge(nodeEnter)
-    .transition().duration(350)
-    .attr("transform", d => `translate(${d.y},${d.x})`)
-    .attr("opacity", 1);
-
-  // Update collapse indicators
-  node.merge(nodeEnter).select(".collapse-indicator")
-    .attr("opacity", d => (d._children) && d.data.type !== "book" ? 0.7 : 0);
-
-  // Update text anchors on expand/collapse
-  node.merge(nodeEnter).select("text")
-    .attr("x", d => {
-      const r = getNodeRadius(d);
-      return (d.children || d._children) ? -(r + 5) : (r + 5);
-    })
-    .attr("text-anchor", d => (d.children || d._children) ? "end" : "start");
-
-  node.exit()
-    .transition().duration(350)
-    .attr("transform", d => `translate(${source.y},${source.x})`)
-    .attr("opacity", 0)
-    .remove();
-
-  nodes.forEach(d => {
-    d.x0 = d.x;
-    d.y0 = d.y;
-  });
+  nodes.forEach(d=>{d.x0=d.x;d.y0=d.y;});
 }
 
-// Bezier diagonal for horizontal tree
-function diagonal(d) {
-  return `M ${d.source.y} ${d.source.x}
-          C ${(d.source.y + d.target.y) / 2} ${d.source.x},
-            ${(d.source.y + d.target.y) / 2} ${d.target.x},
-            ${d.target.y} ${d.target.x}`;
+function handleNodeClick(event, d){
+  event.stopPropagation();
+  if(d.data.type==="book"){
+    focusNode(d);
+    openPanel(d);
+    return;
+  }
+  if(d.children){d._children=d.children;d.children=null;}
+  else{d.children=d._children;d._children=null;}
+  clearFocus();
+  closePanel();
+  update(d);
 }
 
-root.x0 = 0;
-root.y0 = 0;
-update(root);
+function focusNode(d){
+  const ancestors = d.ancestors();
+  focusedIds = new Set(ancestors.map(a=>a.id));
+  focusedIds.add(d.id);
+  update(d);
+  // breadcrumb
+  const bc = document.getElementById("breadcrumb");
+  const parts = ancestors.reverse().map((a,i)=>{
+    if(a.data.type==="root") return "Root";
+    if(a.data.type==="level") return a.data.name;
+    if(a.data.type==="subject") return a.data.name;
+    return "";
+  }).filter(Boolean);
+  parts.push(d.data.name.length>30?d.data.name.slice(0,28)+"…":d.data.name);
+  bc.innerHTML = parts.map((p,i)=>i===parts.length-1?`<span>${p}</span>`:p).join(" › ");
+  bc.classList.add("show");
+}
 
-// ═══════════ CONTROLS ═══════════
-function resetZoom() {
+function clearFocus(){
+  focusedIds=null;
+  document.getElementById("breadcrumb").classList.remove("show");
+  g.selectAll(".node").transition().duration(300).attr("opacity",1);
+  g.selectAll(".link").transition().duration(300).attr("opacity",0.2);
+}
+
+// Panel
+function openPanel(d){
+  selectedBook=d;
+  document.getElementById("panel-title").textContent=d.data.name;
+  // path
+  const anc=d.ancestors().reverse();
+  const pathHtml=anc.map((a,i)=>{
+    if(a.data.type==="root") return "Root";
+    if(a.data.type==="level") return `<span>${a.data.name}</span>`;
+    if(a.data.type==="subject") return `<span>${a.data.name}</span>`;
+    return "";
+  }).filter(Boolean).join(" › ");
+  document.getElementById("panel-path").innerHTML=pathHtml;
+  document.getElementById("panel-mem").textContent=d.data.mem?"★ Memorize this text":"";
+  document.getElementById("btn-info").href=d.data.info||"#";
+  document.getElementById("btn-pdf").href=d.data.pdf||"#";
+  document.getElementById("btn-video").href=d.data.video||"#";
+  document.getElementById("panel").classList.add("open");
+  document.getElementById("hint").style.opacity="0";
+}
+
+function closePanel(){
+  document.getElementById("panel").classList.remove("open");
+  document.getElementById("hint").style.opacity="1";
+  if(selectedBook){ clearFocus(); selectedBook=null; }
+}
+
+document.addEventListener("keydown",e=>{ if(e.key==="Escape") closePanel(); });
+
+// Controls
+function resetZoom(){
   svg.transition().duration(400).call(
-    zoom.transform,
-    d3.zoomIdentity.translate(width * 0.06, height / 2).scale(1)
+    zoom.transform, d3.zoomIdentity.translate(W*.08, H/2).scale(.9)
   );
 }
 
-function expandAll() {
-  root.descendants().forEach(d => {
-    if (d._children) {
-      d.children = d._children;
-      d._children = null;
-    }
+function expandAll(){
+  root.descendants().forEach(d=>{
+    if(d._children){d.children=d._children;d._children=null;}
   });
-  update(root);
+  clearFocus(); closePanel(); update(root);
 }
 
-function collapseAll() {
-  root.descendants().forEach(d => {
-    if (d.depth >= 2 && d.children) {
-      d._children = d.children;
-      d.children = null;
-    }
+function collapseToLevels(){
+  root.descendants().forEach(d=>{
+    if(d.depth>=2&&d.children){d._children=d.children;d.children=null;}
   });
-  update(root);
+  clearFocus(); closePanel(); update(root);
+}
+
+// Initial render + zoom to fit
+update(root);
+svg.call(zoom.transform, d3.zoomIdentity.translate(W*.06,H/2).scale(.95));
+
+// ══════════════════════════════════════════════
+// VIEW TOGGLE
+// ══════════════════════════════════════════════
+function setView(v){
+  currentView=v;
+  document.getElementById("btn-tree").classList.toggle("active",v==="tree");
+  document.getElementById("btn-list").classList.toggle("active",v==="list");
+  document.getElementById("canvas").style.display=v==="tree"?"block":"none";
+  document.getElementById("listview").classList.toggle("show",v==="list");
+  document.getElementById("hint").style.display=v==="tree"?"block":"none";
+  if(v==="list"&&!document.getElementById("listview").innerHTML.trim()) buildList();
+  if(v==="tree") closePanel();
+}
+
+// ══════════════════════════════════════════════
+// LIST VIEW
+// ══════════════════════════════════════════════
+function buildList(){
+  const lv=document.getElementById("listview");
+  let html="";
+  TREE.children.forEach((level,li)=>{
+    const lc=LC[level.level]||"#c9a84c";
+    html+=`<div class="lv-level">
+      <div class="lv-level-hdr" style="color:${lc};border-left:2px solid ${lc}" onclick="toggleLvl(this)">
+        <span>${level.name} — ${level.subtitle||""}</span>
+        <span class="caret">›</span>
+      </div>
+      <div class="lv-level-body">`;
+    (level.children||[]).forEach((subj,si)=>{
+      html+=`<div class="lv-subject">
+        <div class="lv-subj-hdr" style="color:${subj.color}88" onclick="toggleSubj(this)">
+          <span>${subj.name}</span>
+          <span class="caret">›</span>
+        </div>
+        <div class="lv-subj-body">`;
+      (subj.children||[]).forEach((book,bi)=>{
+        const bdata=JSON.stringify({name:book.name,mem:book.mem,info:book.info,pdf:book.pdf,video:book.video}).replace(/"/g,"&quot;");
+        html+=`<div class="lv-book" onclick="openListPanel(${JSON.stringify(bdata).replace(/"/g,"&quot;")}, '${level.name}', '${subj.name}')">
+          <span class="lv-book-name">${book.mem?'<span style="color:#c9a84c">★</span> ':''} ${book.name}</span>
+          <span class="lv-book-arrow">›</span>
+        </div>`;
+      });
+      html+=`</div></div>`;
+    });
+    html+=`</div></div>`;
+  });
+  lv.innerHTML=html;
+}
+
+function toggleLvl(el){
+  el.classList.toggle("open");
+  el.nextElementSibling.classList.toggle("open");
+}
+function toggleSubj(el){
+  el.classList.toggle("open");
+  el.nextElementSibling.classList.toggle("open");
+}
+
+function openListPanel(bdataStr, levelName, subjName){
+  try{
+    const data=JSON.parse(bdataStr);
+    document.getElementById("panel-title").textContent=data.name;
+    document.getElementById("panel-path").innerHTML=`<span>${levelName}</span> › <span>${subjName}</span>`;
+    document.getElementById("panel-mem").textContent=data.mem?"★ Memorize this text":"";
+    document.getElementById("btn-info").href=data.info||"#";
+    document.getElementById("btn-pdf").href=data.pdf||"#";
+    document.getElementById("btn-video").href=data.video||"#";
+    document.getElementById("panel").classList.add("open");
+  }catch(e){}
 }
 
 // Resize
-window.addEventListener("resize", () => {
-  svg.attr("width", window.innerWidth).attr("height", window.innerHeight);
+window.addEventListener("resize",()=>{
+  const nw=window.innerWidth,nh=window.innerHeight;
+  svg.attr("width",nw).attr("height",nh);
 });
+
+// Auto-detect mobile
+if(window.innerWidth<700) setView("list");
 </script>
 </body>
 </html>
