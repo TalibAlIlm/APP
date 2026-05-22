@@ -207,9 +207,9 @@ const TREE = {
         b("Mandhuma: Islamic Ethics for Beginners",true),
       ]),
       s("Adab — Entry", SC.adab,[
-        b("Hisnul Muslim — Fortress of the Muslim",false),
-        b("Adhkar wal-Adaab — Mutoon Series"),
-        b("Mukhtasar Ta'dhim al-Ilm"),
+        b("Hisnul Muslim — Fortress of the Muslim",true),
+        b("Adhkar wal-Adaab — Mutoon Series",true),
+        b("Mukhtasar Ta'dhim al-Ilm",true),
       ]),
     ]
   },
@@ -327,7 +327,7 @@ const TREE = {
         b("Saba'ik al-Bukhari — 500 Hadiths"),
       ]),
       s("Mustalah al-Hadith", SC.mustalah,[
-        b("Nukhbat al-Fikar — Ibn Hajar al-Asqalani",true),
+        b("Nukhbat al-Fikar — Ibn Hajar al-Asqalani"),
         b("Ikhtisar Ulum al-Hadith — Ibn Kathir"),
       ]),
       s("Fiqh — Hanbali", SC.fiqh,[
@@ -404,7 +404,7 @@ const TREE = {
         b("Alfiyyat al-Hadith al-Iraqi",true),
       ]),
       s("Fiqh — Hanbali", SC.fiqh,[
-        b("Zad al-Mustaqni' — al-Hajjawi",true),
+        b("Zad al-Mustaqni' — al-Hajjawi"),
         b("Ar-Rawdul-Murbi' Matn Zad al-Mustaqni' — al-Bahuti",true),
         b("Al-Umdah fi al-Fiqh — Ibn Qudama"),
       ]),
