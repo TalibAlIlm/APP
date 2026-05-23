@@ -3,110 +3,279 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Talib al-Ilm — Islamic Studies Roadmap</title>
+<title>Talib al-ʿIlm — Islamic Studies Roadmap</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=IBM+Plex+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=IBM+Plex+Mono:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
+/* ── RESET & BASE ────────────────────────────────────── */
 *{margin:0;padding:0;box-sizing:border-box}
 :root{
-  --bg:#07060a;--bg2:#0f0d14;--bg3:#161422;
-  --gold:#c9a84c;--gold2:#e8c97a;--muted:#4a4260;
-  --border:#1e1b2e;--text:#d4cce8;
+  --bg:#06050d;--bg2:#0d0b18;--bg3:#13111f;
+  --gold:#c9a84c;--gold2:#e8c97a;--gold3:#f5e2a8;
+  --muted:#3d3858;--border:#1c1930;--text:#cec8e8;
+  --panel-w:292px;
 }
-body{background:var(--bg);font-family:'IBM Plex Mono',monospace;overflow:hidden;width:100vw;height:100vh;color:var(--text)}
 
-/* ── HEADER ── */
-#header{position:fixed;top:0;left:0;right:0;height:46px;background:rgba(7,6,10,.95);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 16px;gap:14px;z-index:200;backdrop-filter:blur(10px)}
-#header h1{font-family:'Cinzel',serif;font-size:12px;letter-spacing:.18em;color:var(--gold);white-space:nowrap;text-transform:uppercase}
-.hsep{width:1px;height:18px;background:var(--border)}
-.legend{display:flex;align-items:center;gap:10px;flex-wrap:wrap;overflow:hidden}
-.li{display:flex;align-items:center;gap:4px;font-size:9px;letter-spacing:.04em;color:var(--muted);white-space:nowrap}
-.ld{width:7px;height:7px;border-radius:50%}
-.hbtn{margin-left:auto;display:flex;gap:6px;flex-shrink:0}
-.hbtn button{background:transparent;border:1px solid var(--border);color:var(--muted);font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.1em;padding:4px 9px;cursor:pointer;text-transform:uppercase;transition:all .2s}
-.hbtn button:hover,.hbtn button.active{border-color:var(--gold);color:var(--gold);background:rgba(201,168,76,.08)}
+body{
+  background:var(--bg);
+  font-family:'IBM Plex Mono',monospace;
+  overflow:hidden;width:100vw;height:100vh;color:var(--text);
+}
 
-/* ── CANVAS ── */
-#canvas{width:100%;height:100%;cursor:grab}
+/* Atmospheric depth */
+body::before{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:
+    radial-gradient(ellipse 55% 45% at 15% 25%,rgba(201,168,76,.04) 0%,transparent 65%),
+    radial-gradient(ellipse 45% 55% at 85% 75%,rgba(120,80,200,.04) 0%,transparent 60%),
+    radial-gradient(ellipse 30% 30% at 50% 50%,rgba(201,168,76,.02) 0%,transparent 70%);
+}
+
+/* ── HEADER ──────────────────────────────────────────── */
+#header{
+  position:fixed;top:0;left:0;right:0;height:46px;
+  background:rgba(6,5,13,.96);
+  border-bottom:1px solid var(--border);
+  box-shadow:0 1px 24px rgba(0,0,0,.5);
+  display:flex;align-items:center;padding:0 14px;gap:12px;
+  z-index:200;backdrop-filter:blur(14px);
+}
+#header h1{
+  font-family:'Cinzel',serif;font-size:11px;
+  letter-spacing:.2em;color:var(--gold);
+  white-space:nowrap;text-transform:uppercase;
+  text-shadow:0 0 20px rgba(201,168,76,.35);
+}
+.hsep{width:1px;height:18px;background:var(--border);flex-shrink:0}
+.legend{display:flex;align-items:center;gap:9px;overflow:hidden}
+.li{display:flex;align-items:center;gap:4px;font-size:8.5px;letter-spacing:.04em;color:var(--muted);white-space:nowrap}
+.ld{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.hbtn{margin-left:auto;display:flex;gap:5px;flex-shrink:0}
+.hbtn button{
+  background:transparent;border:1px solid var(--border);
+  color:var(--muted);font-family:'IBM Plex Mono',monospace;
+  font-size:9px;letter-spacing:.08em;padding:4px 9px;
+  cursor:pointer;text-transform:uppercase;
+  transition:all .2s ease;white-space:nowrap;
+}
+.hbtn button:hover{border-color:var(--gold);color:var(--gold);background:rgba(201,168,76,.07)}
+.hbtn button.active{border-color:var(--gold);color:var(--gold);background:rgba(201,168,76,.1);
+  box-shadow:0 0 10px rgba(201,168,76,.15)}
+
+/* ── CANVAS ──────────────────────────────────────────── */
+#canvas{width:100%;height:100%;cursor:grab;display:block;position:relative;z-index:1}
 #canvas:active{cursor:grabbing}
 
-/* ── BREADCRUMB ── */
-#breadcrumb{position:fixed;top:56px;left:16px;font-size:9px;letter-spacing:.1em;color:var(--muted);z-index:150;pointer-events:none;text-transform:uppercase;transition:opacity .3s;opacity:0}
+/* ── BREADCRUMB ──────────────────────────────────────── */
+#breadcrumb{
+  position:fixed;top:58px;left:16px;
+  font-size:9px;letter-spacing:.1em;color:var(--muted);
+  z-index:150;pointer-events:none;text-transform:uppercase;
+  opacity:0;transition:opacity .4s ease;
+  max-width:55vw;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
 #breadcrumb.show{opacity:1}
-#breadcrumb span{color:var(--gold)}
+#breadcrumb span{color:var(--gold2);text-shadow:0 0 8px rgba(232,201,122,.4)}
 
-/* ── BOOK PANEL ── */
-#panel{position:fixed;right:-320px;top:46px;bottom:0;width:300px;background:var(--bg2);border-left:1px solid var(--border);z-index:300;display:flex;flex-direction:column;transition:right .3s cubic-bezier(.4,0,.2,1)}
+/* ── PANEL ───────────────────────────────────────────── */
+#panel{
+  position:fixed;right:calc(-1 * var(--panel-w));top:46px;bottom:0;
+  width:var(--panel-w);
+  background:rgba(13,11,24,.97);
+  border-left:1px solid var(--border);
+  box-shadow:-8px 0 32px rgba(0,0,0,.5);
+  z-index:300;display:flex;flex-direction:column;
+  transition:right .32s cubic-bezier(.34,1.26,.64,1);
+  overflow-y:auto;backdrop-filter:blur(20px);
+}
 #panel.open{right:0}
-#panel-close{position:absolute;top:12px;right:12px;background:none;border:none;color:var(--muted);font-size:18px;cursor:pointer;line-height:1}
-#panel-close:hover{color:var(--gold)}
-#panel-path{padding:16px 16px 0;font-size:9px;letter-spacing:.1em;color:var(--muted);text-transform:uppercase;line-height:1.8}
-#panel-path span{color:var(--gold)}
-#panel-title{padding:12px 16px 8px;font-family:'Cinzel',serif;font-size:14px;color:var(--gold2);line-height:1.35;border-bottom:1px solid var(--border)}
-#panel-mem{padding:8px 16px 0;font-size:10px;letter-spacing:.1em;color:#c9a84c}
-#panel-btns{padding:20px 16px;display:flex;flex-direction:column;gap:10px}
-.pbtn{display:flex;align-items:center;gap:10px;padding:12px 14px;border:1px solid var(--border);background:transparent;color:var(--text);font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.06em;cursor:pointer;text-align:left;transition:all .2s;text-decoration:none}
-.pbtn:hover{border-color:var(--gold);color:var(--gold);background:rgba(201,168,76,.06)}
-.pbtn .icon{font-size:14px;width:20px;text-align:center;flex-shrink:0}
-#panel-note{padding:0 16px;font-size:10px;color:var(--muted);line-height:1.6;border-top:1px solid var(--border);padding-top:14px}
+#panel::-webkit-scrollbar{width:2px}
+#panel::-webkit-scrollbar-thumb{background:var(--border)}
 
-/* ── CONTROLS ── */
-#controls{position:fixed;bottom:16px;right:16px;display:flex;gap:5px;z-index:150}
-.cbtn{width:30px;height:30px;background:var(--bg2);border:1px solid var(--border);color:var(--muted);font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s}
-.cbtn:hover{border-color:var(--gold);color:var(--gold)}
+#panel-close{
+  position:sticky;top:0;right:0;
+  align-self:flex-end;margin:10px 10px -4px auto;
+  background:none;border:none;color:var(--muted);
+  font-size:15px;cursor:pointer;line-height:1;
+  transition:color .2s;z-index:1;
+}
+#panel-close:hover{color:var(--gold);text-shadow:0 0 8px rgba(201,168,76,.5)}
 
-#hint{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);font-size:9px;letter-spacing:.1em;color:var(--muted);pointer-events:none;text-transform:uppercase;transition:opacity .5s}
+#panel-path{
+  padding:12px 14px 0;
+  font-size:9px;letter-spacing:.1em;color:var(--muted);
+  text-transform:uppercase;line-height:1.9;
+}
+#panel-path span{color:var(--gold2)}
+#panel-title{
+  padding:10px 14px 12px;
+  font-family:'Cinzel',serif;font-size:12px;
+  color:var(--gold2);line-height:1.45;
+  border-bottom:1px solid var(--border);
+  border-top:1px solid var(--border);
+  margin-top:8px;
+  text-shadow:0 0 16px rgba(232,201,122,.2);
+}
+#panel-mem{
+  padding:10px 14px 2px;
+  font-size:9px;letter-spacing:.12em;
+  color:#e8c97a;min-height:28px;
+  text-shadow:0 0 10px rgba(232,201,122,.6);
+}
+#panel-btns{padding:12px 14px 16px;display:flex;flex-direction:column;gap:7px}
+.pbtn{
+  display:flex;align-items:center;gap:10px;
+  padding:10px 13px;
+  border:1px solid var(--border);
+  background:transparent;color:var(--text);
+  font-family:'IBM Plex Mono',monospace;
+  font-size:10px;letter-spacing:.06em;
+  cursor:pointer;text-align:left;
+  transition:all .22s ease;
+  text-decoration:none;width:100%;
+}
+.pbtn:hover{
+  border-color:var(--gold);color:var(--gold2);
+  background:rgba(201,168,76,.06);
+  box-shadow:0 0 16px rgba(201,168,76,.12),inset 0 0 8px rgba(201,168,76,.03);
+  transform:translateX(2px);
+}
+.pbtn .icon{font-size:13px;width:18px;text-align:center;flex-shrink:0;opacity:.8}
+#panel-note{
+  padding:12px 14px 18px;
+  font-size:9px;color:var(--muted);line-height:1.7;
+  border-top:1px solid var(--border);
+  margin-top:auto;
+}
 
-/* ── MOBILE LIST VIEW ── */
-#listview{position:fixed;top:46px;left:0;right:0;bottom:0;overflow-y:auto;background:var(--bg);display:none;z-index:50}
+/* ── ZOOM CONTROLS ───────────────────────────────────── */
+#controls{position:fixed;bottom:14px;right:14px;display:flex;gap:4px;z-index:150}
+.cbtn{
+  width:28px;height:28px;
+  background:rgba(13,11,24,.9);
+  border:1px solid var(--border);
+  color:var(--muted);font-size:14px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  transition:all .2s;backdrop-filter:blur(8px);
+}
+.cbtn:hover{border-color:var(--gold);color:var(--gold);box-shadow:0 0 10px rgba(201,168,76,.2)}
+
+#hint{
+  position:fixed;bottom:14px;left:50%;transform:translateX(-50%);
+  font-size:9px;letter-spacing:.08em;color:#221f30;
+  pointer-events:none;text-transform:uppercase;white-space:nowrap;
+  transition:opacity .4s;
+}
+
+/* ── LIST VIEW ───────────────────────────────────────── */
+#listview{
+  position:fixed;top:46px;left:0;right:0;bottom:0;
+  overflow-y:auto;background:var(--bg);
+  display:none;z-index:50;
+}
 #listview.show{display:block}
-#listview::-webkit-scrollbar{width:4px}
-#listview::-webkit-scrollbar-track{background:var(--bg)}
-#listview::-webkit-scrollbar-thumb{background:var(--border)}
+#listview::-webkit-scrollbar{width:3px}
+#listview::-webkit-scrollbar-thumb{background:#1c1930}
 
 .lv-level{border-bottom:1px solid var(--border)}
-.lv-level-hdr{padding:14px 16px;font-family:'Cinzel',serif;font-size:12px;letter-spacing:.15em;text-transform:uppercase;cursor:pointer;display:flex;align-items:center;justify-content:space-between;user-select:none}
-.lv-level-hdr:hover{background:rgba(255,255,255,.02)}
-.lv-level-hdr .caret{font-size:10px;transition:transform .25s;color:var(--muted)}
-.lv-level-hdr.open .caret{transform:rotate(90deg)}
-.lv-level-body{display:none}
-.lv-level-body.open{display:block}
 
-.lv-subject{border-top:1px solid var(--border)}
-.lv-subj-hdr{padding:10px 24px;font-size:10px;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;display:flex;align-items:center;justify-content:space-between;user-select:none;color:var(--muted)}
-.lv-subj-hdr:hover{background:rgba(255,255,255,.02)}
-.lv-subj-hdr.open .caret{transform:rotate(90deg)}
-.lv-subj-body{display:none;padding:0 32px 8px}
-.lv-subj-body.open{display:block}
+.lv-lhdr{
+  padding:13px 14px;
+  font-family:'Cinzel',serif;font-size:10.5px;
+  letter-spacing:.14em;text-transform:uppercase;
+  cursor:pointer;display:flex;align-items:center;
+  justify-content:space-between;user-select:none;gap:10px;
+  transition:background .2s;
+}
+.lv-lhdr:hover{background:rgba(255,255,255,.025)}
+.lv-lhdr .ct{font-size:10px;transition:transform .28s cubic-bezier(.4,0,.2,1);color:var(--muted);flex-shrink:0}
+.lv-lhdr.open .ct{transform:rotate(90deg)}
 
-.lv-book{padding:8px 0;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,.03);cursor:pointer}
-.lv-book:hover .lv-book-name{opacity:1}
-.lv-book-name{font-size:10px;color:var(--text);opacity:.7;transition:opacity .2s;line-height:1.4}
-.lv-book-mem{font-size:8px;color:var(--gold);margin-left:8px;white-space:nowrap}
-.lv-book-arrow{font-size:10px;color:var(--muted);margin-left:8px;flex-shrink:0}
+.lv-lbody{max-height:0;overflow:hidden;transition:max-height .38s cubic-bezier(.4,0,.2,1)}
+.lv-lbody.open{max-height:20000px}
 
-/* ── D3 styles ── */
+.lv-subject{border-top:1px solid rgba(255,255,255,.035)}
+.lv-shdr{
+  padding:9px 22px;font-size:9px;letter-spacing:.12em;
+  text-transform:uppercase;cursor:pointer;
+  display:flex;align-items:center;gap:8px;
+  user-select:none;transition:background .15s;
+}
+.lv-shdr:hover{background:rgba(255,255,255,.018)}
+.lv-shdr.open .ct{transform:rotate(90deg)}
+.lv-shdr .ct{transition:transform .22s cubic-bezier(.4,0,.2,1);color:var(--muted);margin-left:auto;flex-shrink:0}
+
+.lv-sbody{max-height:0;overflow:hidden;transition:max-height .32s cubic-bezier(.4,0,.2,1);padding:0 28px}
+.lv-sbody.open{max-height:5000px;padding-bottom:10px}
+
+.lv-book{
+  display:flex;align-items:center;
+  padding:5px 0;
+  border-bottom:1px solid rgba(255,255,255,.022);
+  gap:7px;min-height:30px;
+}
+.lv-book-num{font-size:8px;color:var(--muted);width:14px;flex-shrink:0;text-align:right}
+
+/* Regular book name */
+.lv-book-name{
+  font-size:9.5px;opacity:.72;flex:1;line-height:1.35;
+  cursor:pointer;transition:opacity .15s ease;
+}
+.lv-book-name:hover{opacity:1}
+
+/* Memorise: golden glow instead of a box */
+.lv-book-name.is-mem{
+  color:var(--gold2);opacity:1;
+  text-shadow:0 0 8px rgba(232,201,122,.55),0 0 20px rgba(201,168,76,.28);
+  animation:mem-pulse 3.2s ease-in-out infinite;
+}
+@keyframes mem-pulse{
+  0%,100%{text-shadow:0 0 6px rgba(232,201,122,.45),0 0 16px rgba(201,168,76,.2)}
+  50%{text-shadow:0 0 12px rgba(232,201,122,.75),0 0 28px rgba(201,168,76,.4)}
+}
+
+.lv-book-actions{display:flex;gap:3px;flex-shrink:0}
+.lv-btn{
+  width:20px;height:20px;background:transparent;
+  border:1px solid var(--border);color:var(--muted);
+  font-size:9px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  text-decoration:none;transition:all .18s ease;line-height:1;
+}
+.lv-btn:hover{
+  border-color:var(--gold);color:var(--gold);
+  background:rgba(201,168,76,.08);
+  box-shadow:0 0 8px rgba(201,168,76,.2);
+}
+
+/* ── D3 SVG STYLES ───────────────────────────────────── */
 .link{fill:none;stroke-width:.8px}
 .node{cursor:pointer}
-.node circle{stroke-width:1.5px}
-.node text{pointer-events:none;dominant-baseline:middle}
-.dimmed{opacity:.06!important;transition:opacity .3s}
-.focused{opacity:1!important;transition:opacity .3s}
+.node circle{stroke-width:1.5px;transition:r .15s ease}
+
+/* Memorise label — golden glow via SVG filter */
+.mem-label{font-weight:500}
 
 @media(max-width:680px){
   .legend{display:none}
-  #header h1{font-size:10px}
+  #header h1{font-size:9px;letter-spacing:.1em}
+  .hbtn button{font-size:8px;padding:3px 6px}
 }
+
+/* Entrance animation */
+@keyframes fadeInUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+#header{animation:fadeInUp .5s ease both}
+#hint{animation:fadeInUp .8s .3s ease both}
 </style>
 </head>
 <body>
 
-<!-- HEADER -->
+<!-- ── HEADER ─────────────────────────────────────────── -->
 <div id="header">
-  <h1>Talib al-&#x2018;Ilm</h1>
+  <h1>Talib al-&#x02BF;Ilm</h1>
   <div class="hsep"></div>
   <div class="legend">
-    <div class="li"><div class="ld" style="background:#a8d5e2"></div>Entry Poems</div>
+    <div class="li"><div class="ld" style="background:#a8d5e2"></div>Poems</div>
     <div class="li"><div class="ld" style="background:#ef9a9a"></div>Aqeedah</div>
     <div class="li"><div class="ld" style="background:#80cbc4"></div>Fiqh</div>
     <div class="li"><div class="ld" style="background:#ffcc80"></div>Hadith</div>
@@ -114,12 +283,12 @@ body{background:var(--bg);font-family:'IBM Plex Mono',monospace;overflow:hidden;
     <div class="li"><div class="ld" style="background:#80deea"></div>Tajweed</div>
     <div class="li"><div class="ld" style="background:#ce93d8"></div>Usool</div>
     <div class="li"><div class="ld" style="background:#fff59d"></div>Tafsir</div>
-    <div class="li"><div class="ld" style="background:#c5e1a5"></div>Fara'id</div>
+    <div class="li"><div class="ld" style="background:#c5e1a5"></div>Fara&#x02BE;id</div>
     <div class="li"><div class="ld" style="background:#ffe082"></div>Balagha</div>
     <div class="li"><div class="ld" style="background:#bcaaa4"></div>Adab</div>
     <div class="li"><div class="ld" style="background:#f48fb1"></div>Seerah</div>
     <div class="li"><div class="ld" style="background:#b39ddb"></div>Mustalah</div>
-    <div class="li"><div class="ld" style="background:#b2dfdb"></div>Qawa'id</div>
+    <div class="li"><div class="ld" style="background:#b2dfdb"></div>Qawa&#x02BF;id</div>
     <div class="li"><div class="ld" style="background:#e6ee9c"></div>Literature</div>
   </div>
   <div class="hbtn">
@@ -134,556 +303,576 @@ body{background:var(--bg);font-family:'IBM Plex Mono',monospace;overflow:hidden;
 <div id="breadcrumb"></div>
 <svg id="canvas"></svg>
 
-<!-- BOOK PANEL -->
+<!-- ── PANEL ─────────────────────────────────────────── -->
 <div id="panel">
   <button id="panel-close" onclick="closePanel()">&#x2715;</button>
   <div id="panel-path"></div>
   <div id="panel-title"></div>
   <div id="panel-mem"></div>
   <div id="panel-btns">
-    <a class="pbtn" id="btn-info" href="#" target="_blank">
-      <span class="icon">&#9432;</span> Book Information
+    <a class="pbtn" id="btn-info" href="#" target="_blank" rel="noopener">
+      <span class="icon">&#9432;</span>Information
     </a>
-    <a class="pbtn" id="btn-pdf" href="#" target="_blank">
-      <span class="icon">&#128196;</span> Read / Download PDF
+    <a class="pbtn" id="btn-pdf" href="#" target="_blank" rel="noopener">
+      <span class="icon">&#128196;</span>PDF
     </a>
-    <a class="pbtn" id="btn-video" href="#" target="_blank">
-      <span class="icon">&#9654;</span> Watch Reading / Lesson
+    <a class="pbtn" id="btn-video" href="#" target="_blank" rel="noopener">
+      <span class="icon">&#9654;</span>Recording
     </a>
   </div>
-  <div id="panel-note">Links will be added for each text. Click outside panel or press Esc to close.</div>
+  <div id="panel-note">Links will be added for each text.<br>Press Esc or click the background to close.</div>
 </div>
 
-<!-- LIST VIEW (MOBILE) -->
 <div id="listview"></div>
 
-<!-- CONTROLS -->
 <div id="controls">
-  <button class="cbtn" onclick="zoom.scaleBy(svg,1.3)" title="Zoom In">+</button>
-  <button class="cbtn" onclick="zoom.scaleBy(svg,.77)" title="Zoom Out">&#8722;</button>
+  <button class="cbtn" id="zoom-in" title="Zoom in">+</button>
+  <button class="cbtn" id="zoom-out" title="Zoom out">&#8722;</button>
 </div>
-<div id="hint">Click level/subject to expand &nbsp;&#x2022;&nbsp; Click book for details &nbsp;&#x2022;&nbsp; Drag to pan &nbsp;&#x2022;&nbsp; Scroll to zoom</div>
+<div id="hint">Click level/subject to expand &nbsp;&bull;&nbsp; Click book for details &nbsp;&bull;&nbsp; Drag &amp; scroll to navigate</div>
 
+<!-- ── SCRIPT ─────────────────────────────────────────── -->
 <script>
-// ══════════════════════════════════════════════
-// DATA
-// ══════════════════════════════════════════════
+// ════════════════════════════════════════════════════════
+// COLOUR MAPS
+// ════════════════════════════════════════════════════════
 const SC = {
-  poems:   "#a8d5e2", aqeedah:"#ef9a9a", fiqh:"#80cbc4",
-  hadith:  "#ffcc80", nahw:"#a5d6a7",   tajweed:"#80deea",
-  usool:   "#ce93d8", tafsir:"#fff59d", faraid:"#c5e1a5",
-  balagha: "#ffe082", adab:"#bcaaa4",   seerah:"#f48fb1",
+  poems:"#a8d5e2", aqeedah:"#ef9a9a", fiqh:"#80cbc4",
+  hadith:"#ffcc80", nahw:"#a5d6a7", tajweed:"#80deea",
+  usool:"#ce93d8", tafsir:"#fff59d", faraid:"#c5e1a5",
+  balagha:"#ffe082", adab:"#bcaaa4", seerah:"#f48fb1",
   mustalah:"#b39ddb", qawaid:"#b2dfdb", lit:"#e6ee9c",
-  sarf:    "#a5d6a7", illal:"#b39ddb",  history:"#ffab91",
-  poetry:  "#ffe082"
+  sarf:"#a5d6a7", illal:"#b39ddb", history:"#ffab91", poetry:"#ffe082"
 };
-
 const LC = {0:"#e0c97a",1:"#4caf50",2:"#42a5f5",3:"#ce93d8",4:"#ff8a65",5:"#c9a84c"};
 
-// book(name, mem, info_link, pdf_link, video_link)
-const b = (name, mem=false, i="#", p="#", v="#") => ({name, mem, type:"book", info:i, pdf:p, video:v});
-// subject(name, color, books[])
-const s = (name, color, books) => ({name, color, type:"subject", children:books});
+// ════════════════════════════════════════════════════════
+// DATA HELPERS
+// ════════════════════════════════════════════════════════
+const b = (n,m=false,i="#",p="#",v="#")=>({name:n,mem:m,type:"book",info:i,pdf:p,video:v});
+const s = (n,c,ch)=>({name:n,color:c,type:"subject",children:ch});
 
-const TREE = {
-  name:"Talib al-Ilm", type:"root",
-  children:[
+// ════════════════════════════════════════════════════════
+// TREE DATA — top = first to study, bottom = next
+// ════════════════════════════════════════════════════════
+const TREE = {name:"Talib al-Ilm",type:"root",children:[
 
-  // ─────────────────────────────────────
-  // LEVEL 0 — Entry Point
-  // ─────────────────────────────────────
-  { name:"Entry Level", subtitle:"First Steps · al-Bidaya", level:0, type:"level",
-    children:[
-      s("Short Poems — Amir Bahjat", SC.poems,[
-        b("Mandhuma: Pillars of Islam",true),
-        b("Mandhuma: Articles of Faith",true),
-        b("Mandhuma: Attributes of Allah",true),
-        b("Mandhuma: The Prophet's Character",true),
-        b("Mandhuma: Ablution (al-Wudu')",true),
-        b("Mandhuma: The Prayer (al-Salah)",true),
-        b("Mandhuma: Names of Allah (al-Asma' al-Husna)",true),
-        b("Mandhuma: The Shahadatayn",true),
-        b("Mandhuma: Deeds of the Heart",true),
-        b("Mandhuma: Islamic Ethics for Beginners",true),
-      ]),
-      s("Adab — Entry", SC.adab,[
-        b("Hisnul Muslim — Fortress of the Muslim",true),
-        b("Adhkar wal-Adaab — Mutoon Series",true),
-        b("Mukhtasar Ta'dhim al-Ilm",true),
-      ]),
-    ]
-  },
+// ─ ENTRY LEVEL ──────────────────────────────────────────
+{name:"Entry Level",subtitle:"First Steps",level:0,type:"level",children:[
+  s("Short Poems — Amir Bahjat",SC.poems,[
+    b("Mandhuma al-Tawhid wal-Iman",true),
+    b("Mandhuma Ahsan al-Akhlaq",true),
+    b("Al-Mandhuma al-Munira fi Muhimm Ilm al-Sira",true),
+  ]),
+  s("Adab — Entry",SC.adab,[
+    b("Mukhtasar Ta'dhim al-Ilm",true),
+    b("Adhkar wal-Adaab — Mutoon Series",true),
+    b("Hisnul Muslim — Fortress of the Muslim",true),
+  ]),
+]},
 
-  // ─────────────────────────────────────
-  // LEVEL 1 — Foundation
-  // ─────────────────────────────────────
-  { name:"Level I", subtitle:"Foundation · al-Mubtadi'", level:1, type:"level",
-    children:[
-      s("Aqeedah", SC.aqeedah,[
-        b("Nawaqid al-Islam — Nullifiers of Islam"),
-        b("Al-Usul al-Thalatha — The Three Fundamentals"),
-        b("Al-Qawa'id al-Arba'a — The Four Principles"),
-      ]),
-      s("Fiqh", SC.fiqh,[
-        b("Shurut al-Salah — Conditions & Pillars of Prayer"),
-      ]),
-      s("Hadith", SC.hadith,[
-        b("Al-Arba'un al-Nawawiyya — Forty Hadiths",true),
-      ]),
-      s("Nahw — Arabic Grammar", SC.nahw,[
-        b("Madinah Arabic Books (1–3)"),
-        b("Al-Nahw al-Wadih (for beginners)"),
-        b("Al-Ajurrumiyya"),
-      ]),
-      s("Tajweed", SC.tajweed,[
-        b("Tuhfat al-Atfal"),
-      ]),
-      s("Usool al-Fiqh", SC.usool,[
-        b("Al-Waraqat — al-Juwayni"),
-      ]),
-      s("Usool al-Tafsir", SC.tafsir,[
-        b("Muqaddima fi Usool al-Tafsir — Ibn Taymiyya (Summary)"),
-      ]),
-      s("Fara'id — Inheritance", SC.faraid,[
-        b("Al-Rahabiyya",true),
-      ]),
-      s("Adab & Adhkar", SC.adab,[
-        b("Hilyat Talib al-Ilm — Bakr Abu Zayd"),
-      ]),
-    ]
-  },
+// ─ LEVEL I ──────────────────────────────────────────────
+{name:"Level I",subtitle:"Foundation",level:1,type:"level",children:[
+  s("Aqeedah",SC.aqeedah,[
+    b("Al-Usul al-Thalatha — The Three Fundamentals"),
+    b("Al-Qawa'id al-Arba'a — The Four Principles"),
+    b("Nawaqid al-Islam — Nullifiers of Islam"),
+  ]),
+  s("Fiqh",SC.fiqh,[
+    b("Al-Nadhm al-Bayin fi al-Fiqh al-Mutayin"),
+    b("Shurut al-Salah — Conditions, Pillars & Obligations"),
+  ]),
+  s("Hadith",SC.hadith,[
+    b("Al-Arba'un al-Nawawiyya",true),
+  ]),
+  s("Nahw — Arabic Grammar",SC.nahw,[
+    b("Madinah Arabic Books (1–3)"),
+    b("Al-Nahw al-Wadih"),
+    b("Al-Ajurrumiyya"),
+  ]),
+  s("Tajweed",SC.tajweed,[
+    b("Tuhfat al-Atfal"),
+  ]),
+  s("Usool al-Fiqh",SC.usool,[
+    b("Al-Waraqat — al-Juwayni"),
+  ]),
+  s("Usool al-Tafsir",SC.tafsir,[
+    b("Muqaddima fi Usool al-Tafsir — Ibn Taymiyya (Summary)"),
+  ]),
+  s("Fara'id — Inheritance",SC.faraid,[
+    b("Al-Rahabiyya",true),
+  ]),
+  s("Adab",SC.adab,[
+    b("Hilyat Talib al-Ilm — Bakr Abu Zayd"),
+  ]),
+]},
 
-  // ─────────────────────────────────────
-  // LEVEL 2 — Elementary
-  // ─────────────────────────────────────
-  { name:"Level II", subtitle:"Elementary · al-Ibtida'i", level:2, type:"level",
-    children:[
-      s("Aqeedah / Tawheed", SC.aqeedah,[
-        b("Kitab al-Tawhid — Ibn Abd al-Wahhab"),
-        b("Kashf al-Shubuhat — Removing Doubts"),
-        b("Sullam al-Wusool ila Ilm al-Usool",true),
-      ]),
-      s("Nahw — Arabic Grammar", SC.nahw,[
-        b("Mutammima al-Ajurrumiyya"),
-      ]),
-      s("Hadith", SC.hadith,[
-        b("Umdat al-Ahkam — al-Maqdisi",true),
-      ]),
-      s("Mustalah al-Hadith", SC.mustalah,[
-        b("Al-Mandhuma al-Bayquniyya"),
-      ]),
-      s("Fiqh — Hanbali", SC.fiqh,[
-        b("Akhsar al-Mukhtasarat — Ibn Balban"),
-      ]),
-      s("Fiqh — Shafi'i", SC.fiqh,[
-        b("Matn al-Ghaya wal-Taqrib — Abu Shuja'"),
-      ]),
-      s("Fiqh — Hanafi", SC.fiqh,[
-        b("Mukhtasar al-Quduri"),
-      ]),
-      s("Tajweed / Qira'at", SC.tajweed,[
-        b("Al-Muqaddima al-Jazariyya"),
-        b("Na't al-Darajat fi Hukm al-Qira'at"),
-      ]),
-      s("Usool al-Tafsir", SC.tafsir,[
-        b("Mandhuma al-Zamzami fi Usool al-Tafsir",true),
-      ]),
-      s("Usool al-Fiqh", SC.usool,[
-        b("Al-Qawa'id wal-Usool al-Jami'a"),
-      ]),
-      s("Qawa'id Fiqhiyya", SC.qawaid,[
-        b("Zubdat al-Qawa'id al-Fiqhiyya"),
-      ]),
-      s("Adab", SC.adab,[
-        b("Mandhuma Abi Ishaq al-Ilbiri"),
-        b("Mandhuma al-Adab al-Shar'iyya al-Sughra",true),
-      ]),
-      s("Seerah", SC.seerah,[
-        b("Al-Urjuza al-Mi'iyya — on the Prophet's Life"),
-      ]),
-    ]
-  },
+// ─ LEVEL II ─────────────────────────────────────────────
+{name:"Level II",subtitle:"Elementary",level:2,type:"level",children:[
+  s("Aqeedah",SC.aqeedah,[
+    b("Luma al-I'tiqad — Ibn Qudama"),
+    b("Kitab al-Tawhid — Ibn Abd al-Wahhab"),
+    b("Kashf al-Shubuhat"),
+  ]),
+  s("Nahw — Arabic Grammar",SC.nahw,[
+    b("Mutammima al-Ajurrumiyya"),
+    b("Nuzhat al-Huloom — Ibn Hisham"),
+  ]),
+  s("Hadith",SC.hadith,[
+    b("Umdat al-Ahkam — al-Maqdisi",true),
+  ]),
+  s("Mustalah al-Hadith",SC.mustalah,[
+    b("Al-Mandhuma al-Bayquniyya"),
+  ]),
+  s("Fiqh — Hanbali",SC.fiqh,[
+    b("Akhsar al-Mukhtasarat — Ibn Balban"),
+  ]),
+  s("Fiqh — Shafi'i",SC.fiqh,[
+    b("Matn al-Ghaya wal-Taqrib — Abu Shuja'"),
+  ]),
+  s("Fiqh — Maliki",SC.fiqh,[
+    b("Al-Qayrawaniyya — Ibn Abi Zayd al-Qayrawani"),
+  ]),
+  s("Fiqh — Hanafi",SC.fiqh,[
+    b("Mukhtasar al-Quduri"),
+  ]),
+  s("Tajweed / Qira'at",SC.tajweed,[
+    b("Al-Muqaddima al-Jazariyya"),
+    b("Na't al-Darajat fi Hukm al-Qira'at"),
+    b("Al-Khaqaniyya"),
+  ]),
+  s("Usool al-Tafsir",SC.tafsir,[
+    b("Mandhuma al-Zamzami fi Usool al-Tafsir",true),
+  ]),
+  s("Usool al-Fiqh",SC.usool,[
+    b("Al-Qawa'id wal-Usool al-Jami'a"),
+  ]),
+  s("Qawa'id Fiqhiyya",SC.qawaid,[
+    b("Zubdat al-Qawa'id al-Fiqhiyya"),
+  ]),
+  s("Adab",SC.adab,[
+    b("Mandhuma Abi Ishaq al-Ilbiri"),
+    b("Mandhuma al-Adab al-Shar'iyya al-Sughra",true),
+  ]),
+  s("Seerah",SC.seerah,[
+    b("Al-Urjuza al-Mi'iyya"),
+  ]),
+]},
 
-  // ─────────────────────────────────────
-  // LEVEL 3 — Intermediate
-  // ─────────────────────────────────────
-  { name:"Level III", subtitle:"Intermediate · al-Mutawassit", level:3, type:"level",
-    children:[
-      s("Aqeedah", SC.aqeedah,[
-        b("Al-Aqida al-Wasitiyya — Ibn Taymiyya"),
-        b("Al-Fatawa al-Hamawiyya — Ibn Taymiyya"),
-        b("Al-Qawl al-Mufid Sharh Kitab al-Tawhid — Ibn Uthaymin"),
-        b("Fath al-Majid Sharh Kitab al-Tawhid"),
-      ]),
-      s("Nahw — Arabic Grammar", SC.nahw,[
-        b("Qatr al-Nada wa Ball al-Sada — Ibn Hisham"),
-        b("Shudhur al-Dhahab — Ibn Hisham"),
-      ]),
-      s("Sarf — Morphology", SC.sarf,[
-        b("Lamiyyat al-Af'al — Ibn Malik"),
-      ]),
-      s("Hadith", SC.hadith,[
-        b("Bulugh al-Maram — Ibn Hajar al-Asqalani",true),
-        b("Saba'ik al-Bukhari — 500 Hadiths"),
-      ]),
-      s("Mustalah al-Hadith", SC.mustalah,[
-        b("Nukhbat al-Fikar — Ibn Hajar al-Asqalani"),
-        b("Ikhtisar Ulum al-Hadith — Ibn Kathir"),
-      ]),
-      s("Fiqh — Hanbali", SC.fiqh,[
-        b("Dalil al-Talib li-Nayl al-Matalib"),
-      ]),
-      s("Fiqh — No Madhab", SC.fiqh,[
-        b("Al-Durar al-Bahiyya — al-Shawkani",true),
-      ]),
-      s("Fiqh — Shafi'i", SC.fiqh,[
-        b("Al-Yaqut al-Nafis — al-Hadrami"),
-      ]),
-      s("Fiqh — Maliki", SC.fiqh,[
-        b("Al-Umdah fi al-Ahkam"),
-      ]),
-      s("Fiqh — Maliki / Al-Qayrawaniyya", SC.fiqh,[
-        b("Al-Qayrawaniyya — Ibn Abi Zayd"),
-      ]),
-      s("Tajweed / Qira'at", SC.tajweed,[
-        b("Hirz al-Amani — Al-Shatibiyya (7 Qira'at)",true),
-      ]),
-      s("Tafsir", SC.tafsir,[
-        b("Tafsir al-Jalalayn — Jalal al-Din al-Suyuti & al-Mahalli"),
-        b("Tafsir al-Sidi"),
-      ]),
-      s("Usool al-Tafsir", SC.tafsir,[
-        b("Al-Niqaya fi Ulum al-Quran — al-Suyuti"),
-      ]),
-      s("Usool al-Fiqh — Hanbali", SC.usool,[
-        b("Al-Nadhm al-Saghir fi Usool al-Fiqh"),
-        b("Bidayat al-Ma'mul fi Usool al-Fiqh"),
-      ]),
-      s("Balagha — Rhetoric", SC.balagha,[
-        b("Al-Jawhar al-Maknun — al-Akhdhori"),
-      ]),
-      s("Qawa'id Fiqhiyya", SC.qawaid,[
-        b("Mandhuma al-Qawa'id al-Fiqhiyya — Ibn Uthaymin"),
-        b("Al-Qawa'id al-Fiqhiyya — al-Sidi"),
-      ]),
-      s("Adab / Tazkiyya", SC.adab,[
-        b("Mutahharat al-Qulub — al-Sanusi"),
-        b("Kitab al-Adhkar — Ibn Taymiyya"),
-        b("Mandhuma Asbab Hayat al-Qulub"),
-      ]),
-      s("Seerah", SC.seerah,[
-        b("Rawdat al-Anwar fi Sirati al-Nabi al-Mukhtar"),
-        b("Al-Fusool fi Seerat al-Rasool — Ibn Kathir"),
-      ]),
-      s("Arabic Literature", SC.lit,[
-        b("Banat Su'ad — Ka'b ibn Zuhayr",true),
-        b("Lamiyyat al-Arab — al-Shanfara",true),
-      ]),
-    ]
-  },
+// ─ LEVEL III ────────────────────────────────────────────
+{name:"Level III",subtitle:"Intermediate",level:3,type:"level",children:[
+  s("Aqeedah",SC.aqeedah,[
+    b("Al-Aqida al-Wasitiyya — Ibn Taymiyya"),
+    b("Al-Qawl al-Mufid Sharh Kitab al-Tawhid — Ibn Uthaymin"),
+    b("Fath al-Majid Sharh Kitab al-Tawhid"),
+  ]),
+  s("Nahw — Arabic Grammar",SC.nahw,[
+    b("Shudhur al-Dhahab — Ibn Hisham"),
+    b("Qatr al-Nada wa Ball al-Sada — Ibn Hisham"),
+    b("Mulhat al-I'rab — al-Hariri"),
+  ]),
+  s("Sarf — Morphology",SC.sarf,[
+    b("Lamiyyat al-Af'al — Ibn Malik"),
+  ]),
+  s("Hadith",SC.hadith,[
+    b("Bulugh al-Maram — Ibn Hajar al-Asqalani",true),
+    b("Saba'ik al-Bukhari — 500 Hadiths"),
+  ]),
+  s("Mustalah al-Hadith",SC.mustalah,[
+    b("Nukhbat al-Fikar — Ibn Hajar al-Asqalani"),
+    b("Ikhtisar Ulum al-Hadith — Ibn Kathir"),
+  ]),
+  s("Fiqh — Hanbali",SC.fiqh,[
+    b("Al-Umdah fi al-Fiqh — Ibn Qudama"),
+    b("Bidayat al-Abid wa Kifayat al-Zahid"),
+    b("Dalil al-Talib li-Nayl al-Matalib"),
+  ]),
+  s("Fiqh — Shafi'i",SC.fiqh,[
+    b("Al-Yaqut al-Nafis — al-Hadrami"),
+  ]),
+  s("Fiqh — Maliki",SC.fiqh,[
+    b("Al-Umdah — Maliki Mukhtasar"),
+  ]),
+  s("Fiqh — No Madhab",SC.fiqh,[
+    b("Al-Durar al-Bahiyya — al-Shawkani",true),
+  ]),
+  s("Tajweed / Qira'at",SC.tajweed,[
+    b("Al-Salsabil al-Shafi"),
+    b("Hirz al-Amani — Al-Shatibiyya (7 Qira'at)",true),
+  ]),
+  s("Tafsir",SC.tafsir,[
+    b("Tafsir al-Jalalayn"),
+    b("Tafsir al-Sidi"),
+  ]),
+  s("Usool al-Tafsir",SC.tafsir,[
+    b("Al-Niqaya fi Ulum al-Quran — al-Suyuti"),
+  ]),
+  s("Usool al-Fiqh — Hanbali",SC.usool,[
+    b("Al-Nadhm al-Saghir fi Usool al-Fiqh"),
+    b("Bidayat al-Ma'mul fi Usool al-Fiqh"),
+  ]),
+  s("Balagha — Rhetoric",SC.balagha,[
+    b("Al-Jawhar al-Maknun — al-Akhdhori"),
+  ]),
+  s("Qawa'id Fiqhiyya",SC.qawaid,[
+    b("Mandhuma al-Qawa'id al-Fiqhiyya — Ibn Uthaymin"),
+    b("Al-Qawa'id al-Fiqhiyya — al-Sidi"),
+  ]),
+  s("Adab / Tazkiyya",SC.adab,[
+    b("Mandhuma Asbab Hayat al-Qulub — Ibn Atiq"),
+    b("Mutahharat al-Qulub — al-Sanusi"),
+    b("Kitab al-Adhkar — Ibn Taymiyya"),
+  ]),
+  s("Seerah",SC.seerah,[
+    b("Rawdat al-Anwar fi Sirati al-Nabi al-Mukhtar"),
+    b("Al-Fusool fi Seerat al-Rasool — Ibn Kathir"),
+  ]),
+  s("Arabic Literature",SC.lit,[
+    b("Banat Su'ad — Ka'b ibn Zuhayr",true),
+    b("Lamiyyat al-Arab — al-Shanfara",true),
+  ]),
+]},
 
-  // ─────────────────────────────────────
-  // LEVEL 4 — Advanced
-  // ─────────────────────────────────────
-  { name:"Level IV", subtitle:"Advanced · al-Mutaqaddim", level:4, type:"level",
-    children:[
-      s("Aqeedah", SC.aqeedah,[
-        b("Al-Aqida al-Tahawiyya + Sharh Ibn Abi al-Izz"),
-        b("Al-Risala al-Tadmuriyya — Ibn Taymiyya"),
-        b("Ar-Risala al-Hamawiyya — Ibn Taymiyya"),
-      ]),
-      s("Nahw — Arabic Grammar", SC.nahw,[
-        b("Alfiyyat Ibn Malik — 1002 verses",true),
-      ]),
-      s("Hadith", SC.hadith,[
-        b("Riyad al-Salihin — Imam al-Nawawi",true),
-        b("Al-Lu'lu' wal-Marjan — al-Fuad Abd al-Baqi",true),
-        b("Al-Muharrar fi al-Hadith — Ibn Abd al-Hadi"),
-      ]),
-      s("Mustalah al-Hadith", SC.mustalah,[
-        b("Alfiyyat al-Hadith al-Iraqi",true),
-      ]),
-      s("Fiqh — Hanbali", SC.fiqh,[
-        b("Zad al-Mustaqni' — al-Hajjawi"),
-        b("Ar-Rawdul-Murbi' Matn Zad al-Mustaqni' — al-Bahuti",true),
-        b("Al-Umdah fi al-Fiqh — Ibn Qudama"),
-      ]),
-      s("Fiqh — Shafi'i", SC.fiqh,[
-        b("Matn al-Zubad — Ibn Raslan"),
-        b("Umdat al-Salik wa Uddat al-Nasik"),
-        b("Minhaj al-Talibin — Imam al-Nawawi",true),
-      ]),
-      s("Fiqh — Hanafi", SC.fiqh,[
-        b("Al-Hidaya — al-Marghinani",true),
-      ]),
-      s("Tajweed / Qira'at", SC.tajweed,[
-        b("Tayyibat al-Nashr fi al-Qira'at al-Ashr — Ibn al-Jazari",true),
-        b("Al-Durra al-Mudiyya — Ibn al-Jazari",true),
-        b("Al-Khaqaniyya"),
-        b("Al-Salsabil al-Shafi"),
-      ]),
-      s("Tafsir", SC.tafsir,[
-        b("Ma'alim al-Tanzil — al-Baghawi"),
-      ]),
-      s("Usool al-Tafsir", SC.tafsir,[
-        b("Al-Itqan fi Ulum al-Quran — al-Suyuti"),
-      ]),
-      s("Usool al-Fiqh — Hanbali", SC.usool,[
-        b("Mukhtasar al-Tahrir — Ibn al-Najjar"),
-        b("Maraqi al-Su'ud — al-Shinqiti",true),
-        b("Murtaqa al-Su'ud — Hanbali usool poem"),
-      ]),
-      s("Balagha — Rhetoric", SC.balagha,[
-        b("Uqud al-Juman — al-Suyuti",true),
-        b("Mi'at al-Ma'ani wal-Bayan"),
-      ]),
-      s("Science of Poetry", SC.poetry,[
-        b("Al-Kafi fi al-Arud wal-Qawafi"),
-        b("Hidayat al-Murtab fi Mutashabihat al-Kitab"),
-      ]),
-      s("Qawa'id Fiqhiyya", SC.qawaid,[
-        b("Al-Fara'id al-Bahiyya — Abu Bakr al-Ahdal",true),
-        b("Al-Mandhuma al-Fadghariyya"),
-        b("Al-Musakka al-Kawthariyya"),
-      ]),
-      s("Seerah", SC.seerah,[
-        b("Alfiyyat al-Sirat al-Nabawiyya — al-Iraqi",true),
-        b("Al-Urjuza al-Mi'iyya — Dhikr Ahwal Ashraf al-Bariyya"),
-      ]),
-      s("Arabic Literature", SC.lit,[
-        b("Al-Maqamat al-Hariri — al-Hariri",true),
-        b("Al-Mu'allaqat — Pre-Islamic Odes",true),
-      ]),
-    ]
-  },
+// ─ LEVEL IV ─────────────────────────────────────────────
+{name:"Level IV",subtitle:"Advanced",level:4,type:"level",children:[
+  s("Aqeedah",SC.aqeedah,[
+    b("Al-Aqida al-Tahawiyya + Sharh Ibn Abi al-Izz"),
+    b("Al-Fatawa al-Hamawiyya — Ibn Taymiyya"),
+    b("Al-Risala al-Tadmuriyya — Ibn Taymiyya"),
+    b("Sullam al-Wusool ila Ilm al-Usool",true),
+  ]),
+  s("Nahw — Arabic Grammar",SC.nahw,[
+    b("Alfiyyat Ibn Malik — 1002 verses",true),
+  ]),
+  s("Hadith",SC.hadith,[
+    b("Riyad al-Salihin — Imam al-Nawawi",true),
+    b("Al-Lu'lu' wal-Marjan",true),
+    b("Al-Muharrar fi al-Hadith — Ibn Abd al-Hadi"),
+  ]),
+  s("Mustalah al-Hadith",SC.mustalah,[
+    b("Alfiyyat al-Hadith al-Iraqi",true),
+  ]),
+  s("Fiqh — Hanbali",SC.fiqh,[
+    b("Zad al-Mustaqni' — al-Hajjawi"),
+    b("Ar-Rawdul-Murbi' Matn Zad al-Mustaqni'",true),
+    b("Al-Nadhm al-Jali ma al-Ahmirar"),
+    b("Ma la Yasi' al-Hanbali Jahluhu"),
+  ]),
+  s("Fiqh — Shafi'i",SC.fiqh,[
+    b("Matn al-Zubad — Ibn Raslan"),
+    b("Umdat al-Salik wa Uddat al-Nasik"),
+    b("Minhaj al-Talibin — Imam al-Nawawi",true),
+  ]),
+  s("Fiqh — Hanafi",SC.fiqh,[
+    b("Al-Hidaya — al-Marghinani",true),
+  ]),
+  s("Tajweed / Qira'at",SC.tajweed,[
+    b("Al-Durra al-Mudiyya — Ibn al-Jazari",true),
+    b("Tayyibat al-Nashr fi al-Qira'at al-Ashr — Ibn al-Jazari",true),
+    b("Hidayat al-Murtab fi Mutashabihat al-Kitab"),
+  ]),
+  s("Tafsir",SC.tafsir,[
+    b("Ma'alim al-Tanzil — al-Baghawi"),
+  ]),
+  s("Usool al-Tafsir",SC.tafsir,[
+    b("Al-Itqan fi Ulum al-Quran — al-Suyuti"),
+  ]),
+  s("Usool al-Fiqh",SC.usool,[
+    b("Mukhtasar al-Tahrir — Ibn al-Najjar al-Hanbali"),
+    b("Maraqi al-Su'ud — al-Shinqiti",true),
+  ]),
+  s("Balagha — Rhetoric",SC.balagha,[
+    b("Mi'at al-Ma'ani wal-Bayan"),
+    b("Uqud al-Juman — al-Suyuti",true),
+  ]),
+  s("Science of Poetry",SC.poetry,[
+    b("Al-Kafi fi al-Arud wal-Qawafi"),
+  ]),
+  s("Qawa'id Fiqhiyya",SC.qawaid,[
+    b("Al-Musakka al-Kawthariyya"),
+    b("Al-Mandhuma al-Fadghariyya"),
+    b("Al-Fara'id al-Bahiyya — Abu Bakr al-Ahdal",true),
+  ]),
+  s("Seerah",SC.seerah,[
+    b("Alfiyyat al-Sirat al-Nabawiyya — al-Iraqi",true),
+  ]),
+  s("Arabic Literature",SC.lit,[
+    b("Al-Maqamat al-Hariri — al-Hariri",true),
+    b("Al-Mu'allaqat — Pre-Islamic Odes",true),
+  ]),
+]},
 
-  // ─────────────────────────────────────
-  // LEVEL 5 — Mastery
-  // ─────────────────────────────────────
-  { name:"Level V", subtitle:"Mastery · al-Itqan", level:5, type:"level",
-    children:[
-      s("Aqeedah — Encyclopedic", SC.aqeedah,[
-        b("A'lam al-Sunna al-Mansura — al-Hakami"),
-        b("Al-Qasida al-Nuniyya — Ibn al-Qayyim"),
-        b("Al-Kafiya al-Shafiya — Ibn al-Qayyim (5842 verses)"),
-        b("Arwa al-Iman wa Dhura al-Jinan — 300 verses"),
-      ]),
-      s("Nahw — Mastery", SC.nahw,[
-        b("Sharh Ibn Aqil ala al-Alfiyya — Ibn Aqil"),
-        b("Al-Kafiya fi Ilm al-Nahw — Ibn al-Hajib"),
-        b("Al-Nahw al-Saghir — advanced"),
-        b("Nuzhat al-Huloom — morphology"),
-      ]),
-      s("Hadith — Full Collections", SC.hadith,[
-        b("Sahih al-Bukhari — Full (7563 hadiths)"),
-        b("Sahih Muslim — Full"),
-        b("Sunan Abu Dawud"),
-        b("Sunan al-Tirmidhi"),
-        b("Sunan al-Nasa'i"),
-        b("Sunan Ibn Maja"),
-        b("Mukhtasar al-Mundhiri li-Sahih Muslim"),
-        b("Mukhtasar al-Zubaidi li-Sahih al-Bukhari"),
-        b("Al-Jam' bayn al-Sahihayn — al-Hamidi"),
-        b("Al-Wafi fi al-Jam' bayn al-Sahihayn"),
-        b("Al-Jam' bayn al-Sahihayn — Shaykh Yahya"),
-        b("Muntaqa al-Akhbar — Ibn Taymiyya"),
-        b("Mukhtasar Ibn Abi Jamra"),
-      ]),
-      s("Ilal al-Hadith", SC.illal,[
-        b("Al-Ilal wa Qara'in al-Tarjih"),
-        b("Sharh Ilal al-Tirmidhi — Ibn Rajab al-Hanbali"),
-        b("Al-Ilal al-Daraqutni"),
-      ]),
-      s("Mustalah — Advanced", SC.mustalah,[
-        b("Fath al-Mughith Sharh Alfiyyat al-Hadith — al-Sakhawi"),
-      ]),
-      s("Fiqh — Advanced", SC.fiqh,[
-        b("Al-Mughni — Ibn Qudama (10 volumes)"),
-        b("Malh al-Nad fi Nadhm Zad al-Mustaqni' — 2660 verses"),
-        b("Al-Nadhm al-Jali ma al-Ahmirar — 971 verses"),
-        b("Ma la Yasi' al-Hanbali Jahluhu — 95 verses"),
-        b("Balaght al-Wusool — Hanbali usool"),
-        b("Rasm al-Mufti al-Hanbali"),
-      ]),
-      s("Usool al-Fiqh — Advanced", SC.usool,[
-        b("Rawdat al-Nadhir — Ibn Qudama"),
-        b("Hanbalat Tashil al-Turuqat — 233 verses"),
-        b("Bidayat al-Ma'mool — 272 verses"),
-      ]),
-      s("Tafsir — Complete", SC.tafsir,[
-        b("Tafsir Ibn Kathir — Full (4 volumes)"),
-        b("Tafsir al-Tabari — Full (Jami' al-Bayan)"),
-        b("Al-Shatibiyya — Hirz al-Amani — advanced reading"),
-      ]),
-      s("Qawa'id Fiqhiyya — Advanced", SC.qawaid,[
-        b("Nadhm al-Qawa'id wal-Usool al-Jami'a — 70 verses"),
-        b("Al-Mandhuma al-Usool al-Fiqh wa Qawa'iduhu — 103 verses"),
-        b("Taqrib al-Mutaba'id — 32 verses"),
-      ]),
-      s("Islamic History", SC.history,[
-        b("Al-Bidaya wal-Nihaya — Ibn Kathir (14 volumes)"),
-        b("Tarikh al-Tabari — al-Tabari"),
-        b("Siyar A'lam al-Nubala' — al-Dhahabi (25 volumes)"),
-      ]),
-      s("Adab / Tazkiyya", SC.adab,[
-        b("Al-Wabil al-Sayyib — Ibn al-Qayyim"),
-      ]),
-      s("Arabic Literature — Advanced", SC.lit,[
-        b("Al-Maqamat al-Hariri — deep study & memorization"),
-      ]),
-    ]
-  }
+// ─ LEVEL V ──────────────────────────────────────────────
+{name:"Level V",subtitle:"Mastery",level:5,type:"level",children:[
+  s("Aqeedah — Encyclopedic",SC.aqeedah,[
+    b("A'lam al-Sunna al-Mansura — al-Hakami"),
+    b("Arwa al-Iman wa Dhura al-Jinan"),
+    b("Al-Qasida al-Nuniyya — Ibn al-Qayyim"),
+    b("Al-Kafiya al-Shafiya — Ibn al-Qayyim"),
+    b("Al-Safariniyya — al-Saffarini"),
+  ]),
+  s("Nahw — Mastery",SC.nahw,[
+    b("Sharh Ibn Aqil ala al-Alfiyya"),
+    b("Al-Kafiya fi Ilm al-Nahw — Ibn al-Hajib"),
+  ]),
+  s("Hadith — Full Collections",SC.hadith,[
+    b("Sahih al-Bukhari — Full"),
+    b("Sahih Muslim — Full"),
+    b("Sunan Abu Dawud"),
+    b("Sunan al-Tirmidhi"),
+    b("Sunan al-Nasa'i"),
+    b("Sunan Ibn Maja"),
+    b("Mukhtasar Ibn Abi Jamra"),
+    b("Mukhtasar al-Zubaidi li-Sahih al-Bukhari"),
+    b("Mukhtasar al-Mundhiri li-Sahih Muslim"),
+    b("Al-Jam' bayn al-Sahihayn — al-Hamidi"),
+    b("Al-Wafi fi al-Jam' bayn al-Sahihayn"),
+    b("Al-Jam' bayn al-Sahihayn — Shaykh Yahya"),
+    b("Muntaqa al-Akhbar — Ibn Taymiyya"),
+  ]),
+  s("Ilal al-Hadith",SC.illal,[
+    b("Al-Ilal wa Qara'in al-Tarjih"),
+    b("Sharh Ilal al-Tirmidhi — Ibn Rajab al-Hanbali"),
+    b("Al-Ilal al-Daraqutni"),
+  ]),
+  s("Mustalah — Advanced",SC.mustalah,[
+    b("Fath al-Mughith Sharh Alfiyyat al-Hadith — al-Sakhawi"),
+  ]),
+  s("Fiqh — Advanced",SC.fiqh,[
+    b("Umdat al-Talib li-Nayl al-Mathalib"),
+    b("Balaght al-Wusool"),
+    b("Rasm al-Mufti al-Hanbali"),
+    b("Malh al-Nad fi Nadhm Zad al-Mustaqni'"),
+    b("Al-Mughni — Ibn Qudama (10 volumes)"),
+  ]),
+  s("Usool al-Fiqh — Advanced",SC.usool,[
+    b("Rawdat al-Nadhir — Ibn Qudama"),
+    b("Hanbalat Tashil al-Turuqat"),
+  ]),
+  s("Tafsir — Complete",SC.tafsir,[
+    b("Tafsir Ibn Kathir — Full (4 volumes)"),
+    b("Tafsir al-Tabari — Full (Jami' al-Bayan)"),
+  ]),
+  s("Qawa'id Fiqhiyya — Advanced",SC.qawaid,[
+    b("Nadhm al-Qawa'id wal-Usool al-Jami'a"),
+    b("Al-Mandhuma fi Usool al-Fiqh wa Qawa'iduhu"),
+    b("Taqrib al-Mutaba'id"),
+  ]),
+  s("Islamic History",SC.history,[
+    b("Al-Bidaya wal-Nihaya — Ibn Kathir (14 volumes)"),
+    b("Tarikh al-Tabari"),
+    b("Siyar A'lam al-Nubala' — al-Dhahabi (25 volumes)"),
+  ]),
+  s("Adab / Tazkiyya",SC.adab,[
+    b("Al-Wabil al-Sayyib — Ibn al-Qayyim"),
+  ]),
+]}
+]};
 
-  ]
-};
+// ════════════════════════════════════════════════════════
+// BOOK REGISTRY for indexed list-view lookups
+// ════════════════════════════════════════════════════════
+let BOOK_REG = [];
+function regBook(book,levelName,subjName){
+  const idx=BOOK_REG.length;
+  BOOK_REG.push({...book,levelName,subjName});
+  return idx;
+}
 
-// ══════════════════════════════════════════════
+// ════════════════════════════════════════════════════════
 // STATE
-// ══════════════════════════════════════════════
-let currentView = 'tree';
-let selectedBook = null;
+// ════════════════════════════════════════════════════════
 let focusedIds = null;
 let nodeId = 0;
+let listBuilt = false;
 
-// ══════════════════════════════════════════════
-// D3 TREE
-// ══════════════════════════════════════════════
+// ════════════════════════════════════════════════════════
+// D3 SETUP
+// ════════════════════════════════════════════════════════
 const W = window.innerWidth, H = window.innerHeight;
 const svg = d3.select("#canvas").attr("width",W).attr("height",H);
+
+// SVG defs — glow filter for memorise labels
+const defs = svg.append("defs");
+const glowFilter = defs.append("filter")
+  .attr("id","glow-gold")
+  .attr("x","-40%").attr("y","-80%")
+  .attr("width","180%").attr("height","260%");
+glowFilter.append("feGaussianBlur")
+  .attr("in","SourceGraphic").attr("stdDeviation","2.4").attr("result","blur");
+glowFilter.append("feColorMatrix")
+  .attr("in","blur").attr("type","matrix")
+  .attr("values","2.2 1.2 0 0 0.05  1.4 0.9 0 0 0  0 0.2 0 0 0  0 0 0 2.2 0")
+  .attr("result","colored");
+const glowMerge = glowFilter.append("feMerge");
+glowMerge.append("feMergeNode").attr("in","colored");
+glowMerge.append("feMergeNode").attr("in","SourceGraphic");
+
+// Node hover glow filter
+const hoverFilter = defs.append("filter")
+  .attr("id","hover-glow").attr("x","-60%").attr("y","-60%")
+  .attr("width","220%").attr("height","220%");
+hoverFilter.append("feGaussianBlur")
+  .attr("in","SourceGraphic").attr("stdDeviation","3").attr("result","blur");
+hoverFilter.append("feColorMatrix")
+  .attr("in","blur").attr("type","matrix")
+  .attr("values","1 0.5 0 0 0  0.5 0.3 0 0 0  0 0 0.1 0 0  0 0 0 1.8 0")
+  .attr("result","c");
+const hm = hoverFilter.append("feMerge");
+hm.append("feMergeNode").attr("in","c");
+hm.append("feMergeNode").attr("in","SourceGraphic");
+
 const g = svg.append("g");
 
-const zoom = d3.zoom().scaleExtent([0.08,4]).on("zoom",e => {
-  g.attr("transform",e.transform);
-  closePanel();
+// Zoom — does NOT close panel (better UX while navigating)
+const zoom = d3.zoom().scaleExtent([0.06,4]).on("zoom", e => {
+  g.attr("transform", e.transform);
 });
 svg.call(zoom).on("dblclick.zoom",null);
-svg.on("click",()=>{ if(focusedIds){ clearFocus(); closePanel(); }});
 
-const treeFn = d3.tree().nodeSize([20,260]);
+// Click on SVG background closes panel
+svg.on("click", () => { closePanel(); });
+
+// Wired zoom buttons
+document.getElementById("zoom-in").onclick  = () => zoom.scaleBy(svg, 1.3);
+document.getElementById("zoom-out").onclick = () => zoom.scaleBy(svg, .77);
+
+const treeFn = d3.tree().nodeSize([20,264]);
 let root = d3.hierarchy(TREE);
-
-// Collapse all except root and levels initially
-root.descendants().forEach(d=>{
-  if(d.depth >= 2){ d._children = d.children; d.children = null; }
+root.descendants().forEach(d => {
+  if(d.depth >= 2){ d._children=d.children; d.children=null; }
 });
 root.x0 = 0; root.y0 = 0;
 
-function getNodeColor(d){
-  if(d.data.type==="root") return "#c9a84c";
-  if(d.data.type==="level") return LC[d.data.level]||"#c9a84c";
+// ── Helpers ──────────────────────────────────────────────
+function nodeColor(d){
+  if(d.data.type==="root")    return "#c9a84c";
+  if(d.data.type==="level")   return LC[d.data.level]||"#c9a84c";
   if(d.data.type==="subject") return d.data.color||"#888";
-  // book — inherit parent subject color
   return (d.parent&&d.parent.data.color)||"#a0a0c0";
 }
-
-function getR(d){
-  if(d.data.type==="root") return 13;
-  if(d.data.type==="level") return 9;
+function nodeR(d){
+  if(d.data.type==="root")    return 13;
+  if(d.data.type==="level")   return 9;
   if(d.data.type==="subject") return 6;
   return 4;
 }
-
-function getLabel(d){
-  if(d.data.type==="root") return "Talib al-'Ilm";
-  if(d.data.type==="level") return d.data.name + (d.data.subtitle?" · "+d.data.subtitle.split(" · ")[0]:"");
+function nodeLabel(d){
+  if(d.data.type==="root")    return "Talib al-Ilm";
+  if(d.data.type==="level")   return d.data.name+" — "+(d.data.subtitle||"");
   if(d.data.type==="subject"){
-    const n = d.children||d._children;
-    return d.data.name + (n?` [${n.length}]`:"");
+    const n=(d.children||d._children||[]).length;
+    return d.data.name+(n?` [${n}]`:"");
   }
-  const nm = d.data.name.length>36?d.data.name.slice(0,34)+"…":d.data.name;
-  return (d.data.mem?"★ ":"")+nm;
+  const nm=d.data.name.length>38?d.data.name.slice(0,36)+"…":d.data.name;
+  return nm;
 }
-
 function diag(d){
-  return `M${d.source.y},${d.source.x}C${(d.source.y+d.target.y)/2},${d.source.x} ${(d.source.y+d.target.y)/2},${d.target.x} ${d.target.y},${d.target.x}`;
+  const sx=d.source.y,sy=d.source.x,tx=d.target.y,ty=d.target.x,mx=(sx+tx)/2;
+  return `M${sx},${sy}C${mx},${sy} ${mx},${ty} ${tx},${ty}`;
 }
 
+// ── Main update ──────────────────────────────────────────
 function update(src){
-  const td = treeFn(root);
-  const nodes = td.descendants();
-  const links = td.links();
+  const td=treeFn(root);
+  const nodes=td.descendants();
+  const links=td.links();
 
-  // links
-  const link = g.selectAll(".link").data(links, d=>d.target.id);
-  const le = link.enter().insert("path",".node")
+  // Links
+  const link=g.selectAll(".link").data(links,d=>d.target.id);
+  const le=link.enter().insert("path",".node")
     .attr("class","link")
     .attr("d",()=>{const o={x:src.x0||0,y:src.y0||0};return diag({source:o,target:o});})
-    .attr("stroke", d=>{
+    .attr("stroke",d=>{
       const t=d.target;
       if(t.data.type==="level") return LC[t.data.level]||"#444";
       if(t.data.type==="book") return (t.parent&&t.parent.data.color)||"#444";
-      return (t.data.color||"#444");
-    })
-    .attr("opacity",0);
+      return t.data.color||"#444";
+    }).attr("opacity",0);
+
   link.merge(le).transition().duration(300)
     .attr("d",diag)
-    .attr("stroke", d=>{
+    .attr("stroke",d=>{
       const t=d.target;
       if(t.data.type==="level") return LC[t.data.level]||"#444";
       if(t.data.type==="book") return (t.parent&&t.parent.data.color)||"#444";
-      return (t.data.color||"#444");
+      return t.data.color||"#444";
     })
-    .attr("opacity", d => {
-      if(!focusedIds) return 0.2;
-      return (focusedIds.has(d.source.id)&&focusedIds.has(d.target.id)) ? 0.7 : 0.04;
+    .attr("opacity",d=>{
+      if(!focusedIds) return 0.22;
+      return (focusedIds.has(d.source.id)&&focusedIds.has(d.target.id))?0.8:0.04;
     });
+
   link.exit().transition().duration(300)
     .attr("d",()=>{const o={x:src.x,y:src.y};return diag({source:o,target:o});})
     .attr("opacity",0).remove();
 
-  // nodes
-  const node = g.selectAll(".node").data(nodes, d=>d.id||(d.id=++nodeId));
-  const ne = node.enter().append("g")
+  // Nodes
+  const node=g.selectAll(".node").data(nodes,d=>d.id||(d.id=++nodeId));
+  const ne=node.enter().append("g")
     .attr("class","node")
     .attr("transform",()=>`translate(${src.y0||0},${src.x0||0})`)
-    .attr("opacity",0)
-    .on("click", handleNodeClick);
+    .attr("opacity",0);
 
+  // Node circle
   ne.append("circle")
-    .attr("r", getR)
-    .attr("fill", d=>{
-      const c=getNodeColor(d);
-      if(d.data.type==="book") return c+"18";
-      if(d.data.type==="subject") return c+"28";
-      return c+"3a";
-    })
-    .attr("stroke", getNodeColor)
-    .attr("stroke-width", d=>d.data.type==="root"?2:1.5);
+    .attr("r",nodeR)
+    .attr("fill",d=>nodeColor(d)+(d.data.type==="book"?"18":d.data.type==="subject"?"2c":"3e"))
+    .attr("stroke",nodeColor)
+    .attr("stroke-width",d=>d.data.type==="root"?2:1.5);
 
-  // collapse dot
-  ne.append("circle").attr("class","cdot").attr("r",2).attr("fill",getNodeColor).attr("opacity",0);
+  // Collapse indicator dot
+  ne.append("circle").attr("class","cd")
+    .attr("r",2.2).attr("fill",nodeColor).attr("opacity",0);
 
+  // Label text
   ne.append("text")
     .attr("dy","0.31em")
-    .attr("font-size", d=>{
-      if(d.data.type==="root") return "12px";
-      if(d.data.type==="level") return "10px";
-      if(d.data.type==="subject") return "9px";
-      return "8.5px";
-    })
-    .attr("fill", d=>{
-      const c=getNodeColor(d);
+    .attr("font-size",d=>d.data.type==="root"?"12px":d.data.type==="level"?"10px":d.data.type==="subject"?"9px":"8.5px")
+    .attr("font-weight",d=>d.data.mem?"500":"400")
+    .attr("class",d=>d.data.mem?"mem-label":"")
+    .attr("fill",d=>{
+      if(d.data.type==="book"&&d.data.mem) return "#e8c97a";
+      const c=nodeColor(d);
       if(d.data.type==="root"||d.data.type==="level") return c;
       if(d.data.type==="subject") return c+"cc";
-      return d.data.mem?c:c+"99";
+      return c+"99";
     })
-    .attr("letter-spacing", d=>d.data.type==="level"?"0.1em":"0.03em")
-    .text(getLabel);
+    .attr("filter",d=>d.data.type==="book"&&d.data.mem?"url(#glow-gold)":null)
+    .attr("letter-spacing",d=>d.data.type==="level"?"0.1em":"0.03em")
+    .text(nodeLabel);
 
-  const merged = node.merge(ne);
-  merged.transition().duration(300)
-    .attr("transform", d=>`translate(${d.y},${d.x})`)
-    .attr("opacity", d=>{
+  // Hover effects
+  ne.on("mouseover", function(event,d){
+      if(d.data.type==="root") return;
+      d3.select(this).select("circle")
+        .transition().duration(130).ease(d3.easeQuadOut)
+        .attr("r", nodeR(d)*1.38)
+        .attr("stroke-width", d.data.type==="level"?2.5:2);
+    })
+    .on("mouseout", function(event,d){
+      d3.select(this).select("circle")
+        .transition().duration(200).ease(d3.easeQuadOut)
+        .attr("r", nodeR(d))
+        .attr("stroke-width", d.data.type==="root"?2:1.5);
+    })
+    .on("click", handleNodeClick);
+
+  // Merge & transition
+  const merged=node.merge(ne);
+  merged.transition().duration(300).ease(d3.easeCubicOut)
+    .attr("transform",d=>`translate(${d.y},${d.x})`)
+    .attr("opacity",d=>{
       if(!focusedIds) return 1;
-      return focusedIds.has(d.id)?1:0.06;
+      return focusedIds.has(d.id)?1:0.05;
     });
 
-  // update text anchor and collapse dot
   merged.select("text")
-    .attr("x", d=>{const r=getR(d);return (d.children||d._children)?-(r+5):(r+5);})
-    .attr("text-anchor", d=>(d.children||d._children)?"end":"start");
-  merged.select(".cdot")
-    .attr("opacity", d=>d._children&&d.data.type!=="book"?.7:0);
+    .attr("x",d=>{const r=nodeR(d);return (d.children||d._children)?-(r+5):(r+5);})
+    .attr("text-anchor",d=>(d.children||d._children)?"end":"start");
+
+  merged.select(".cd")
+    .attr("opacity",d=>d._children&&d.data.type!=="book"?.75:0);
 
   node.exit().transition().duration(300)
     .attr("transform",`translate(${src.y},${src.x})`)
@@ -694,60 +883,51 @@ function update(src){
 
 function handleNodeClick(event, d){
   event.stopPropagation();
-  if(d.data.type==="book"){
-    focusNode(d);
-    openPanel(d);
-    return;
-  }
-  if(d.children){d._children=d.children;d.children=null;}
-  else{d.children=d._children;d._children=null;}
-  clearFocus();
-  closePanel();
-  update(d);
+  if(d.data.type==="book"){ focusNode(d); openPanel(d.data,d); return; }
+  d.children?(d._children=d.children,d.children=null):(d.children=d._children,d._children=null);
+  clearFocus(); update(d);
 }
 
 function focusNode(d){
-  const ancestors = d.ancestors();
-  focusedIds = new Set(ancestors.map(a=>a.id));
+  const anc=d.ancestors();
+  focusedIds=new Set(anc.map(a=>a.id));
   focusedIds.add(d.id);
   update(d);
-  // breadcrumb
-  const bc = document.getElementById("breadcrumb");
-  const parts = ancestors.reverse().map((a,i)=>{
-    if(a.data.type==="root") return "Root";
-    if(a.data.type==="level") return a.data.name;
-    if(a.data.type==="subject") return a.data.name;
-    return "";
-  }).filter(Boolean);
-  parts.push(d.data.name.length>30?d.data.name.slice(0,28)+"…":d.data.name);
-  bc.innerHTML = parts.map((p,i)=>i===parts.length-1?`<span>${p}</span>`:p).join(" › ");
+  const parts=anc.reverse()
+    .map(a=>a.data.type==="root"?null:a.data.name)
+    .filter(Boolean);
+  parts.push(d.data.name.length>28?d.data.name.slice(0,26)+"…":d.data.name);
+  const bc=document.getElementById("breadcrumb");
+  bc.innerHTML=parts.map((p,i)=>i===parts.length-1?`<span>${p}</span>`:p).join(" ›&nbsp;");
   bc.classList.add("show");
 }
 
 function clearFocus(){
+  if(!focusedIds) return;
   focusedIds=null;
   document.getElementById("breadcrumb").classList.remove("show");
   g.selectAll(".node").transition().duration(300).attr("opacity",1);
-  g.selectAll(".link").transition().duration(300).attr("opacity",0.2);
+  g.selectAll(".link").transition().duration(300).attr("opacity",0.22);
 }
 
-// Panel
-function openPanel(d){
-  selectedBook=d;
-  document.getElementById("panel-title").textContent=d.data.name;
-  // path
-  const anc=d.ancestors().reverse();
-  const pathHtml=anc.map((a,i)=>{
-    if(a.data.type==="root") return "Root";
-    if(a.data.type==="level") return `<span>${a.data.name}</span>`;
-    if(a.data.type==="subject") return `<span>${a.data.name}</span>`;
-    return "";
-  }).filter(Boolean).join(" › ");
+// ════════════════════════════════════════════════════════
+// PANEL
+// ════════════════════════════════════════════════════════
+function openPanel(data, treeNode){
+  document.getElementById("panel-title").textContent=data.name;
+  let pathHtml="";
+  if(treeNode){
+    pathHtml=treeNode.ancestors().reverse()
+      .map(a=>a.data.type==="root"?null:a.data.type==="level"?`<span>${a.data.name}</span>`:a.data.type==="subject"?`<span>${a.data.name}</span>`:null)
+      .filter(Boolean).join("&nbsp;&rsaquo;&nbsp;");
+  } else if(data.levelName){
+    pathHtml=`<span>${data.levelName}</span>&nbsp;&rsaquo;&nbsp;<span>${data.subjName}</span>`;
+  }
   document.getElementById("panel-path").innerHTML=pathHtml;
-  document.getElementById("panel-mem").textContent=d.data.mem?"★ Memorize this text":"";
-  document.getElementById("btn-info").href=d.data.info||"#";
-  document.getElementById("btn-pdf").href=d.data.pdf||"#";
-  document.getElementById("btn-video").href=d.data.video||"#";
+  document.getElementById("panel-mem").textContent=data.mem?"✦ Memorize this text":"";
+  document.getElementById("btn-info").href=data.info||"#";
+  document.getElementById("btn-pdf").href=data.pdf||"#";
+  document.getElementById("btn-video").href=data.video||"#";
   document.getElementById("panel").classList.add("open");
   document.getElementById("hint").style.opacity="0";
 }
@@ -755,76 +935,81 @@ function openPanel(d){
 function closePanel(){
   document.getElementById("panel").classList.remove("open");
   document.getElementById("hint").style.opacity="1";
-  if(selectedBook){ clearFocus(); selectedBook=null; }
+  clearFocus();
 }
-
 document.addEventListener("keydown",e=>{ if(e.key==="Escape") closePanel(); });
 
-// Controls
+// ════════════════════════════════════════════════════════
+// TREE CONTROLS
+// ════════════════════════════════════════════════════════
 function resetZoom(){
-  svg.transition().duration(400).call(
-    zoom.transform, d3.zoomIdentity.translate(W*.08, H/2).scale(.9)
+  svg.transition().duration(420).ease(d3.easeCubicOut).call(
+    zoom.transform, d3.zoomIdentity.translate(W*.07,H/2).scale(.92)
   );
 }
-
 function expandAll(){
-  root.descendants().forEach(d=>{
-    if(d._children){d.children=d._children;d._children=null;}
-  });
-  clearFocus(); closePanel(); update(root);
+  root.descendants().forEach(d=>{if(d._children){d.children=d._children;d._children=null;}});
+  clearFocus(); update(root);
 }
-
 function collapseToLevels(){
-  root.descendants().forEach(d=>{
-    if(d.depth>=2&&d.children){d._children=d.children;d.children=null;}
-  });
-  clearFocus(); closePanel(); update(root);
+  root.descendants().forEach(d=>{if(d.depth>=2&&d.children){d._children=d.children;d.children=null;}});
+  clearFocus(); update(root);
 }
 
-// Initial render + zoom to fit
+// Initial render
 update(root);
-svg.call(zoom.transform, d3.zoomIdentity.translate(W*.06,H/2).scale(.95));
+svg.call(zoom.transform, d3.zoomIdentity.translate(W*.07,H/2).scale(.92));
 
-// ══════════════════════════════════════════════
+// ════════════════════════════════════════════════════════
 // VIEW TOGGLE
-// ══════════════════════════════════════════════
+// ════════════════════════════════════════════════════════
 function setView(v){
-  currentView=v;
   document.getElementById("btn-tree").classList.toggle("active",v==="tree");
   document.getElementById("btn-list").classList.toggle("active",v==="list");
-  document.getElementById("canvas").style.display=v==="tree"?"block":"none";
+  document.getElementById("canvas").style.display      = v==="tree"?"block":"none";
   document.getElementById("listview").classList.toggle("show",v==="list");
-  document.getElementById("hint").style.display=v==="tree"?"block":"none";
-  if(v==="list"&&!document.getElementById("listview").innerHTML.trim()) buildList();
+  document.getElementById("hint").style.display        = v==="tree"?"block":"none";
+  document.getElementById("controls").style.display    = v==="tree"?"flex":"none";
+  if(v==="list"&&!listBuilt) buildList();
   if(v==="tree") closePanel();
 }
 
-// ══════════════════════════════════════════════
+// ════════════════════════════════════════════════════════
 // LIST VIEW
-// ══════════════════════════════════════════════
+// ════════════════════════════════════════════════════════
 function buildList(){
+  BOOK_REG=[];
   const lv=document.getElementById("listview");
   let html="";
-  TREE.children.forEach((level,li)=>{
+  TREE.children.forEach(level=>{
     const lc=LC[level.level]||"#c9a84c";
     html+=`<div class="lv-level">
-      <div class="lv-level-hdr" style="color:${lc};border-left:2px solid ${lc}" onclick="toggleLvl(this)">
-        <span>${level.name} — ${level.subtitle||""}</span>
-        <span class="caret">›</span>
+      <div class="lv-lhdr" style="color:${lc};border-left:2px solid ${lc}30" onclick="toggleAcc(this)">
+        <span style="border-left:2px solid ${lc};padding-left:8px">${level.name} — ${level.subtitle||""}</span>
+        <span class="ct">&#x203A;</span>
       </div>
-      <div class="lv-level-body">`;
-    (level.children||[]).forEach((subj,si)=>{
+      <div class="lv-lbody">`;
+    (level.children||[]).forEach(subj=>{
+      const sc=subj.color;
       html+=`<div class="lv-subject">
-        <div class="lv-subj-hdr" style="color:${subj.color}88" onclick="toggleSubj(this)">
-          <span>${subj.name}</span>
-          <span class="caret">›</span>
+        <div class="lv-shdr" style="color:${sc}99" onclick="toggleAcc(this)">
+          <span style="flex:1">${subj.name}</span>
+          <span style="font-size:8px;color:${sc}55;margin-right:4px">${(subj.children||[]).length}</span>
+          <span class="ct">&#x203A;</span>
         </div>
-        <div class="lv-subj-body">`;
+        <div class="lv-sbody">`;
       (subj.children||[]).forEach((book,bi)=>{
-        const bdata=JSON.stringify({name:book.name,mem:book.mem,info:book.info,pdf:book.pdf,video:book.video}).replace(/"/g,"&quot;");
-        html+=`<div class="lv-book" onclick="openListPanel(${JSON.stringify(bdata).replace(/"/g,"&quot;")}, '${level.name}', '${subj.name}')">
-          <span class="lv-book-name">${book.mem?'<span style="color:#c9a84c">★</span> ':''} ${book.name}</span>
-          <span class="lv-book-arrow">›</span>
+        const idx=regBook(book,level.name,subj.name);
+        const mc=book.mem?" is-mem":"";
+        const st=book.mem?"":`style="color:${sc}bb"`;
+        html+=`<div class="lv-book">
+          <span class="lv-book-num" style="color:${sc}44">${bi+1}</span>
+          <span class="lv-book-name${mc}" ${st} onclick="openBookByIdx(${idx})">${book.name}</span>
+          <div class="lv-book-actions">
+            <a class="lv-btn" href="${book.info||'#'}" target="_blank" rel="noopener" title="Information" onclick="event.stopPropagation()">&#9432;</a>
+            <a class="lv-btn" href="${book.pdf||'#'}" target="_blank" rel="noopener" title="PDF" onclick="event.stopPropagation()">&#8659;</a>
+            <a class="lv-btn" href="${book.video||'#'}" target="_blank" rel="noopener" title="Recording" onclick="event.stopPropagation()">&#9654;</a>
+          </div>
         </div>`;
       });
       html+=`</div></div>`;
@@ -832,37 +1017,22 @@ function buildList(){
     html+=`</div></div>`;
   });
   lv.innerHTML=html;
+  listBuilt=true;
 }
 
-function toggleLvl(el){
+function toggleAcc(el){
   el.classList.toggle("open");
   el.nextElementSibling.classList.toggle("open");
 }
-function toggleSubj(el){
-  el.classList.toggle("open");
-  el.nextElementSibling.classList.toggle("open");
+function openBookByIdx(idx){
+  const data=BOOK_REG[idx];
+  if(!data) return;
+  openPanel(data,null);
 }
 
-function openListPanel(bdataStr, levelName, subjName){
-  try{
-    const data=JSON.parse(bdataStr);
-    document.getElementById("panel-title").textContent=data.name;
-    document.getElementById("panel-path").innerHTML=`<span>${levelName}</span> › <span>${subjName}</span>`;
-    document.getElementById("panel-mem").textContent=data.mem?"★ Memorize this text":"";
-    document.getElementById("btn-info").href=data.info||"#";
-    document.getElementById("btn-pdf").href=data.pdf||"#";
-    document.getElementById("btn-video").href=data.video||"#";
-    document.getElementById("panel").classList.add("open");
-  }catch(e){}
-}
-
-// Resize
 window.addEventListener("resize",()=>{
-  const nw=window.innerWidth,nh=window.innerHeight;
-  svg.attr("width",nw).attr("height",nh);
+  svg.attr("width",window.innerWidth).attr("height",window.innerHeight);
 });
-
-// Auto-detect mobile
 if(window.innerWidth<700) setView("list");
 </script>
 </body>
