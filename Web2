@@ -699,10 +699,10 @@ const glowFilter = defs.append("filter")
   .attr("x","-40%").attr("y","-80%")
   .attr("width","180%").attr("height","260%");
 glowFilter.append("feGaussianBlur")
-  .attr("in","SourceGraphic").attr("stdDeviation","2.4").attr("result","blur");
+  .attr("in","SourceGraphic").attr("stdDeviation","1.1").attr("result","blur");
 glowFilter.append("feColorMatrix")
   .attr("in","blur").attr("type","matrix")
-  .attr("values","2.2 1.2 0 0 0.05  1.4 0.9 0 0 0  0 0.2 0 0 0  0 0 0 2.2 0")
+  .attr("values","1.4 0.6 0 0 0  0.8 0.5 0 0 0  0 0.1 0 0 0  0 0 0 1.2 0")
   .attr("result","colored");
 const glowMerge = glowFilter.append("feMerge");
 glowMerge.append("feMergeNode").attr("in","colored");
