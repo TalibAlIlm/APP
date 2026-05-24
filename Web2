@@ -365,7 +365,7 @@ const TREE = {name:"Talib al-Ilm",type:"root",children:[
     b("Al-Mandhuma al-Munira fi Muhimm Ilm al-Sira",true),
   ]),
   s("Adab — Entry",SC.adab,[
-    b("Mukhtasar Ta'dhim al-Ilm",true),
+    b("Khulasa Ta'dhim al-Ilm — al-Usaymi",true),
     b("Adhkar wal-Adaab — Mutoon Series",true),
     b("Hisnul Muslim — Fortress of the Muslim",true),
   ]),
@@ -416,7 +416,7 @@ const TREE = {name:"Talib al-Ilm",type:"root",children:[
   ]),
   s("Nahw — Arabic Grammar",SC.nahw,[
     b("Mutammima al-Ajurrumiyya"),
-    b("Nuzhat al-Huloom — Ibn Hisham"),
+    b("Nuzhat al-Huloom fi Nadhm al-Ajurrumiyya"),
   ]),
   s("Hadith",SC.hadith,[
     b("Umdat al-Ahkam — al-Maqdisi",true),
@@ -476,7 +476,6 @@ const TREE = {name:"Talib al-Ilm",type:"root",children:[
   ]),
   s("Hadith",SC.hadith,[
     b("Bulugh al-Maram — Ibn Hajar al-Asqalani",true),
-    b("Saba'ik al-Bukhari — 500 Hadiths"),
   ]),
   s("Mustalah al-Hadith",SC.mustalah,[
     b("Nukhbat al-Fikar — Ibn Hajar al-Asqalani"),
@@ -489,9 +488,6 @@ const TREE = {name:"Talib al-Ilm",type:"root",children:[
   ]),
   s("Fiqh — Shafi'i",SC.fiqh,[
     b("Al-Yaqut al-Nafis — al-Hadrami"),
-  ]),
-  s("Fiqh — Maliki",SC.fiqh,[
-    b("Al-Umdah — Maliki Mukhtasar"),
   ]),
   s("Fiqh — No Madhab",SC.fiqh,[
     b("Al-Durar al-Bahiyya — al-Shawkani",true),
@@ -521,10 +517,10 @@ const TREE = {name:"Talib al-Ilm",type:"root",children:[
   s("Adab / Tazkiyya",SC.adab,[
     b("Mandhuma Asbab Hayat al-Qulub — Ibn Atiq"),
     b("Mutahharat al-Qulub — al-Sanusi"),
-    b("Kitab al-Adhkar — Ibn Taymiyya"),
+    b("Al-Kalim al-Tayyib — Ibn Taymiyya"),
   ]),
   s("Seerah",SC.seerah,[
-    b("Rawdat al-Anwar fi Sirati al-Nabi al-Mukhtar"),
+    b("Rawdat al-Anwar fi Sirati al-Nabi al-Mukhtar — al-Mubarakfuri"),
     b("Al-Fusool fi Seerat al-Rasool — Ibn Kathir"),
   ]),
   s("Arabic Literature",SC.lit,[
@@ -607,7 +603,7 @@ const TREE = {name:"Talib al-Ilm",type:"root",children:[
   s("Aqeedah — Encyclopedic",SC.aqeedah,[
     b("A'lam al-Sunna al-Mansura — al-Hakami"),
     b("Arwa al-Iman wa Dhura al-Jinan"),
-    b("Al-Qasida al-Nuniyya — Ibn al-Qayyim"),
+    b("Al-Qasida al-Nuniyya — al-Qahtani al-Andalusi"),
     b("Al-Kafiya al-Shafiya — Ibn al-Qayyim"),
     b("Al-Safariniyya — al-Saffarini"),
   ]),
