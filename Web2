@@ -5,299 +5,256 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Talib al-ʿIlm — Islamic Studies Roadmap</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=IBM+Plex+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=IBM+Plex+Mono:wght@300;400;500&family=Noto+Naskh+Arabic:wght@400;700&display=swap" rel="stylesheet">
 <style>
-/* ── RESET & BASE ────────────────────────────────────── */
+/* ── RESET & SEPIA THEME ─────────────────────────────── */
 *{margin:0;padding:0;box-sizing:border-box}
 :root{
-  --bg:#06050d;--bg2:#0d0b18;--bg3:#13111f;
+  --bg:#0c0904;--bg2:#130f08;--bg3:#1c1510;
   --gold:#c9a84c;--gold2:#e8c97a;--gold3:#f5e2a8;
-  --muted:#3d3858;--border:#1c1930;--text:#cec8e8;
-  --panel-w:292px;
+  --muted:#6b5a3e;--border:#2c1e10;--text:#e8d5b7;
+  --panel-w:294px;
 }
-
-body{
-  background:var(--bg);
-  font-family:'IBM Plex Mono',monospace;
-  overflow:hidden;width:100vw;height:100vh;color:var(--text);
-}
-
-/* Atmospheric depth */
-body::before{
-  content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+body{background:var(--bg);font-family:'IBM Plex Mono',monospace;overflow:hidden;width:100vw;height:100vh;color:var(--text)}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
   background:
-    radial-gradient(ellipse 55% 45% at 15% 25%,rgba(201,168,76,.04) 0%,transparent 65%),
-    radial-gradient(ellipse 45% 55% at 85% 75%,rgba(120,80,200,.04) 0%,transparent 60%),
-    radial-gradient(ellipse 30% 30% at 50% 50%,rgba(201,168,76,.02) 0%,transparent 70%);
+    radial-gradient(ellipse 55% 45% at 12% 20%,rgba(201,168,76,.055) 0%,transparent 65%),
+    radial-gradient(ellipse 40% 50% at 88% 80%,rgba(160,100,30,.04) 0%,transparent 60%),
+    radial-gradient(ellipse 28% 28% at 50% 50%,rgba(201,168,76,.025) 0%,transparent 70%);}
+
+/* ── BISMILLAH SPLASH ────────────────────────────────── */
+#splash{
+  position:fixed;inset:0;z-index:9999;
+  background:#0c0904;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:18px;cursor:pointer;
+  animation:splashOut 0.7s ease 2.6s forwards;
 }
+@keyframes splashOut{to{opacity:0;pointer-events:none}}
+.splash-ornament{
+  color:var(--gold);opacity:0;font-size:13px;letter-spacing:.4em;
+  animation:splashIn .8s ease .2s forwards;
+}
+.splash-arabic{
+  font-family:'Noto Naskh Arabic',serif;font-size:clamp(26px,5vw,46px);
+  color:var(--gold2);opacity:0;text-align:center;line-height:1.5;
+  text-shadow:0 0 40px rgba(232,201,122,.5),0 0 80px rgba(201,168,76,.25);
+  animation:splashIn .9s ease .5s forwards;
+}
+.splash-english{
+  font-family:'Cinzel',serif;font-size:11px;letter-spacing:.22em;
+  text-transform:uppercase;color:var(--muted);opacity:0;
+  animation:splashIn .7s ease 1s forwards;
+}
+.splash-line{width:120px;height:1px;background:linear-gradient(to right,transparent,var(--gold),transparent);opacity:0;animation:splashIn .6s ease 1.3s forwards}
+.splash-skip{font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);opacity:0;animation:splashIn .5s ease 1.8s forwards}
+@keyframes splashIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
 
 /* ── HEADER ──────────────────────────────────────────── */
 #header{
-  position:fixed;top:0;left:0;right:0;height:46px;
-  background:rgba(6,5,13,.96);
-  border-bottom:1px solid var(--border);
-  box-shadow:0 1px 24px rgba(0,0,0,.5);
-  display:flex;align-items:center;padding:0 14px;gap:12px;
-  z-index:200;backdrop-filter:blur(14px);
+  position:fixed;top:0;left:0;right:0;height:46px;z-index:200;
+  background:rgba(12,9,4,.97);border-bottom:1px solid var(--border);
+  box-shadow:0 1px 20px rgba(0,0,0,.6);backdrop-filter:blur(14px);
+  display:flex;align-items:center;padding:0 12px;gap:10px;
 }
-#header h1{
-  font-family:'Cinzel',serif;font-size:11px;
-  letter-spacing:.2em;color:var(--gold);
-  white-space:nowrap;text-transform:uppercase;
-  text-shadow:0 0 20px rgba(201,168,76,.35);
-}
+#header h1{font-family:'Cinzel',serif;font-size:11px;letter-spacing:.2em;color:var(--gold);
+  white-space:nowrap;text-transform:uppercase;text-shadow:0 0 16px rgba(201,168,76,.3)}
 .hsep{width:1px;height:18px;background:var(--border);flex-shrink:0}
-.legend{display:flex;align-items:center;gap:9px;overflow:hidden}
-.li{display:flex;align-items:center;gap:4px;font-size:8.5px;letter-spacing:.04em;color:var(--muted);white-space:nowrap}
-.ld{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+
+/* Filter chips (legend) */
+.legend{display:flex;align-items:center;gap:6px;flex-wrap:nowrap;overflow:hidden}
+.chip{
+  display:flex;align-items:center;gap:3px;
+  font-size:8px;letter-spacing:.04em;color:var(--muted);white-space:nowrap;
+  padding:2px 6px;border-radius:2px;border:1px solid transparent;
+  cursor:pointer;transition:all .18s ease;user-select:none;
+}
+.chip:hover{border-color:rgba(255,255,255,.1);color:var(--text)}
+.chip.active{color:#0c0904;border-color:transparent}
+.chip .ld{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+
+/* Header buttons */
 .hbtn{margin-left:auto;display:flex;gap:5px;flex-shrink:0}
 .hbtn button{
-  background:transparent;border:1px solid var(--border);
-  color:var(--muted);font-family:'IBM Plex Mono',monospace;
-  font-size:9px;letter-spacing:.08em;padding:4px 9px;
-  cursor:pointer;text-transform:uppercase;
-  transition:all .2s ease;white-space:nowrap;
+  background:transparent;border:1px solid var(--border);color:var(--muted);
+  font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.08em;
+  padding:4px 8px;cursor:pointer;text-transform:uppercase;
+  transition:all .18s ease;white-space:nowrap;
 }
 .hbtn button:hover{border-color:var(--gold);color:var(--gold);background:rgba(201,168,76,.07)}
-.hbtn button.active{border-color:var(--gold);color:var(--gold);background:rgba(201,168,76,.1);
-  box-shadow:0 0 10px rgba(201,168,76,.15)}
+.hbtn button.active{border-color:var(--gold);color:var(--gold);background:rgba(201,168,76,.1)}
+#btn-search{font-size:12px;padding:3px 8px}
+
+/* ── SEARCH ──────────────────────────────────────────── */
+#search-wrap{
+  position:fixed;top:56px;left:50%;transform:translateX(-50%);
+  z-index:500;width:420px;max-width:90vw;
+  opacity:0;pointer-events:none;transition:opacity .22s ease;
+}
+#search-wrap.open{opacity:1;pointer-events:all}
+#search-input{
+  width:100%;padding:10px 14px;
+  background:rgba(19,15,8,.98);border:1px solid var(--gold);
+  color:var(--text);font-family:'IBM Plex Mono',monospace;font-size:11px;
+  outline:none;box-shadow:0 4px 24px rgba(0,0,0,.6);
+}
+#search-input::placeholder{color:var(--muted)}
+#search-results{
+  background:rgba(19,15,8,.98);border:1px solid var(--border);border-top:none;
+  max-height:280px;overflow-y:auto;
+}
+#search-results::-webkit-scrollbar{width:3px}
+#search-results::-webkit-scrollbar-thumb{background:var(--border)}
+.sr-item{
+  padding:8px 14px;cursor:pointer;border-bottom:1px solid var(--border);
+  transition:background .14s;
+}
+.sr-item:hover{background:rgba(201,168,76,.07)}
+.sr-name{font-size:10px;color:var(--text);line-height:1.3}
+.sr-name.mem{color:var(--gold2)}
+.sr-path{font-size:8px;color:var(--muted);margin-top:2px;letter-spacing:.05em}
+.sr-none{padding:12px 14px;font-size:10px;color:var(--muted);text-align:center}
+
+/* ── BREADCRUMB ──────────────────────────────────────── */
+#breadcrumb{
+  position:fixed;top:58px;left:16px;z-index:150;pointer-events:none;
+  font-size:9px;letter-spacing:.1em;color:var(--muted);text-transform:uppercase;
+  opacity:0;transition:opacity .35s;max-width:55vw;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+#breadcrumb.show{opacity:1}
+#breadcrumb span{color:var(--gold2)}
 
 /* ── CANVAS ──────────────────────────────────────────── */
 #canvas{width:100%;height:100%;cursor:grab;display:block;position:relative;z-index:1}
 #canvas:active{cursor:grabbing}
 
-/* ── BREADCRUMB ──────────────────────────────────────── */
-#breadcrumb{
-  position:fixed;top:58px;left:16px;
-  font-size:9px;letter-spacing:.1em;color:var(--muted);
-  z-index:150;pointer-events:none;text-transform:uppercase;
-  opacity:0;transition:opacity .4s ease;
-  max-width:55vw;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
-}
-#breadcrumb.show{opacity:1}
-#breadcrumb span{color:var(--gold2);text-shadow:0 0 8px rgba(232,201,122,.4)}
-
 /* ── PANEL ───────────────────────────────────────────── */
 #panel{
   position:fixed;right:calc(-1 * var(--panel-w));top:46px;bottom:0;
-  width:var(--panel-w);
-  background:rgba(13,11,24,.97);
-  border-left:1px solid var(--border);
-  box-shadow:-8px 0 32px rgba(0,0,0,.5);
+  width:var(--panel-w);background:rgba(19,15,8,.97);
+  border-left:1px solid var(--border);box-shadow:-6px 0 28px rgba(0,0,0,.55);
   z-index:300;display:flex;flex-direction:column;
-  transition:right .32s cubic-bezier(.34,1.26,.64,1);
-  overflow-y:auto;backdrop-filter:blur(20px);
+  transition:right .3s cubic-bezier(.34,1.2,.64,1);
+  overflow-y:auto;backdrop-filter:blur(18px);
 }
 #panel.open{right:0}
 #panel::-webkit-scrollbar{width:2px}
 #panel::-webkit-scrollbar-thumb{background:var(--border)}
-
 #panel-close{
-  position:sticky;top:0;right:0;
-  align-self:flex-end;margin:10px 10px -4px auto;
-  background:none;border:none;color:var(--muted);
-  font-size:15px;cursor:pointer;line-height:1;
-  transition:color .2s;z-index:1;
+  position:sticky;top:0;align-self:flex-end;margin:10px 10px -4px auto;
+  background:none;border:none;color:var(--muted);font-size:15px;
+  cursor:pointer;transition:color .18s;z-index:1;line-height:1;
 }
-#panel-close:hover{color:var(--gold);text-shadow:0 0 8px rgba(201,168,76,.5)}
-
-#panel-path{
-  padding:12px 14px 0;
-  font-size:9px;letter-spacing:.1em;color:var(--muted);
-  text-transform:uppercase;line-height:1.9;
-}
+#panel-close:hover{color:var(--gold)}
+#panel-path{padding:12px 14px 0;font-size:9px;letter-spacing:.1em;color:var(--muted);text-transform:uppercase;line-height:1.9}
 #panel-path span{color:var(--gold2)}
-#panel-title{
-  padding:10px 14px 12px;
-  font-family:'Cinzel',serif;font-size:12px;
-  color:var(--gold2);line-height:1.45;
-  border-bottom:1px solid var(--border);
-  border-top:1px solid var(--border);
-  margin-top:8px;
-  text-shadow:0 0 16px rgba(232,201,122,.2);
-}
-#panel-mem{
-  padding:10px 14px 2px;
-  font-size:9px;letter-spacing:.12em;
-  color:#e8c97a;min-height:28px;
-  text-shadow:0 0 10px rgba(232,201,122,.6);
-}
+#panel-title{padding:10px 14px 12px;font-family:'Cinzel',serif;font-size:12px;color:var(--gold2);line-height:1.45;border:1px solid var(--border);border-left:none;border-right:none;margin-top:8px;text-shadow:0 0 14px rgba(232,201,122,.18)}
+#panel-mem{padding:10px 14px 2px;font-size:9px;letter-spacing:.12em;color:var(--gold2);min-height:28px;text-shadow:0 0 8px rgba(232,201,122,.5)}
 #panel-btns{padding:12px 14px 16px;display:flex;flex-direction:column;gap:7px}
 .pbtn{
-  display:flex;align-items:center;gap:10px;
-  padding:10px 13px;
-  border:1px solid var(--border);
-  background:transparent;color:var(--text);
-  font-family:'IBM Plex Mono',monospace;
-  font-size:10px;letter-spacing:.06em;
-  cursor:pointer;text-align:left;
-  transition:all .22s ease;
+  display:flex;align-items:center;gap:10px;padding:10px 13px;
+  border:1px solid var(--border);background:transparent;color:var(--text);
+  font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.06em;
+  cursor:pointer;text-align:left;transition:all .2s ease;
   text-decoration:none;width:100%;
 }
-.pbtn:hover{
-  border-color:var(--gold);color:var(--gold2);
-  background:rgba(201,168,76,.06);
-  box-shadow:0 0 16px rgba(201,168,76,.12),inset 0 0 8px rgba(201,168,76,.03);
-  transform:translateX(2px);
-}
+.pbtn:hover{border-color:var(--gold);color:var(--gold2);background:rgba(201,168,76,.06);
+  box-shadow:0 0 14px rgba(201,168,76,.1);transform:translateX(2px)}
 .pbtn .icon{font-size:13px;width:18px;text-align:center;flex-shrink:0;opacity:.8}
-#panel-note{
-  padding:12px 14px 18px;
-  font-size:9px;color:var(--muted);line-height:1.7;
-  border-top:1px solid var(--border);
-  margin-top:auto;
-}
+#panel-note{padding:12px 14px 18px;font-size:9px;color:var(--muted);line-height:1.7;border-top:1px solid var(--border);margin-top:auto}
 
-/* ── ZOOM CONTROLS ───────────────────────────────────── */
+/* ── CONTROLS ────────────────────────────────────────── */
 #controls{position:fixed;bottom:14px;right:14px;display:flex;gap:4px;z-index:150}
 .cbtn{
-  width:28px;height:28px;
-  background:rgba(13,11,24,.9);
-  border:1px solid var(--border);
-  color:var(--muted);font-size:14px;cursor:pointer;
-  display:flex;align-items:center;justify-content:center;
-  transition:all .2s;backdrop-filter:blur(8px);
+  width:28px;height:28px;background:rgba(19,15,8,.9);
+  border:1px solid var(--border);color:var(--muted);
+  font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;
+  transition:all .18s;backdrop-filter:blur(8px);
 }
-.cbtn:hover{border-color:var(--gold);color:var(--gold);box-shadow:0 0 10px rgba(201,168,76,.2)}
+.cbtn:hover{border-color:var(--gold);color:var(--gold);box-shadow:0 0 8px rgba(201,168,76,.2)}
 
 #hint{
   position:fixed;bottom:14px;left:50%;transform:translateX(-50%);
-  font-size:9px;letter-spacing:.08em;color:#221f30;
-  pointer-events:none;text-transform:uppercase;white-space:nowrap;
-  transition:opacity .4s;
+  font-size:9px;letter-spacing:.08em;color:#2e2010;
+  pointer-events:none;text-transform:uppercase;white-space:nowrap;transition:opacity .4s;
+}
+
+/* ── MINIMAP ─────────────────────────────────────────── */
+#minimap{
+  position:fixed;bottom:50px;left:14px;z-index:150;
+  background:rgba(12,9,4,.9);border:1px solid var(--border);
+  backdrop-filter:blur(8px);cursor:crosshair;
+  box-shadow:0 2px 12px rgba(0,0,0,.4);
+}
+#minimap canvas{display:block}
+#mm-label{
+  font-family:'Cinzel',serif;font-size:7px;letter-spacing:.15em;
+  color:var(--muted);text-transform:uppercase;text-align:center;
+  padding:3px 0 2px;border-bottom:1px solid var(--border);
 }
 
 /* ── LIST VIEW ───────────────────────────────────────── */
-#listview{
-  position:fixed;top:46px;left:0;right:0;bottom:0;
-  overflow-y:auto;background:var(--bg);
-  display:none;z-index:50;
-}
+#listview{position:fixed;top:46px;left:0;right:0;bottom:0;overflow-y:auto;background:var(--bg);display:none;z-index:50}
 #listview.show{display:block}
 #listview::-webkit-scrollbar{width:3px}
-#listview::-webkit-scrollbar-thumb{background:#1c1930}
-
+#listview::-webkit-scrollbar-thumb{background:var(--border)}
 .lv-level{border-bottom:1px solid var(--border)}
-
-.lv-lhdr{
-  padding:13px 14px;
-  font-family:'Cinzel',serif;font-size:10.5px;
-  letter-spacing:.14em;text-transform:uppercase;
-  cursor:pointer;display:flex;align-items:center;
-  justify-content:space-between;user-select:none;gap:10px;
-  transition:background .2s;
-}
-.lv-lhdr:hover{background:rgba(255,255,255,.025)}
-.lv-lhdr .ct{font-size:10px;transition:transform .28s cubic-bezier(.4,0,.2,1);color:var(--muted);flex-shrink:0}
+.lv-lhdr{padding:13px 14px;font-family:'Cinzel',serif;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;cursor:pointer;display:flex;align-items:center;justify-content:space-between;user-select:none;transition:background .18s}
+.lv-lhdr:hover{background:rgba(255,255,255,.018)}
+.lv-lhdr .ct{font-size:10px;transition:transform .26s cubic-bezier(.4,0,.2,1);color:var(--muted);flex-shrink:0}
 .lv-lhdr.open .ct{transform:rotate(90deg)}
-
-.lv-lbody{max-height:0;overflow:hidden;transition:max-height .38s cubic-bezier(.4,0,.2,1)}
+.lv-lbody{max-height:0;overflow:hidden;transition:max-height .36s cubic-bezier(.4,0,.2,1)}
 .lv-lbody.open{max-height:20000px}
-
-.lv-subject{border-top:1px solid rgba(255,255,255,.035)}
-.lv-shdr{
-  padding:9px 22px;font-size:9px;letter-spacing:.12em;
-  text-transform:uppercase;cursor:pointer;
-  display:flex;align-items:center;gap:8px;
-  user-select:none;transition:background .15s;
-}
-.lv-shdr:hover{background:rgba(255,255,255,.018)}
+.lv-subject{border-top:1px solid rgba(255,255,255,.032)}
+.lv-shdr{padding:8px 22px;font-size:9px;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;display:flex;align-items:center;gap:8px;user-select:none;transition:background .14s}
+.lv-shdr:hover{background:rgba(255,255,255,.016)}
+.lv-shdr .ct{transition:transform .2s cubic-bezier(.4,0,.2,1);color:var(--muted);margin-left:auto;flex-shrink:0}
 .lv-shdr.open .ct{transform:rotate(90deg)}
-.lv-shdr .ct{transition:transform .22s cubic-bezier(.4,0,.2,1);color:var(--muted);margin-left:auto;flex-shrink:0}
-
-.lv-sbody{max-height:0;overflow:hidden;transition:max-height .32s cubic-bezier(.4,0,.2,1);padding:0 28px}
+.lv-sbody{max-height:0;overflow:hidden;transition:max-height .28s cubic-bezier(.4,0,.2,1);padding:0 28px}
 .lv-sbody.open{max-height:5000px;padding-bottom:10px}
-
-.lv-book{
-  display:flex;align-items:center;
-  padding:5px 0;
-  border-bottom:1px solid rgba(255,255,255,.022);
-  gap:7px;min-height:30px;
-}
+.lv-book{display:flex;align-items:center;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.02);gap:6px;min-height:29px}
 .lv-book-num{font-size:8px;color:var(--muted);width:14px;flex-shrink:0;text-align:right}
-
-/* Regular book name */
-.lv-book-name{
-  font-size:9.5px;opacity:.72;flex:1;line-height:1.35;
-  cursor:pointer;transition:opacity .15s ease;
-}
+.lv-book-name{font-size:9.5px;opacity:.72;flex:1;line-height:1.35;cursor:pointer;transition:opacity .14s}
 .lv-book-name:hover{opacity:1}
-
-/* Memorise: golden glow instead of a box */
-.lv-book-name.is-mem{
-  color:var(--gold2);opacity:1;
-  text-shadow:0 0 8px rgba(232,201,122,.55),0 0 20px rgba(201,168,76,.28);
-  animation:mem-pulse 3.2s ease-in-out infinite;
-}
-@keyframes mem-pulse{
-  0%,100%{text-shadow:0 0 6px rgba(232,201,122,.45),0 0 16px rgba(201,168,76,.2)}
-  50%{text-shadow:0 0 12px rgba(232,201,122,.75),0 0 28px rgba(201,168,76,.4)}
-}
-
+.lv-book-name.is-mem{color:var(--gold2);opacity:1;text-shadow:0 0 8px rgba(232,201,122,.45),0 0 18px rgba(201,168,76,.22);animation:mem-pulse 3.2s ease-in-out infinite}
+@keyframes mem-pulse{0%,100%{text-shadow:0 0 6px rgba(232,201,122,.4),0 0 14px rgba(201,168,76,.18)}50%{text-shadow:0 0 11px rgba(232,201,122,.7),0 0 26px rgba(201,168,76,.38)}}
 .lv-book-actions{display:flex;gap:3px;flex-shrink:0}
-.lv-btn{
-  width:20px;height:20px;background:transparent;
-  border:1px solid var(--border);color:var(--muted);
-  font-size:9px;cursor:pointer;
-  display:flex;align-items:center;justify-content:center;
-  text-decoration:none;transition:all .18s ease;line-height:1;
-}
-.lv-btn:hover{
-  border-color:var(--gold);color:var(--gold);
-  background:rgba(201,168,76,.08);
-  box-shadow:0 0 8px rgba(201,168,76,.2);
-}
-
-/* ── D3 SVG STYLES ───────────────────────────────────── */
-.link{fill:none;stroke-width:.8px}
-.node{cursor:pointer}
-.node circle{stroke-width:1.5px;transition:r .15s ease}
-
-/* Memorise label — golden glow via SVG filter */
-.mem-label{font-weight:500}
-
-@media(max-width:680px){
-  .legend{display:none}
-  #header h1{font-size:9px;letter-spacing:.1em}
-  .hbtn button{font-size:8px;padding:3px 6px}
-}
-
-/* Entrance animation */
-@keyframes fadeInUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
-#header{animation:fadeInUp .5s ease both}
-#hint{animation:fadeInUp .8s .3s ease both}
+.lv-btn{width:20px;height:20px;background:transparent;border:1px solid var(--border);color:var(--muted);font-size:9px;cursor:pointer;display:flex;align-items:center;justify-content:center;text-decoration:none;transition:all .15s;line-height:1}
+.lv-btn:hover{border-color:var(--gold);color:var(--gold);background:rgba(201,168,76,.08)}
+@media(max-width:680px){.legend{display:none}#header h1{font-size:9px}.hbtn button{font-size:8px;padding:3px 5px}}
 </style>
 </head>
 <body>
+
+<!-- ── BISMILLAH SPLASH ─────────────────────────────── -->
+<div id="splash" onclick="dismissSplash()">
+  <div class="splash-ornament">&#10022; &nbsp; &#10022; &nbsp; &#10022;</div>
+  <div class="splash-arabic">&#xFDFD;</div>
+  <div class="splash-line"></div>
+  <div class="splash-english">In the name of Allah, the Most Gracious, the Most Merciful</div>
+  <div class="splash-skip">Tap anywhere to continue</div>
+</div>
 
 <!-- ── HEADER ─────────────────────────────────────────── -->
 <div id="header">
   <h1>Talib al-&#x02BF;Ilm</h1>
   <div class="hsep"></div>
-  <div class="legend">
-    <div class="li"><div class="ld" style="background:#a8d5e2"></div>Poems</div>
-    <div class="li"><div class="ld" style="background:#ef9a9a"></div>Aqeedah</div>
-    <div class="li"><div class="ld" style="background:#80cbc4"></div>Fiqh</div>
-    <div class="li"><div class="ld" style="background:#ffcc80"></div>Hadith</div>
-    <div class="li"><div class="ld" style="background:#a5d6a7"></div>Nahw</div>
-    <div class="li"><div class="ld" style="background:#80deea"></div>Tajweed</div>
-    <div class="li"><div class="ld" style="background:#ce93d8"></div>Usool</div>
-    <div class="li"><div class="ld" style="background:#fff59d"></div>Tafsir</div>
-    <div class="li"><div class="ld" style="background:#c5e1a5"></div>Fara&#x02BE;id</div>
-    <div class="li"><div class="ld" style="background:#ffe082"></div>Balagha</div>
-    <div class="li"><div class="ld" style="background:#bcaaa4"></div>Adab</div>
-    <div class="li"><div class="ld" style="background:#f48fb1"></div>Seerah</div>
-    <div class="li"><div class="ld" style="background:#b39ddb"></div>Mustalah</div>
-    <div class="li"><div class="ld" style="background:#b2dfdb"></div>Qawa&#x02BF;id</div>
-    <div class="li"><div class="ld" style="background:#e6ee9c"></div>Literature</div>
-  </div>
+  <div class="legend" id="legend-chips"></div>
   <div class="hbtn">
+    <button id="btn-search" title="Search (Ctrl+F)" onclick="toggleSearch()">&#x2315;</button>
     <button id="btn-tree" class="active" onclick="setView('tree')">Tree</button>
     <button id="btn-list" onclick="setView('list')">List</button>
     <button onclick="expandAll()">Expand</button>
     <button onclick="collapseToLevels()">Collapse</button>
     <button onclick="resetZoom()">Reset</button>
+    <button onclick="exportPDF()">PDF</button>
   </div>
+</div>
+
+<!-- ── SEARCH ─────────────────────────────────────────── -->
+<div id="search-wrap">
+  <input id="search-input" type="text" placeholder="Search texts…" oninput="onSearch(this.value)" onkeydown="onSearchKey(event)">
+  <div id="search-results"></div>
 </div>
 
 <div id="breadcrumb"></div>
@@ -310,54 +267,42 @@ body::before{
   <div id="panel-title"></div>
   <div id="panel-mem"></div>
   <div id="panel-btns">
-    <a class="pbtn" id="btn-info" href="#" target="_blank" rel="noopener">
-      <span class="icon">&#9432;</span>Information
-    </a>
-    <a class="pbtn" id="btn-pdf" href="#" target="_blank" rel="noopener">
-      <span class="icon">&#128196;</span>PDF
-    </a>
-    <a class="pbtn" id="btn-video" href="#" target="_blank" rel="noopener">
-      <span class="icon">&#9654;</span>Recording
-    </a>
+    <a class="pbtn" id="btn-info"  href="#" target="_blank" rel="noopener"><span class="icon">&#9432;</span>Information</a>
+    <a class="pbtn" id="btn-pdf"   href="#" target="_blank" rel="noopener"><span class="icon">&#128196;</span>PDF</a>
+    <a class="pbtn" id="btn-video" href="#" target="_blank" rel="noopener"><span class="icon">&#9654;</span>Recording</a>
   </div>
-  <div id="panel-note">Links will be added for each text.<br>Press Esc or click the background to close.</div>
+  <div id="panel-note">Links will be added for each text.<br>Press Esc or click background to close.</div>
 </div>
 
 <div id="listview"></div>
 
+<!-- ── MINIMAP ─────────────────────────────────────────── -->
+<div id="minimap">
+  <div id="mm-label">Map</div>
+  <canvas id="mm-canvas" width="180" height="96"></canvas>
+</div>
+
+<!-- ── CONTROLS ─────────────────────────────────────────── -->
 <div id="controls">
-  <button class="cbtn" id="zoom-in" title="Zoom in">+</button>
-  <button class="cbtn" id="zoom-out" title="Zoom out">&#8722;</button>
+  <button class="cbtn" id="zoom-in">+</button>
+  <button class="cbtn" id="zoom-out">&#8722;</button>
 </div>
 <div id="hint">Click level/subject to expand &nbsp;&bull;&nbsp; Click book for details &nbsp;&bull;&nbsp; Drag &amp; scroll to navigate</div>
 
-<!-- ── SCRIPT ─────────────────────────────────────────── -->
 <script>
 // ════════════════════════════════════════════════════════
-// COLOUR MAPS
+// COLOURS
 // ════════════════════════════════════════════════════════
-const SC = {
-  poems:"#a8d5e2", aqeedah:"#ef9a9a", fiqh:"#80cbc4",
-  hadith:"#ffcc80", nahw:"#a5d6a7", tajweed:"#80deea",
-  usool:"#ce93d8", tafsir:"#fff59d", faraid:"#c5e1a5",
-  balagha:"#ffe082", adab:"#bcaaa4", seerah:"#f48fb1",
-  mustalah:"#b39ddb", qawaid:"#b2dfdb", lit:"#e6ee9c",
-  sarf:"#a5d6a7", illal:"#b39ddb", history:"#ffab91", poetry:"#ffe082"
-};
-const LC = {0:"#e0c97a",1:"#4caf50",2:"#42a5f5",3:"#ce93d8",4:"#ff8a65",5:"#c9a84c"};
+const SC={poems:"#a8d5e2",aqeedah:"#ef9a9a",fiqh:"#80cbc4",hadith:"#ffcc80",nahw:"#a5d6a7",tajweed:"#80deea",usool:"#ce93d8",tafsir:"#fff59d",faraid:"#c5e1a5",balagha:"#ffe082",adab:"#bcaaa4",seerah:"#f48fb1",mustalah:"#b39ddb",qawaid:"#b2dfdb",lit:"#e6ee9c",sarf:"#a5d6a7",illal:"#b39ddb",history:"#ffab91",poetry:"#ffe082"};
+const LC={0:"#e0c97a",1:"#4caf50",2:"#42a5f5",3:"#ce93d8",4:"#ff8a65",5:"#c9a84c"};
 
 // ════════════════════════════════════════════════════════
-// DATA HELPERS
+// DATA
 // ════════════════════════════════════════════════════════
-const b = (n,m=false,i="#",p="#",v="#")=>({name:n,mem:m,type:"book",info:i,pdf:p,video:v});
-const s = (n,c,ch)=>({name:n,color:c,type:"subject",children:ch});
+const b=(n,m=false,i="#",p="#",v="#")=>({name:n,mem:m,type:"book",info:i,pdf:p,video:v});
+const s=(n,c,ch)=>({name:n,color:c,type:"subject",children:ch});
 
-// ════════════════════════════════════════════════════════
-// TREE DATA — top = first to study, bottom = next
-// ════════════════════════════════════════════════════════
-const TREE = {name:"Talib al-Ilm",type:"root",children:[
-
-// ─ ENTRY LEVEL ──────────────────────────────────────────
+const TREE={name:"Talib al-Ilm",type:"root",children:[
 {name:"Entry Level",subtitle:"First Steps",level:0,type:"level",children:[
   s("Short Poems — Amir Bahjat",SC.poems,[
     b("Mandhuma al-Tawhid wal-Iman",true),
@@ -370,8 +315,6 @@ const TREE = {name:"Talib al-Ilm",type:"root",children:[
     b("Hisnul Muslim — Fortress of the Muslim",true),
   ]),
 ]},
-
-// ─ LEVEL I ──────────────────────────────────────────────
 {name:"Level I",subtitle:"Foundation",level:1,type:"level",children:[
   s("Aqeedah",SC.aqeedah,[
     b("Al-Usul al-Thalatha — The Three Fundamentals"),
@@ -382,32 +325,18 @@ const TREE = {name:"Talib al-Ilm",type:"root",children:[
     b("Al-Nadhm al-Bayin fi al-Fiqh al-Mutayin"),
     b("Shurut al-Salah — Conditions, Pillars & Obligations"),
   ]),
-  s("Hadith",SC.hadith,[
-    b("Al-Arba'un al-Nawawiyya",true),
-  ]),
+  s("Hadith",SC.hadith,[b("Al-Arba'un al-Nawawiyya",true)]),
   s("Nahw — Arabic Grammar",SC.nahw,[
     b("Madinah Arabic Books (1–3)"),
     b("Al-Nahw al-Wadih"),
     b("Al-Ajurrumiyya"),
   ]),
-  s("Tajweed",SC.tajweed,[
-    b("Tuhfat al-Atfal"),
-  ]),
-  s("Usool al-Fiqh",SC.usool,[
-    b("Al-Waraqat — al-Juwayni"),
-  ]),
-  s("Usool al-Tafsir",SC.tafsir,[
-    b("Muqaddima fi Usool al-Tafsir — Ibn Taymiyya (Summary)"),
-  ]),
-  s("Fara'id — Inheritance",SC.faraid,[
-    b("Al-Rahabiyya",true),
-  ]),
-  s("Adab",SC.adab,[
-    b("Hilyat Talib al-Ilm — Bakr Abu Zayd"),
-  ]),
+  s("Tajweed",SC.tajweed,[b("Tuhfat al-Atfal")]),
+  s("Usool al-Fiqh",SC.usool,[b("Al-Waraqat — al-Juwayni")]),
+  s("Usool al-Tafsir",SC.tafsir,[b("Muqaddima fi Usool al-Tafsir — Ibn Taymiyya (Summary)")]),
+  s("Fara'id — Inheritance",SC.faraid,[b("Al-Rahabiyya",true)]),
+  s("Adab",SC.adab,[b("Hilyat Talib al-Ilm — Bakr Abu Zayd")]),
 ]},
-
-// ─ LEVEL II ─────────────────────────────────────────────
 {name:"Level II",subtitle:"Elementary",level:2,type:"level",children:[
   s("Aqeedah",SC.aqeedah,[
     b("Luma al-I'tiqad — Ibn Qudama"),
@@ -418,48 +347,26 @@ const TREE = {name:"Talib al-Ilm",type:"root",children:[
     b("Mutammima al-Ajurrumiyya"),
     b("Nuzhat al-Huloom fi Nadhm al-Ajurrumiyya"),
   ]),
-  s("Hadith",SC.hadith,[
-    b("Umdat al-Ahkam — al-Maqdisi",true),
-  ]),
-  s("Mustalah al-Hadith",SC.mustalah,[
-    b("Al-Mandhuma al-Bayquniyya"),
-  ]),
-  s("Fiqh — Hanbali",SC.fiqh,[
-    b("Akhsar al-Mukhtasarat — Ibn Balban"),
-  ]),
-  s("Fiqh — Shafi'i",SC.fiqh,[
-    b("Matn al-Ghaya wal-Taqrib — Abu Shuja'"),
-  ]),
-  s("Fiqh — Maliki",SC.fiqh,[
-    b("Al-Qayrawaniyya — Ibn Abi Zayd al-Qayrawani"),
-  ]),
-  s("Fiqh — Hanafi",SC.fiqh,[
-    b("Mukhtasar al-Quduri"),
-  ]),
+  s("Hadith",SC.hadith,[b("Umdat al-Ahkam — al-Maqdisi",true)]),
+  s("Mustalah al-Hadith",SC.mustalah,[b("Al-Mandhuma al-Bayquniyya")]),
+  s("Fiqh — Hanbali",SC.fiqh,[b("Akhsar al-Mukhtasarat — Ibn Balban")]),
+  s("Fiqh — Shafi'i",SC.fiqh,[b("Matn al-Ghaya wal-Taqrib — Abu Shuja'")]),
+  s("Fiqh — Maliki",SC.fiqh,[b("Al-Qayrawaniyya — Ibn Abi Zayd al-Qayrawani")]),
+  s("Fiqh — Hanafi",SC.fiqh,[b("Mukhtasar al-Quduri")]),
   s("Tajweed / Qira'at",SC.tajweed,[
     b("Al-Muqaddima al-Jazariyya"),
     b("Na't al-Darajat fi Hukm al-Qira'at"),
     b("Al-Khaqaniyya"),
   ]),
-  s("Usool al-Tafsir",SC.tafsir,[
-    b("Mandhuma al-Zamzami fi Usool al-Tafsir",true),
-  ]),
-  s("Usool al-Fiqh",SC.usool,[
-    b("Al-Qawa'id wal-Usool al-Jami'a"),
-  ]),
-  s("Qawa'id Fiqhiyya",SC.qawaid,[
-    b("Zubdat al-Qawa'id al-Fiqhiyya"),
-  ]),
+  s("Usool al-Tafsir",SC.tafsir,[b("Mandhuma al-Zamzami fi Usool al-Tafsir",true)]),
+  s("Usool al-Fiqh",SC.usool,[b("Al-Qawa'id wal-Usool al-Jami'a")]),
+  s("Qawa'id Fiqhiyya",SC.qawaid,[b("Zubdat al-Qawa'id al-Fiqhiyya")]),
   s("Adab",SC.adab,[
     b("Mandhuma Abi Ishaq al-Ilbiri"),
     b("Mandhuma al-Adab al-Shar'iyya al-Sughra",true),
   ]),
-  s("Seerah",SC.seerah,[
-    b("Al-Urjuza al-Mi'iyya"),
-  ]),
+  s("Seerah",SC.seerah,[b("Al-Urjuza al-Mi'iyya")]),
 ]},
-
-// ─ LEVEL III ────────────────────────────────────────────
 {name:"Level III",subtitle:"Intermediate",level:3,type:"level",children:[
   s("Aqeedah",SC.aqeedah,[
     b("Al-Aqida al-Wasitiyya — Ibn Taymiyya"),
@@ -471,12 +378,8 @@ const TREE = {name:"Talib al-Ilm",type:"root",children:[
     b("Qatr al-Nada wa Ball al-Sada — Ibn Hisham"),
     b("Mulhat al-I'rab — al-Hariri"),
   ]),
-  s("Sarf — Morphology",SC.sarf,[
-    b("Lamiyyat al-Af'al — Ibn Malik"),
-  ]),
-  s("Hadith",SC.hadith,[
-    b("Bulugh al-Maram — Ibn Hajar al-Asqalani",true),
-  ]),
+  s("Sarf — Morphology",SC.sarf,[b("Lamiyyat al-Af'al — Ibn Malik")]),
+  s("Hadith",SC.hadith,[b("Bulugh al-Maram — Ibn Hajar al-Asqalani",true)]),
   s("Mustalah al-Hadith",SC.mustalah,[
     b("Nukhbat al-Fikar — Ibn Hajar al-Asqalani"),
     b("Ikhtisar Ulum al-Hadith — Ibn Kathir"),
@@ -486,33 +389,25 @@ const TREE = {name:"Talib al-Ilm",type:"root",children:[
     b("Bidayat al-Abid wa Kifayat al-Zahid"),
     b("Dalil al-Talib li-Nayl al-Matalib"),
   ]),
-  s("Fiqh — Shafi'i",SC.fiqh,[
-    b("Al-Yaqut al-Nafis — al-Hadrami"),
-  ]),
-  s("Fiqh — No Madhab",SC.fiqh,[
-    b("Al-Durar al-Bahiyya — al-Shawkani",true),
-  ]),
+  s("Fiqh — Shafi'i",SC.fiqh,[b("Al-Yaqut al-Nafis — al-Hadrami")]),
+  s("Fiqh — No Madhab",SC.fiqh,[b("Al-Durar al-Bahiyya — al-Shawkani",true)]),
   s("Tajweed / Qira'at",SC.tajweed,[
     b("Al-Salsabil al-Shafi"),
     b("Hirz al-Amani — Al-Shatibiyya (7 Qira'at)",true),
   ]),
   s("Tafsir",SC.tafsir,[
     b("Tafsir al-Jalalayn"),
-    b("Tafsir al-Sidi"),
+    b("Tafsir al-Sa'di — Taysir al-Karim al-Rahman"),
   ]),
-  s("Usool al-Tafsir",SC.tafsir,[
-    b("Al-Niqaya fi Ulum al-Quran — al-Suyuti"),
-  ]),
+  s("Usool al-Tafsir",SC.tafsir,[b("Al-Niqaya fi Ulum al-Quran — al-Suyuti")]),
   s("Usool al-Fiqh — Hanbali",SC.usool,[
     b("Al-Nadhm al-Saghir fi Usool al-Fiqh"),
     b("Bidayat al-Ma'mul fi Usool al-Fiqh"),
   ]),
-  s("Balagha — Rhetoric",SC.balagha,[
-    b("Al-Jawhar al-Maknun — al-Akhdhori"),
-  ]),
+  s("Balagha — Rhetoric",SC.balagha,[b("Al-Jawhar al-Maknun — al-Akhdhori")]),
   s("Qawa'id Fiqhiyya",SC.qawaid,[
     b("Mandhuma al-Qawa'id al-Fiqhiyya — Ibn Uthaymin"),
-    b("Al-Qawa'id al-Fiqhiyya — al-Sidi"),
+    b("Al-Qawa'id al-Fiqhiyya — al-Sa'di"),
   ]),
   s("Adab / Tazkiyya",SC.adab,[
     b("Mandhuma Asbab Hayat al-Qulub — Ibn Atiq"),
@@ -528,8 +423,6 @@ const TREE = {name:"Talib al-Ilm",type:"root",children:[
     b("Lamiyyat al-Arab — al-Shanfara",true),
   ]),
 ]},
-
-// ─ LEVEL IV ─────────────────────────────────────────────
 {name:"Level IV",subtitle:"Advanced",level:4,type:"level",children:[
   s("Aqeedah",SC.aqeedah,[
     b("Al-Aqida al-Tahawiyya + Sharh Ibn Abi al-Izz"),
@@ -537,17 +430,13 @@ const TREE = {name:"Talib al-Ilm",type:"root",children:[
     b("Al-Risala al-Tadmuriyya — Ibn Taymiyya"),
     b("Sullam al-Wusool ila Ilm al-Usool",true),
   ]),
-  s("Nahw — Arabic Grammar",SC.nahw,[
-    b("Alfiyyat Ibn Malik — 1002 verses",true),
-  ]),
+  s("Nahw — Arabic Grammar",SC.nahw,[b("Alfiyyat Ibn Malik — 1002 verses",true)]),
   s("Hadith",SC.hadith,[
     b("Riyad al-Salihin — Imam al-Nawawi",true),
     b("Al-Lu'lu' wal-Marjan",true),
     b("Al-Muharrar fi al-Hadith — Ibn Abd al-Hadi"),
   ]),
-  s("Mustalah al-Hadith",SC.mustalah,[
-    b("Alfiyyat al-Hadith al-Iraqi",true),
-  ]),
+  s("Mustalah al-Hadith",SC.mustalah,[b("Alfiyyat al-Hadith al-Iraqi",true)]),
   s("Fiqh — Hanbali",SC.fiqh,[
     b("Zad al-Mustaqni' — al-Hajjawi"),
     b("Ar-Rawdul-Murbi' Matn Zad al-Mustaqni'",true),
@@ -559,20 +448,14 @@ const TREE = {name:"Talib al-Ilm",type:"root",children:[
     b("Umdat al-Salik wa Uddat al-Nasik"),
     b("Minhaj al-Talibin — Imam al-Nawawi",true),
   ]),
-  s("Fiqh — Hanafi",SC.fiqh,[
-    b("Al-Hidaya — al-Marghinani",true),
-  ]),
+  s("Fiqh — Hanafi",SC.fiqh,[b("Al-Hidaya — al-Marghinani",true)]),
   s("Tajweed / Qira'at",SC.tajweed,[
     b("Al-Durra al-Mudiyya — Ibn al-Jazari",true),
     b("Tayyibat al-Nashr fi al-Qira'at al-Ashr — Ibn al-Jazari",true),
     b("Hidayat al-Murtab fi Mutashabihat al-Kitab"),
   ]),
-  s("Tafsir",SC.tafsir,[
-    b("Ma'alim al-Tanzil — al-Baghawi"),
-  ]),
-  s("Usool al-Tafsir",SC.tafsir,[
-    b("Al-Itqan fi Ulum al-Quran — al-Suyuti"),
-  ]),
+  s("Tafsir",SC.tafsir,[b("Ma'alim al-Tanzil — al-Baghawi")]),
+  s("Usool al-Tafsir",SC.tafsir,[b("Al-Itqan fi Ulum al-Quran — al-Suyuti")]),
   s("Usool al-Fiqh",SC.usool,[
     b("Mukhtasar al-Tahrir — Ibn al-Najjar al-Hanbali"),
     b("Maraqi al-Su'ud — al-Shinqiti",true),
@@ -581,24 +464,18 @@ const TREE = {name:"Talib al-Ilm",type:"root",children:[
     b("Mi'at al-Ma'ani wal-Bayan"),
     b("Uqud al-Juman — al-Suyuti",true),
   ]),
-  s("Science of Poetry",SC.poetry,[
-    b("Al-Kafi fi al-Arud wal-Qawafi"),
-  ]),
+  s("Science of Poetry",SC.poetry,[b("Al-Kafi fi al-Arud wal-Qawafi")]),
   s("Qawa'id Fiqhiyya",SC.qawaid,[
     b("Al-Musakka al-Kawthariyya"),
     b("Al-Mandhuma al-Fadghariyya"),
     b("Al-Fara'id al-Bahiyya — Abu Bakr al-Ahdal",true),
   ]),
-  s("Seerah",SC.seerah,[
-    b("Alfiyyat al-Sirat al-Nabawiyya — al-Iraqi",true),
-  ]),
+  s("Seerah",SC.seerah,[b("Alfiyyat al-Sirat al-Nabawiyya — al-Iraqi",true)]),
   s("Arabic Literature",SC.lit,[
     b("Al-Maqamat al-Hariri — al-Hariri",true),
     b("Al-Mu'allaqat — Pre-Islamic Odes",true),
   ]),
 ]},
-
-// ─ LEVEL V ──────────────────────────────────────────────
 {name:"Level V",subtitle:"Mastery",level:5,type:"level",children:[
   s("Aqeedah — Encyclopedic",SC.aqeedah,[
     b("A'lam al-Sunna al-Mansura — al-Hakami"),
@@ -612,12 +489,9 @@ const TREE = {name:"Talib al-Ilm",type:"root",children:[
     b("Al-Kafiya fi Ilm al-Nahw — Ibn al-Hajib"),
   ]),
   s("Hadith — Full Collections",SC.hadith,[
-    b("Sahih al-Bukhari — Full"),
-    b("Sahih Muslim — Full"),
-    b("Sunan Abu Dawud"),
-    b("Sunan al-Tirmidhi"),
-    b("Sunan al-Nasa'i"),
-    b("Sunan Ibn Maja"),
+    b("Sahih al-Bukhari — Full"),b("Sahih Muslim — Full"),
+    b("Sunan Abu Dawud"),b("Sunan al-Tirmidhi"),
+    b("Sunan al-Nasa'i"),b("Sunan Ibn Maja"),
     b("Mukhtasar Ibn Abi Jamra"),
     b("Mukhtasar al-Zubaidi li-Sahih al-Bukhari"),
     b("Mukhtasar al-Mundhiri li-Sahih Muslim"),
@@ -631,13 +505,10 @@ const TREE = {name:"Talib al-Ilm",type:"root",children:[
     b("Sharh Ilal al-Tirmidhi — Ibn Rajab al-Hanbali"),
     b("Al-Ilal al-Daraqutni"),
   ]),
-  s("Mustalah — Advanced",SC.mustalah,[
-    b("Fath al-Mughith Sharh Alfiyyat al-Hadith — al-Sakhawi"),
-  ]),
+  s("Mustalah — Advanced",SC.mustalah,[b("Fath al-Mughith Sharh Alfiyyat al-Hadith — al-Sakhawi")]),
   s("Fiqh — Advanced",SC.fiqh,[
     b("Umdat al-Talib li-Nayl al-Mathalib"),
-    b("Balaght al-Wusool"),
-    b("Rasm al-Mufti al-Hanbali"),
+    b("Balaght al-Wusool"),b("Rasm al-Mufti al-Hanbali"),
     b("Malh al-Nad fi Nadhm Zad al-Mustaqni'"),
     b("Al-Mughni — Ibn Qudama (10 volumes)"),
   ]),
@@ -659,239 +530,222 @@ const TREE = {name:"Talib al-Ilm",type:"root",children:[
     b("Tarikh al-Tabari"),
     b("Siyar A'lam al-Nubala' — al-Dhahabi (25 volumes)"),
   ]),
-  s("Adab / Tazkiyya",SC.adab,[
-    b("Al-Wabil al-Sayyib — Ibn al-Qayyim"),
-  ]),
+  s("Adab / Tazkiyya",SC.adab,[b("Al-Wabil al-Sayyib — Ibn al-Qayyim")]),
 ]}
 ]};
 
 // ════════════════════════════════════════════════════════
-// BOOK REGISTRY for indexed list-view lookups
+// SEARCH INDEX
 // ════════════════════════════════════════════════════════
-let BOOK_REG = [];
-function regBook(book,levelName,subjName){
-  const idx=BOOK_REG.length;
-  BOOK_REG.push({...book,levelName,subjName});
-  return idx;
-}
+const searchIndex=[];
+(function buildIdx(node,ln,sn){
+  if(node.type==="book"){searchIndex.push({...node,levelName:ln,subjName:sn});return;}
+  (node.children||[]).forEach(c=>buildIdx(c,node.type==="level"?node.name:ln,node.type==="subject"?node.name:sn));
+})(TREE,"","");
+
+// ════════════════════════════════════════════════════════
+// BOOK REGISTRY for list view
+// ════════════════════════════════════════════════════════
+let BOOK_REG=[];
+const regBook=(bk,ln,sn)=>{const i=BOOK_REG.length;BOOK_REG.push({...bk,levelName:ln,subjName:sn});return i;};
 
 // ════════════════════════════════════════════════════════
 // STATE
 // ════════════════════════════════════════════════════════
-let focusedIds = null;
-let nodeId = 0;
-let listBuilt = false;
+let focusedIds=null,activeFilters=new Set(),nodeId=0,listBuilt=false;
+let mmMinX=0,mmMinY=0,mmScale=1; // minimap transform cache
 
 // ════════════════════════════════════════════════════════
 // D3 SETUP
 // ════════════════════════════════════════════════════════
-const W = window.innerWidth, H = window.innerHeight;
-const svg = d3.select("#canvas").attr("width",W).attr("height",H);
+const W=window.innerWidth,H=window.innerHeight;
+const svg=d3.select("#canvas").attr("width",W).attr("height",H);
 
-// SVG defs — glow filter for memorise labels
-const defs = svg.append("defs");
-const glowFilter = defs.append("filter")
-  .attr("id","glow-gold")
-  .attr("x","-40%").attr("y","-80%")
-  .attr("width","180%").attr("height","260%");
-glowFilter.append("feGaussianBlur")
-  .attr("in","SourceGraphic").attr("stdDeviation","1.1").attr("result","blur");
-glowFilter.append("feColorMatrix")
-  .attr("in","blur").attr("type","matrix")
-  .attr("values","1.4 0.6 0 0 0  0.8 0.5 0 0 0  0 0.1 0 0 0  0 0 0 1.2 0")
-  .attr("result","colored");
-const glowMerge = glowFilter.append("feMerge");
-glowMerge.append("feMergeNode").attr("in","colored");
-glowMerge.append("feMergeNode").attr("in","SourceGraphic");
+// SVG defs — glow filters
+const defs=svg.append("defs");
+const addFilter=(id,std,matrix)=>{
+  const f=defs.append("filter").attr("id",id).attr("x","-50%").attr("y","-100%").attr("width","200%").attr("height","300%");
+  f.append("feGaussianBlur").attr("in","SourceGraphic").attr("stdDeviation",std).attr("result","blur");
+  f.append("feColorMatrix").attr("in","blur").attr("type","matrix").attr("values",matrix).attr("result","c");
+  const m=f.append("feMerge");m.append("feMergeNode").attr("in","c");m.append("feMergeNode").attr("in","SourceGraphic");
+};
+addFilter("glow-gold","1.1","1.4 0.6 0 0 0  0.8 0.5 0 0 0  0 0.1 0 0 0  0 0 0 1.2 0");
+addFilter("glow-path","2.5","1.8 1.0 0 0 0  1.2 0.7 0 0 0  0 0.1 0 0 0  0 0 0 2 0");
 
-// Node hover glow filter
-const hoverFilter = defs.append("filter")
-  .attr("id","hover-glow").attr("x","-60%").attr("y","-60%")
-  .attr("width","220%").attr("height","220%");
-hoverFilter.append("feGaussianBlur")
-  .attr("in","SourceGraphic").attr("stdDeviation","3").attr("result","blur");
-hoverFilter.append("feColorMatrix")
-  .attr("in","blur").attr("type","matrix")
-  .attr("values","1 0.5 0 0 0  0.5 0.3 0 0 0  0 0 0.1 0 0  0 0 0 1.8 0")
-  .attr("result","c");
-const hm = hoverFilter.append("feMerge");
-hm.append("feMergeNode").attr("in","c");
-hm.append("feMergeNode").attr("in","SourceGraphic");
+const g=svg.append("g");
+const bgGroup=g.append("g").attr("class","bg");
+const linksGroup=g.append("g").attr("class","lkg");
+const nodesGroup=g.append("g").attr("class","ndg");
 
-const g = svg.append("g");
-
-// Zoom — does NOT close panel (better UX while navigating)
-const zoom = d3.zoom().scaleExtent([0.06,4]).on("zoom", e => {
-  g.attr("transform", e.transform);
+const zoom=d3.zoom().scaleExtent([0.06,4]).on("zoom",e=>{
+  g.attr("transform",e.transform);
+  updateMinimap();
 });
 svg.call(zoom).on("dblclick.zoom",null);
+svg.on("click",()=>{closePanel();});
+document.getElementById("zoom-in").onclick=()=>zoom.scaleBy(svg,1.3);
+document.getElementById("zoom-out").onclick=()=>zoom.scaleBy(svg,.77);
 
-// Click on SVG background closes panel
-svg.on("click", () => { closePanel(); });
-
-// Wired zoom buttons
-document.getElementById("zoom-in").onclick  = () => zoom.scaleBy(svg, 1.3);
-document.getElementById("zoom-out").onclick = () => zoom.scaleBy(svg, .77);
-
-const treeFn = d3.tree().nodeSize([20,264]);
-let root = d3.hierarchy(TREE);
-root.descendants().forEach(d => {
-  if(d.depth >= 2){ d._children=d.children; d.children=null; }
-});
-root.x0 = 0; root.y0 = 0;
+const treeFn=d3.tree().nodeSize([20,264]);
+let root=d3.hierarchy(TREE);
+root.descendants().forEach(d=>{if(d.depth>=2){d._children=d.children;d.children=null;}});
+root.x0=0;root.y0=0;
 
 // ── Helpers ──────────────────────────────────────────────
 function nodeColor(d){
-  if(d.data.type==="root")    return "#c9a84c";
-  if(d.data.type==="level")   return LC[d.data.level]||"#c9a84c";
-  if(d.data.type==="subject") return d.data.color||"#888";
-  return (d.parent&&d.parent.data.color)||"#a0a0c0";
+  if(d.data.type==="root")return"#c9a84c";
+  if(d.data.type==="level")return LC[d.data.level]||"#c9a84c";
+  if(d.data.type==="subject")return d.data.color||"#888";
+  return(d.parent&&d.parent.data.color)||"#a0a0c0";
 }
-function nodeR(d){
-  if(d.data.type==="root")    return 13;
-  if(d.data.type==="level")   return 9;
-  if(d.data.type==="subject") return 6;
-  return 4;
-}
+function nodeR(d){return d.data.type==="root"?13:d.data.type==="level"?9:d.data.type==="subject"?6:4;}
 function nodeLabel(d){
-  if(d.data.type==="root")    return "Talib al-Ilm";
-  if(d.data.type==="level")   return d.data.name+" — "+(d.data.subtitle||"");
-  if(d.data.type==="subject"){
-    const n=(d.children||d._children||[]).length;
-    return d.data.name+(n?` [${n}]`:"");
-  }
+  if(d.data.type==="root")return"Talib al-Ilm";
+  if(d.data.type==="level")return d.data.name+" — "+(d.data.subtitle||"");
+  if(d.data.type==="subject"){const n=(d.children||d._children||[]).length;return d.data.name+(n?` [${n}]`:"");}
   const nm=d.data.name.length>38?d.data.name.slice(0,36)+"…":d.data.name;
   return nm;
 }
-function diag(d){
-  const sx=d.source.y,sy=d.source.x,tx=d.target.y,ty=d.target.x,mx=(sx+tx)/2;
-  return `M${sx},${sy}C${mx},${sy} ${mx},${ty} ${tx},${ty}`;
+function diag(d){const sx=d.source.y,sy=d.source.x,tx=d.target.y,ty=d.target.x,mx=(sx+tx)/2;return`M${sx},${sy}C${mx},${sy} ${mx},${ty} ${tx},${ty}`;}
+function nodeOpacity(d){
+  if(focusedIds)return focusedIds.has(d.id)?1:0.05;
+  if(activeFilters.size){
+    if(d.data.type==="root"||d.data.type==="level")return 1;
+    if(d.data.type==="subject")return activeFilters.has(d.data.color)?1:0.06;
+    return(d.parent&&activeFilters.has(d.parent.data.color))?1:0.06;
+  }
+  return 1;
+}
+function linkOpacity(d){
+  if(focusedIds)return(focusedIds.has(d.source.id)&&focusedIds.has(d.target.id))?0.85:0.04;
+  if(activeFilters.size){
+    const tc=d.target.data.type==="subject"?d.target.data.color:d.target.data.type==="book"?(d.target.parent&&d.target.parent.data.color):null;
+    return tc&&activeFilters.has(tc)?0.35:0.04;
+  }
+  return 0.22;
 }
 
 // ── Main update ──────────────────────────────────────────
+let fillTimer;
 function update(src){
   const td=treeFn(root);
-  const nodes=td.descendants();
-  const links=td.links();
+  const nodes=td.descendants(),links=td.links();
 
   // Links
-  const link=g.selectAll(".link").data(links,d=>d.target.id);
-  const le=link.enter().insert("path",".node")
-    .attr("class","link")
+  const link=linksGroup.selectAll(".link").data(links,d=>d.target.id);
+  const le=link.enter().insert("path",":first-child")
+    .attr("class","link").attr("fill","none").attr("stroke-width",".8px")
     .attr("d",()=>{const o={x:src.x0||0,y:src.y0||0};return diag({source:o,target:o});})
-    .attr("stroke",d=>{
-      const t=d.target;
-      if(t.data.type==="level") return LC[t.data.level]||"#444";
-      if(t.data.type==="book") return (t.parent&&t.parent.data.color)||"#444";
-      return t.data.color||"#444";
-    }).attr("opacity",0);
-
-  link.merge(le).transition().duration(300)
+    .attr("stroke",d=>{const t=d.target;return t.data.type==="level"?LC[t.data.level]:t.data.type==="book"?(t.parent&&t.parent.data.color)||"#444":t.data.color||"#444";})
+    .attr("opacity",0);
+  link.merge(le).transition().duration(290)
     .attr("d",diag)
-    .attr("stroke",d=>{
-      const t=d.target;
-      if(t.data.type==="level") return LC[t.data.level]||"#444";
-      if(t.data.type==="book") return (t.parent&&t.parent.data.color)||"#444";
-      return t.data.color||"#444";
-    })
-    .attr("opacity",d=>{
-      if(!focusedIds) return 0.22;
-      return (focusedIds.has(d.source.id)&&focusedIds.has(d.target.id))?0.8:0.04;
-    });
-
-  link.exit().transition().duration(300)
-    .attr("d",()=>{const o={x:src.x,y:src.y};return diag({source:o,target:o});})
-    .attr("opacity",0).remove();
+    .attr("stroke",d=>{const t=d.target;return t.data.type==="level"?LC[t.data.level]:t.data.type==="book"?(t.parent&&t.parent.data.color)||"#444":t.data.color||"#444";})
+    .attr("opacity",linkOpacity);
+  link.exit().transition().duration(290).attr("d",()=>{const o={x:src.x,y:src.y};return diag({source:o,target:o});}).attr("opacity",0).remove();
 
   // Nodes
-  const node=g.selectAll(".node").data(nodes,d=>d.id||(d.id=++nodeId));
-  const ne=node.enter().append("g")
-    .attr("class","node")
-    .attr("transform",()=>`translate(${src.y0||0},${src.x0||0})`)
-    .attr("opacity",0);
+  const node=nodesGroup.selectAll(".node").data(nodes,d=>d.id||(d.id=++nodeId));
+  const ne=node.enter().append("g").attr("class","node")
+    .attr("transform",()=>`translate(${src.y0||0},${src.x0||0})`).attr("opacity",0);
 
-  // Node circle
   ne.append("circle")
-    .attr("r",nodeR)
+    .attr("r",nodeR).attr("stroke-width",d=>d.data.type==="root"?2:1.5)
     .attr("fill",d=>nodeColor(d)+(d.data.type==="book"?"18":d.data.type==="subject"?"2c":"3e"))
-    .attr("stroke",nodeColor)
-    .attr("stroke-width",d=>d.data.type==="root"?2:1.5);
-
-  // Collapse indicator dot
-  ne.append("circle").attr("class","cd")
-    .attr("r",2.2).attr("fill",nodeColor).attr("opacity",0);
-
-  // Label text
-  ne.append("text")
-    .attr("dy","0.31em")
+    .attr("stroke",nodeColor);
+  ne.append("circle").attr("class","cd").attr("r",2.2).attr("fill",nodeColor).attr("opacity",0);
+  ne.append("text").attr("dy","0.31em")
     .attr("font-size",d=>d.data.type==="root"?"12px":d.data.type==="level"?"10px":d.data.type==="subject"?"9px":"8.5px")
     .attr("font-weight",d=>d.data.mem?"500":"400")
-    .attr("class",d=>d.data.mem?"mem-label":"")
-    .attr("fill",d=>{
-      if(d.data.type==="book"&&d.data.mem) return "#e8c97a";
-      const c=nodeColor(d);
-      if(d.data.type==="root"||d.data.type==="level") return c;
-      if(d.data.type==="subject") return c+"cc";
-      return c+"99";
-    })
-    .attr("filter",d=>d.data.type==="book"&&d.data.mem?"url(#glow-gold)":null)
+    .attr("fill",d=>{if(d.data.mem&&d.data.type==="book")return"#e8c97a";const c=nodeColor(d);return d.data.type==="root"||d.data.type==="level"?c:d.data.type==="subject"?c+"cc":c+"99";})
+    .attr("filter",d=>d.data.mem&&d.data.type==="book"?"url(#glow-gold)":null)
     .attr("letter-spacing",d=>d.data.type==="level"?"0.1em":"0.03em")
     .text(nodeLabel);
 
-  // Hover effects
-  ne.on("mouseover", function(event,d){
-      if(d.data.type==="root") return;
-      d3.select(this).select("circle")
-        .transition().duration(130).ease(d3.easeQuadOut)
-        .attr("r", nodeR(d)*1.38)
-        .attr("stroke-width", d.data.type==="level"?2.5:2);
+  // Hover
+  ne.on("mouseover",function(e,d){
+      if(d.data.type==="root")return;
+      d3.select(this).select("circle").transition().duration(120).attr("r",nodeR(d)*1.38).attr("stroke-width",2);
     })
-    .on("mouseout", function(event,d){
-      d3.select(this).select("circle")
-        .transition().duration(200).ease(d3.easeQuadOut)
-        .attr("r", nodeR(d))
-        .attr("stroke-width", d.data.type==="root"?2:1.5);
+    .on("mouseout",function(e,d){
+      d3.select(this).select("circle").transition().duration(180).attr("r",nodeR(d)).attr("stroke-width",d.data.type==="root"?2:1.5);
     })
-    .on("click", handleNodeClick);
+    .on("click",handleNodeClick);
 
-  // Merge & transition
   const merged=node.merge(ne);
-  merged.transition().duration(300).ease(d3.easeCubicOut)
+  merged.transition().duration(290).ease(d3.easeCubicOut)
     .attr("transform",d=>`translate(${d.y},${d.x})`)
-    .attr("opacity",d=>{
-      if(!focusedIds) return 1;
-      return focusedIds.has(d.id)?1:0.05;
-    });
-
+    .attr("opacity",nodeOpacity);
   merged.select("text")
-    .attr("x",d=>{const r=nodeR(d);return (d.children||d._children)?-(r+5):(r+5);})
+    .attr("x",d=>{const r=nodeR(d);return(d.children||d._children)?-(r+5):(r+5);})
     .attr("text-anchor",d=>(d.children||d._children)?"end":"start");
-
-  merged.select(".cd")
-    .attr("opacity",d=>d._children&&d.data.type!=="book"?.75:0);
-
-  node.exit().transition().duration(300)
-    .attr("transform",`translate(${src.y},${src.x})`)
-    .attr("opacity",0).remove();
-
+  merged.select(".cd").attr("opacity",d=>d._children&&d.data.type!=="book"?.75:0);
+  node.exit().transition().duration(290).attr("transform",`translate(${src.y},${src.x})`).attr("opacity",0).remove();
   nodes.forEach(d=>{d.x0=d.x;d.y0=d.y;});
+
+  // Schedule fills and minimap after transitions
+  clearTimeout(fillTimer);
+  fillTimer=setTimeout(()=>{drawLevelFills();updateMinimap();},310);
 }
 
-function handleNodeClick(event, d){
+// ── Level fills ──────────────────────────────────────────
+function drawLevelFills(){
+  bgGroup.selectAll("*").remove();
+  root.each(lNode=>{
+    if(lNode.data.type!=="level"||!lNode.children||!lNode.children.length)return;
+    const all=lNode.descendants();
+    const xs=all.map(n=>n.y),ys=all.map(n=>n.x);
+    const x0=Math.min(...xs)-18,x1=Math.max(...xs)+230;
+    const y0=Math.min(...ys)-16,y1=Math.max(...ys)+16;
+    const color=LC[lNode.data.level]||"#c9a84c";
+    bgGroup.append("rect")
+      .attr("x",x0).attr("y",y0).attr("width",x1-x0).attr("height",y1-y0)
+      .attr("rx",6).attr("ry",6)
+      .attr("fill",color+"08").attr("stroke",color+"20").attr("stroke-width",.8);
+  });
+}
+
+// ── Animated path ─────────────────────────────────────────
+function animatePath(d){
+  const anc=d.ancestors().reverse(); // root→level→subject→book
+  anc.forEach((node,i)=>{
+    if(i>=anc.length-1)return;
+    const next=anc[i+1];
+    linksGroup.selectAll(".link").filter(function(ld){
+      return ld.source.id===node.id&&ld.target.id===next.id;
+    }).each(function(){
+      const el=this,len=el.getTotalLength();
+      d3.select(el)
+        .attr("stroke-dasharray",`${len} ${len}`)
+        .attr("stroke-dashoffset",len)
+        .attr("stroke","#e8c97a").attr("stroke-width",2.2)
+        .attr("opacity",1).attr("filter","url(#glow-path)")
+        .transition().delay(i*210).duration(360).ease(d3.easeCubicOut)
+        .attr("stroke-dashoffset",0);
+    });
+  });
+}
+
+function resetLinkStyles(){
+  linksGroup.selectAll(".link")
+    .attr("stroke-dasharray",null).attr("stroke-dashoffset",null)
+    .attr("stroke-width",".8px").attr("filter",null);
+}
+
+// ── Node click ────────────────────────────────────────────
+function handleNodeClick(event,d){
   event.stopPropagation();
-  if(d.data.type==="book"){ focusNode(d); openPanel(d.data,d); return; }
+  if(d.data.type==="book"){focusNode(d);openPanel(d.data,d);return;}
   d.children?(d._children=d.children,d.children=null):(d.children=d._children,d._children=null);
-  clearFocus(); update(d);
+  clearFocus();update(d);
 }
 
 function focusNode(d){
   const anc=d.ancestors();
-  focusedIds=new Set(anc.map(a=>a.id));
-  focusedIds.add(d.id);
+  focusedIds=new Set(anc.map(a=>a.id));focusedIds.add(d.id);
   update(d);
-  const parts=anc.reverse()
-    .map(a=>a.data.type==="root"?null:a.data.name)
-    .filter(Boolean);
+  setTimeout(()=>animatePath(d),310);
+  const parts=anc.reverse().map(a=>a.data.type==="root"?null:a.data.name).filter(Boolean);
   parts.push(d.data.name.length>28?d.data.name.slice(0,26)+"…":d.data.name);
   const bc=document.getElementById("breadcrumb");
   bc.innerHTML=parts.map((p,i)=>i===parts.length-1?`<span>${p}</span>`:p).join(" ›&nbsp;");
@@ -899,27 +753,23 @@ function focusNode(d){
 }
 
 function clearFocus(){
-  if(!focusedIds) return;
+  if(!focusedIds&&!document.getElementById("breadcrumb").classList.contains("show"))return;
   focusedIds=null;
   document.getElementById("breadcrumb").classList.remove("show");
-  g.selectAll(".node").transition().duration(300).attr("opacity",1);
-  g.selectAll(".link").transition().duration(300).attr("opacity",0.22);
+  resetLinkStyles();
+  nodesGroup.selectAll(".node").transition().duration(280).attr("opacity",nodeOpacity);
+  linksGroup.selectAll(".link").transition().duration(280).attr("opacity",linkOpacity);
 }
 
 // ════════════════════════════════════════════════════════
 // PANEL
 // ════════════════════════════════════════════════════════
-function openPanel(data, treeNode){
+function openPanel(data,treeNode){
   document.getElementById("panel-title").textContent=data.name;
-  let pathHtml="";
-  if(treeNode){
-    pathHtml=treeNode.ancestors().reverse()
-      .map(a=>a.data.type==="root"?null:a.data.type==="level"?`<span>${a.data.name}</span>`:a.data.type==="subject"?`<span>${a.data.name}</span>`:null)
-      .filter(Boolean).join("&nbsp;&rsaquo;&nbsp;");
-  } else if(data.levelName){
-    pathHtml=`<span>${data.levelName}</span>&nbsp;&rsaquo;&nbsp;<span>${data.subjName}</span>`;
-  }
-  document.getElementById("panel-path").innerHTML=pathHtml;
+  let ph="";
+  if(treeNode){ph=treeNode.ancestors().reverse().map(a=>a.data.type==="root"?null:a.data.type==="level"||a.data.type==="subject"?`<span>${a.data.name}</span>`:null).filter(Boolean).join("&nbsp;&rsaquo;&nbsp;");}
+  else if(data.levelName){ph=`<span>${data.levelName}</span>&nbsp;&rsaquo;&nbsp;<span>${data.subjName}</span>`;}
+  document.getElementById("panel-path").innerHTML=ph;
   document.getElementById("panel-mem").textContent=data.mem?"✦ Memorize this text":"";
   document.getElementById("btn-info").href=data.info||"#";
   document.getElementById("btn-pdf").href=data.pdf||"#";
@@ -933,28 +783,144 @@ function closePanel(){
   document.getElementById("hint").style.opacity="1";
   clearFocus();
 }
-document.addEventListener("keydown",e=>{ if(e.key==="Escape") closePanel(); });
+document.addEventListener("keydown",e=>{
+  if(e.key==="Escape"){closePanel();closeSearch();}
+  if((e.ctrlKey||e.metaKey)&&e.key==="f"){e.preventDefault();toggleSearch();}
+});
+
+// ════════════════════════════════════════════════════════
+// SEARCH
+// ════════════════════════════════════════════════════════
+let searchOpen=false;
+function toggleSearch(){
+  searchOpen=!searchOpen;
+  const w=document.getElementById("search-wrap");
+  w.classList.toggle("open",searchOpen);
+  if(searchOpen){setTimeout(()=>document.getElementById("search-input").focus(),50);}
+  else{document.getElementById("search-input").value="";document.getElementById("search-results").innerHTML="";}
+}
+function closeSearch(){searchOpen=false;document.getElementById("search-wrap").classList.remove("open");document.getElementById("search-input").value="";document.getElementById("search-results").innerHTML="";}
+function onSearch(q){
+  const el=document.getElementById("search-results");
+  if(!q.trim()){el.innerHTML="";return;}
+  const ql=q.toLowerCase();
+  const hits=searchIndex.filter(b=>b.name.toLowerCase().includes(ql)).slice(0,12);
+  if(!hits.length){el.innerHTML=`<div class="sr-none">No results</div>`;return;}
+  el.innerHTML=hits.map((b,i)=>`<div class="sr-item" onclick="navigateToBook(${i},'${q.replace(/'/g,"\\'")}')">
+    <div class="sr-name${b.mem?" mem":""}">${b.name}</div>
+    <div class="sr-path">${b.levelName} › ${b.subjName}</div>
+  </div>`).join("");
+  el._hits=hits;
+}
+function onSearchKey(e){if(e.key==="Escape")closeSearch();}
+function navigateToBook(i,q){
+  const el=document.getElementById("search-results");
+  const hits=el._hits||(searchIndex.filter(b=>b.name.toLowerCase().includes(q.toLowerCase())).slice(0,12));
+  const target=hits[i];if(!target)return;
+  closeSearch();
+  // Expand tree to show this book
+  let found=null;
+  root.each(d=>{if(d.data.name===target.name&&d.data.type==="book")found=d;});
+  if(!found)return;
+  // Ensure ancestors are expanded
+  found.ancestors().forEach(a=>{if(a._children){a.children=a._children;a._children=null;}});
+  update(root);
+  // After transition, focus
+  setTimeout(()=>{
+    let node=null;root.each(d=>{if(d.data.name===target.name&&d.data.type==="book")node=d;});
+    if(!node)return;
+    focusNode(node);openPanel(node.data,node);
+    // Pan to node
+    svg.transition().duration(500).call(zoom.transform,d3.zoomIdentity.translate(W/2-node.y,H/2-node.x).scale(1));
+  },340);
+}
+
+// ════════════════════════════════════════════════════════
+// FILTER CHIPS
+// ════════════════════════════════════════════════════════
+const CATEGORIES=[
+  {label:"Poems",color:SC.poems},{label:"Aqeedah",color:SC.aqeedah},{label:"Fiqh",color:SC.fiqh},
+  {label:"Hadith",color:SC.hadith},{label:"Nahw",color:SC.nahw},{label:"Tajweed",color:SC.tajweed},
+  {label:"Usool",color:SC.usool},{label:"Tafsir",color:SC.tafsir},{label:"Fara'id",color:SC.faraid},
+  {label:"Balagha",color:SC.balagha},{label:"Adab",color:SC.adab},{label:"Seerah",color:SC.seerah},
+  {label:"Mustalah",color:SC.mustalah},{label:"Qawa'id",color:SC.qawaid},{label:"Literature",color:SC.lit},
+];
+(function buildChips(){
+  const container=document.getElementById("legend-chips");
+  CATEGORIES.forEach(cat=>{
+    const el=document.createElement("div");
+    el.className="chip";
+    el.innerHTML=`<div class="ld" style="background:${cat.color}"></div>${cat.label}`;
+    el.title=`Filter: ${cat.label}`;
+    el.onclick=()=>toggleFilter(cat.color,el,cat);
+    container.appendChild(el);
+  });
+})();
+function toggleFilter(color,el,cat){
+  if(activeFilters.has(color)){
+    activeFilters.delete(color);
+    el.classList.remove("active");
+    el.style.background="";el.style.color="";
+  } else {
+    activeFilters.add(color);
+    el.classList.add("active");
+    el.style.background=color;el.style.color="#0c0904";
+  }
+  clearFocus();update(root);
+}
+
+// ════════════════════════════════════════════════════════
+// MINIMAP
+// ════════════════════════════════════════════════════════
+const mmCanvas=document.getElementById("mm-canvas");
+const mmCtx=mmCanvas.getContext("2d");
+const MM_W=mmCanvas.width,MM_H=mmCanvas.height,MM_PAD=7;
+
+document.getElementById("minimap").addEventListener("click",e=>{
+  const rect=mmCanvas.getBoundingClientRect();
+  const mx=e.clientX-rect.left,my=e.clientY-rect.top;
+  const svgX=(mx-MM_PAD)/mmScale+mmMinX;
+  const svgY=(my-MM_PAD)/mmScale+mmMinY;
+  const ct=d3.zoomTransform(svg.node());
+  svg.transition().duration(380).call(zoom.transform,d3.zoomIdentity.translate(W/2-svgX*ct.k,H/2-svgY*ct.k).scale(ct.k));
+});
+
+function updateMinimap(){
+  mmCtx.clearRect(0,0,MM_W,MM_H);
+  const visible=root.descendants().filter(d=>d.x0!==undefined);
+  if(!visible.length)return;
+  const xs=visible.map(d=>d.y),ys=visible.map(d=>d.x);
+  mmMinX=Math.min(...xs);mmMinY=Math.min(...ys);
+  const xRange=Math.max(...xs)-mmMinX||1,yRange=Math.max(...ys)-mmMinY||1;
+  mmScale=Math.min((MM_W-MM_PAD*2)/xRange,(MM_H-MM_PAD*2)/yRange);
+  const toX=v=>MM_PAD+(v-mmMinX)*mmScale;
+  const toY=v=>MM_PAD+(v-mmMinY)*mmScale;
+
+  // Links
+  mmCtx.strokeStyle="rgba(180,140,60,0.18)";mmCtx.lineWidth=0.5;
+  root.links().forEach(lk=>{
+    if(!lk.source.y||!lk.target.y)return;
+    mmCtx.beginPath();mmCtx.moveTo(toX(lk.source.y),toY(lk.source.x));mmCtx.lineTo(toX(lk.target.y),toY(lk.target.x));mmCtx.stroke();
+  });
+  // Nodes
+  visible.forEach(d=>{
+    const r=d.data.type==="root"?3:d.data.type==="level"?2:1.5;
+    mmCtx.fillStyle=nodeColor(d)+(d.data.type==="book"?"80":"cc");
+    mmCtx.beginPath();mmCtx.arc(toX(d.y),toY(d.x),r,0,Math.PI*2);mmCtx.fill();
+  });
+  // Viewport rect
+  const ct=d3.zoomTransform(svg.node());
+  const vx0=-ct.x/ct.k,vy0=-ct.y/ct.k,vx1=(W-ct.x)/ct.k,vy1=(H-ct.y)/ct.k;
+  mmCtx.strokeStyle="rgba(232,201,122,0.55)";mmCtx.lineWidth=1;
+  mmCtx.strokeRect(toX(vx0),toY(vy0),(vx1-vx0)*mmScale,(vy1-vy0)*mmScale);
+}
 
 // ════════════════════════════════════════════════════════
 // TREE CONTROLS
 // ════════════════════════════════════════════════════════
-function resetZoom(){
-  svg.transition().duration(420).ease(d3.easeCubicOut).call(
-    zoom.transform, d3.zoomIdentity.translate(W*.07,H/2).scale(.92)
-  );
-}
-function expandAll(){
-  root.descendants().forEach(d=>{if(d._children){d.children=d._children;d._children=null;}});
-  clearFocus(); update(root);
-}
-function collapseToLevels(){
-  root.descendants().forEach(d=>{if(d.depth>=2&&d.children){d._children=d.children;d.children=null;}});
-  clearFocus(); update(root);
-}
-
-// Initial render
-update(root);
-svg.call(zoom.transform, d3.zoomIdentity.translate(W*.07,H/2).scale(.92));
+function resetZoom(){svg.transition().duration(420).ease(d3.easeCubicOut).call(zoom.transform,d3.zoomIdentity.translate(W*.07,H/2).scale(.92));}
+function expandAll(){root.descendants().forEach(d=>{if(d._children){d.children=d._children;d._children=null;}});clearFocus();update(root);}
+function collapseToLevels(){root.descendants().forEach(d=>{if(d.depth>=2&&d.children){d._children=d.children;d.children=null;}});clearFocus();update(root);}
 
 // ════════════════════════════════════════════════════════
 // VIEW TOGGLE
@@ -962,12 +928,13 @@ svg.call(zoom.transform, d3.zoomIdentity.translate(W*.07,H/2).scale(.92));
 function setView(v){
   document.getElementById("btn-tree").classList.toggle("active",v==="tree");
   document.getElementById("btn-list").classList.toggle("active",v==="list");
-  document.getElementById("canvas").style.display      = v==="tree"?"block":"none";
+  document.getElementById("canvas").style.display=v==="tree"?"block":"none";
   document.getElementById("listview").classList.toggle("show",v==="list");
-  document.getElementById("hint").style.display        = v==="tree"?"block":"none";
-  document.getElementById("controls").style.display    = v==="tree"?"flex":"none";
-  if(v==="list"&&!listBuilt) buildList();
-  if(v==="tree") closePanel();
+  document.getElementById("hint").style.display=v==="tree"?"block":"none";
+  document.getElementById("controls").style.display=v==="tree"?"flex":"none";
+  document.getElementById("minimap").style.display=v==="tree"?"block":"none";
+  if(v==="list"&&!listBuilt)buildList();
+  if(v==="tree")closePanel();
 }
 
 // ════════════════════════════════════════════════════════
@@ -979,57 +946,83 @@ function buildList(){
   let html="";
   TREE.children.forEach(level=>{
     const lc=LC[level.level]||"#c9a84c";
-    html+=`<div class="lv-level">
-      <div class="lv-lhdr" style="color:${lc};border-left:2px solid ${lc}30" onclick="toggleAcc(this)">
-        <span style="border-left:2px solid ${lc};padding-left:8px">${level.name} — ${level.subtitle||""}</span>
-        <span class="ct">&#x203A;</span>
-      </div>
-      <div class="lv-lbody">`;
+    html+=`<div class="lv-level"><div class="lv-lhdr" style="color:${lc};border-left:2px solid ${lc}44" onclick="toggleAcc(this)"><span style="border-left:2px solid ${lc};padding-left:8px">${level.name} — ${level.subtitle||""}</span><span class="ct">&#x203A;</span></div><div class="lv-lbody">`;
     (level.children||[]).forEach(subj=>{
       const sc=subj.color;
-      html+=`<div class="lv-subject">
-        <div class="lv-shdr" style="color:${sc}99" onclick="toggleAcc(this)">
-          <span style="flex:1">${subj.name}</span>
-          <span style="font-size:8px;color:${sc}55;margin-right:4px">${(subj.children||[]).length}</span>
-          <span class="ct">&#x203A;</span>
-        </div>
-        <div class="lv-sbody">`;
+      html+=`<div class="lv-subject"><div class="lv-shdr" style="color:${sc}99" onclick="toggleAcc(this)"><span style="flex:1">${subj.name}</span><span style="font-size:8px;color:${sc}55;margin-right:4px">${(subj.children||[]).length}</span><span class="ct">&#x203A;</span></div><div class="lv-sbody">`;
       (subj.children||[]).forEach((book,bi)=>{
         const idx=regBook(book,level.name,subj.name);
         const mc=book.mem?" is-mem":"";
         const st=book.mem?"":`style="color:${sc}bb"`;
-        html+=`<div class="lv-book">
-          <span class="lv-book-num" style="color:${sc}44">${bi+1}</span>
-          <span class="lv-book-name${mc}" ${st} onclick="openBookByIdx(${idx})">${book.name}</span>
-          <div class="lv-book-actions">
-            <a class="lv-btn" href="${book.info||'#'}" target="_blank" rel="noopener" title="Information" onclick="event.stopPropagation()">&#9432;</a>
-            <a class="lv-btn" href="${book.pdf||'#'}" target="_blank" rel="noopener" title="PDF" onclick="event.stopPropagation()">&#8659;</a>
-            <a class="lv-btn" href="${book.video||'#'}" target="_blank" rel="noopener" title="Recording" onclick="event.stopPropagation()">&#9654;</a>
-          </div>
-        </div>`;
+        html+=`<div class="lv-book"><span class="lv-book-num" style="color:${sc}44">${bi+1}</span><span class="lv-book-name${mc}" ${st} onclick="openBookByIdx(${idx})">${book.name}</span><div class="lv-book-actions"><a class="lv-btn" href="${book.info||"#"}" target="_blank" rel="noopener" title="Information" onclick="event.stopPropagation()">&#9432;</a><a class="lv-btn" href="${book.pdf||"#"}" target="_blank" rel="noopener" title="PDF" onclick="event.stopPropagation()">&#8659;</a><a class="lv-btn" href="${book.video||"#"}" target="_blank" rel="noopener" title="Recording" onclick="event.stopPropagation()">&#9654;</a></div></div>`;
       });
       html+=`</div></div>`;
     });
     html+=`</div></div>`;
   });
-  lv.innerHTML=html;
-  listBuilt=true;
+  lv.innerHTML=html;listBuilt=true;
+}
+function toggleAcc(el){el.classList.toggle("open");el.nextElementSibling.classList.toggle("open");}
+function openBookByIdx(idx){const data=BOOK_REG[idx];if(data)openPanel(data,null);}
+
+// ════════════════════════════════════════════════════════
+// PDF EXPORT
+// ════════════════════════════════════════════════════════
+function exportPDF(){
+  const LC_PRINT={0:"#8b6914",1:"#276620",2:"#1a5c88",3:"#6a3090",4:"#9a3020",5:"#7a6010"};
+  const html=`<!DOCTYPE html><html><head><meta charset="UTF-8">
+<title>Talib al-Ilm — Islamic Studies Roadmap</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Crimson+Pro:wght@400;600&display=swap" rel="stylesheet">
+<style>
+body{font-family:'Crimson Pro',Georgia,serif;background:#fff;color:#1a1005;margin:0;padding:0}
+.page{max-width:860px;margin:0 auto;padding:40px 44px 60px}
+h1{font-family:'Cinzel',serif;text-align:center;font-size:22px;color:#7a5c10;border-bottom:1px solid #c9a84c;padding-bottom:12px;margin-bottom:6px}
+.bismillah{text-align:center;font-family:serif;font-size:20px;color:#7a5c10;margin-bottom:6px}
+.sub{text-align:center;font-size:11px;color:#8b7040;margin-bottom:36px;letter-spacing:.15em;text-transform:uppercase}
+.level{margin-bottom:28px;page-break-inside:avoid}
+.ltitle{font-family:'Cinzel',serif;font-size:13px;border-left:3px solid;padding:5px 10px;margin-bottom:10px;text-transform:uppercase;letter-spacing:.1em}
+.subject{margin-bottom:10px}
+.sname{font-size:10.5px;color:#6b5030;text-transform:uppercase;letter-spacing:.09em;margin-bottom:3px;font-style:italic;padding-left:6px}
+ul{list-style:none;margin:0;padding:0}
+li{font-size:12.5px;padding:2px 0 2px 14px;border-bottom:1px solid #f5ecd8;position:relative}
+li::before{content:'·';position:absolute;left:4px;color:#c9a84c}
+li.mem{color:#7a4c10;font-style:italic}
+li.mem::before{content:'★';font-style:normal}
+@media print{*{-webkit-print-color-adjust:exact!important}}
+</style></head><body><div class="page">
+<div class="bismillah">بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ</div>
+<h1>Talib al-ʿIlm — Islamic Studies Roadmap</h1>
+<div class="sub">Complete Curriculum · Based on Saudi University Traditions</div>
+${TREE.children.map(level=>{
+  const lc=LC_PRINT[level.level]||"#7a5c10";
+  return`<div class="level"><div class="ltitle" style="border-color:${lc};color:${lc}">${level.name} — ${level.subtitle||""}</div>
+${(level.children||[]).map(subj=>`<div class="subject"><div class="sname">${subj.name}</div><ul>
+${(subj.children||[]).map(book=>`<li class="${book.mem?"mem":""}">${book.name}</li>`).join("")}
+</ul></div>`).join("")}</div>`;}).join("")}
+</div></body></html>`;
+  const win=window.open("","_blank");
+  win.document.write(html);win.document.close();
+  setTimeout(()=>win.print(),600);
 }
 
-function toggleAcc(el){
-  el.classList.toggle("open");
-  el.nextElementSibling.classList.toggle("open");
+// ════════════════════════════════════════════════════════
+// BISMILLAH
+// ════════════════════════════════════════════════════════
+function dismissSplash(){
+  const s=document.getElementById("splash");
+  s.style.transition="opacity 0.5s ease";s.style.opacity="0";
+  setTimeout(()=>s.remove(),500);
 }
-function openBookByIdx(idx){
-  const data=BOOK_REG[idx];
-  if(!data) return;
-  openPanel(data,null);
-}
+// Auto-dismiss after CSS animation (2.6s + 0.7s fade = 3.3s)
+setTimeout(()=>{const s=document.getElementById("splash");if(s)s.remove();},3350);
 
-window.addEventListener("resize",()=>{
-  svg.attr("width",window.innerWidth).attr("height",window.innerHeight);
-});
-if(window.innerWidth<700) setView("list");
+// ════════════════════════════════════════════════════════
+// INIT
+// ════════════════════════════════════════════════════════
+update(root);
+svg.call(zoom.transform,d3.zoomIdentity.translate(W*.07,H/2).scale(.92));
+window.addEventListener("resize",()=>svg.attr("width",window.innerWidth).attr("height",window.innerHeight));
+if(window.innerWidth<700)setView("list");
 </script>
 </body>
 </html>
