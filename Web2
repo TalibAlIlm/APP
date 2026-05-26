@@ -7,260 +7,214 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=IBM+Plex+Mono:wght@300;400;500&family=Noto+Naskh+Arabic:wght@400;700&display=swap" rel="stylesheet">
 <style>
-/* ── RESET & SEPIA THEME ─────────────────────────────── */
 *{margin:0;padding:0;box-sizing:border-box}
 :root{
-  --bg:#0c0904;--bg2:#130f08;--bg3:#1c1510;
-  --gold:#c9a84c;--gold2:#e8c97a;--gold3:#f5e2a8;
+  --bg:#0c0904;--bg2:#130f08;
+  --gold:#c9a84c;--gold2:#e8c97a;
   --muted:#6b5a3e;--border:#2c1e10;--text:#e8d5b7;
-  --panel-w:294px;
+  --pw:292px;
 }
 body{background:var(--bg);font-family:'IBM Plex Mono',monospace;overflow:hidden;width:100vw;height:100vh;color:var(--text)}
 body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
-  background:
-    radial-gradient(ellipse 55% 45% at 12% 20%,rgba(201,168,76,.055) 0%,transparent 65%),
-    radial-gradient(ellipse 40% 50% at 88% 80%,rgba(160,100,30,.04) 0%,transparent 60%),
-    radial-gradient(ellipse 28% 28% at 50% 50%,rgba(201,168,76,.025) 0%,transparent 70%);}
+  background:radial-gradient(ellipse 55% 45% at 12% 20%,rgba(201,168,76,.05) 0%,transparent 65%),
+  radial-gradient(ellipse 40% 50% at 88% 80%,rgba(160,100,30,.04) 0%,transparent 60%)}
 
-/* ── BISMILLAH SPLASH ────────────────────────────────── */
-#splash{
-  position:fixed;inset:0;z-index:9999;
-  background:#0c0904;
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  gap:18px;cursor:pointer;
-  animation:splashOut 0.7s ease 2.6s forwards;
-}
+/* ── SPLASH ───────────────────────────────────────────── */
+#splash{position:fixed;inset:0;z-index:9999;background:var(--bg);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;
+  cursor:pointer;animation:splashOut .6s ease 2.8s forwards;pointer-events:auto}
 @keyframes splashOut{to{opacity:0;pointer-events:none}}
-.splash-ornament{
-  color:var(--gold);opacity:0;font-size:13px;letter-spacing:.4em;
-  animation:splashIn .8s ease .2s forwards;
-}
-.splash-arabic{
-  font-family:'Noto Naskh Arabic',serif;font-size:clamp(26px,5vw,46px);
-  color:var(--gold2);opacity:0;text-align:center;line-height:1.5;
-  text-shadow:0 0 40px rgba(232,201,122,.5),0 0 80px rgba(201,168,76,.25);
-  animation:splashIn .9s ease .5s forwards;
-}
-.splash-english{
-  font-family:'Cinzel',serif;font-size:11px;letter-spacing:.22em;
-  text-transform:uppercase;color:var(--muted);opacity:0;
-  animation:splashIn .7s ease 1s forwards;
-}
-.splash-line{width:120px;height:1px;background:linear-gradient(to right,transparent,var(--gold),transparent);opacity:0;animation:splashIn .6s ease 1.3s forwards}
-.splash-skip{font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);opacity:0;animation:splashIn .5s ease 1.8s forwards}
-@keyframes splashIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.sp-bism{font-family:'Noto Naskh Arabic',serif;font-size:clamp(52px,9vw,96px);
+  color:var(--gold2);line-height:1;text-align:center;
+  text-shadow:0 0 60px rgba(232,201,122,.4),0 0 120px rgba(201,168,76,.2);
+  opacity:0;animation:spIn 1s ease .3s forwards}
+.sp-line{width:90px;height:1px;background:linear-gradient(to right,transparent,var(--gold),transparent);
+  opacity:0;animation:spIn .5s ease 1s forwards}
+.sp-en{font-family:'Cinzel',serif;font-size:10px;letter-spacing:.22em;text-transform:uppercase;
+  color:var(--muted);opacity:0;animation:spIn .5s ease 1.2s forwards}
+@keyframes spIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
 
-/* ── HEADER ──────────────────────────────────────────── */
-#header{
-  position:fixed;top:0;left:0;right:0;height:46px;z-index:200;
+/* ── HEADER ───────────────────────────────────────────── */
+#header{position:fixed;top:0;left:0;right:0;height:46px;z-index:200;
   background:rgba(12,9,4,.97);border-bottom:1px solid var(--border);
-  box-shadow:0 1px 20px rgba(0,0,0,.6);backdrop-filter:blur(14px);
-  display:flex;align-items:center;padding:0 12px;gap:10px;
-}
-#header h1{font-family:'Cinzel',serif;font-size:11px;letter-spacing:.2em;color:var(--gold);
-  white-space:nowrap;text-transform:uppercase;text-shadow:0 0 16px rgba(201,168,76,.3)}
+  box-shadow:0 1px 18px rgba(0,0,0,.55);backdrop-filter:blur(12px);
+  display:flex;align-items:center;padding:0 12px;gap:10px;will-change:transform}
+#header h1{font-family:'Cinzel',serif;font-size:11px;letter-spacing:.2em;
+  color:var(--gold);white-space:nowrap;text-transform:uppercase;
+  text-shadow:0 0 14px rgba(201,168,76,.3)}
 .hsep{width:1px;height:18px;background:var(--border);flex-shrink:0}
-
-/* Filter chips (legend) */
-.legend{display:flex;align-items:center;gap:6px;flex-wrap:nowrap;overflow:hidden}
-.chip{
-  display:flex;align-items:center;gap:3px;
-  font-size:8px;letter-spacing:.04em;color:var(--muted);white-space:nowrap;
-  padding:2px 6px;border-radius:2px;border:1px solid transparent;
-  cursor:pointer;transition:all .18s ease;user-select:none;
-}
+.legend{display:flex;align-items:center;gap:5px;overflow:hidden}
+.chip{display:flex;align-items:center;gap:3px;font-size:8px;letter-spacing:.04em;
+  color:var(--muted);white-space:nowrap;padding:2px 6px;border-radius:2px;
+  border:1px solid transparent;cursor:pointer;transition:all .16s;user-select:none}
 .chip:hover{border-color:rgba(255,255,255,.1);color:var(--text)}
-.chip.active{color:#0c0904;border-color:transparent}
+.chip.active{color:#0c0904}
 .chip .ld{width:6px;height:6px;border-radius:50%;flex-shrink:0}
-
-/* Header buttons */
-.hbtn{margin-left:auto;display:flex;gap:5px;flex-shrink:0}
-.hbtn button{
-  background:transparent;border:1px solid var(--border);color:var(--muted);
-  font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.08em;
-  padding:4px 8px;cursor:pointer;text-transform:uppercase;
-  transition:all .18s ease;white-space:nowrap;
-}
+.hbtn{margin-left:auto;display:flex;gap:4px;flex-shrink:0}
+.hbtn button{background:transparent;border:1px solid var(--border);color:var(--muted);
+  font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.07em;
+  padding:4px 8px;cursor:pointer;text-transform:uppercase;transition:all .16s;white-space:nowrap}
 .hbtn button:hover{border-color:var(--gold);color:var(--gold);background:rgba(201,168,76,.07)}
 .hbtn button.active{border-color:var(--gold);color:var(--gold);background:rgba(201,168,76,.1)}
-#btn-search{font-size:12px;padding:3px 8px}
+#btn-search{font-size:13px;padding:3px 8px}
 
-/* ── SEARCH ──────────────────────────────────────────── */
-#search-wrap{
-  position:fixed;top:56px;left:50%;transform:translateX(-50%);
-  z-index:500;width:420px;max-width:90vw;
-  opacity:0;pointer-events:none;transition:opacity .22s ease;
-}
+/* ── SEARCH ───────────────────────────────────────────── */
+#search-wrap{position:fixed;top:56px;left:50%;transform:translateX(-50%);
+  z-index:500;width:420px;max-width:92vw;opacity:0;pointer-events:none;transition:opacity .18s}
 #search-wrap.open{opacity:1;pointer-events:all}
-#search-input{
-  width:100%;padding:10px 14px;
-  background:rgba(19,15,8,.98);border:1px solid var(--gold);
-  color:var(--text);font-family:'IBM Plex Mono',monospace;font-size:11px;
-  outline:none;box-shadow:0 4px 24px rgba(0,0,0,.6);
-}
+#search-input{width:100%;padding:10px 14px;background:rgba(19,15,8,.99);
+  border:1px solid var(--gold);color:var(--text);
+  font-family:'IBM Plex Mono',monospace;font-size:11px;outline:none;
+  box-shadow:0 6px 24px rgba(0,0,0,.65)}
 #search-input::placeholder{color:var(--muted)}
-#search-results{
-  background:rgba(19,15,8,.98);border:1px solid var(--border);border-top:none;
-  max-height:280px;overflow-y:auto;
-}
+#search-results{background:rgba(19,15,8,.99);border:1px solid var(--border);
+  border-top:none;max-height:290px;overflow-y:auto}
 #search-results::-webkit-scrollbar{width:3px}
 #search-results::-webkit-scrollbar-thumb{background:var(--border)}
-.sr-item{
-  padding:8px 14px;cursor:pointer;border-bottom:1px solid var(--border);
-  transition:background .14s;
-}
+.sr-item{padding:9px 14px;cursor:pointer;border-bottom:1px solid var(--border);transition:background .12s}
 .sr-item:hover{background:rgba(201,168,76,.07)}
-.sr-name{font-size:10px;color:var(--text);line-height:1.3}
+.sr-name{font-size:10px;color:var(--text);line-height:1.35}
 .sr-name.mem{color:var(--gold2)}
 .sr-path{font-size:8px;color:var(--muted);margin-top:2px;letter-spacing:.05em}
 .sr-none{padding:12px 14px;font-size:10px;color:var(--muted);text-align:center}
 
-/* ── BREADCRUMB ──────────────────────────────────────── */
-#breadcrumb{
-  position:fixed;top:58px;left:16px;z-index:150;pointer-events:none;
+/* ── BREADCRUMB ───────────────────────────────────────── */
+#breadcrumb{position:fixed;top:58px;left:16px;z-index:150;pointer-events:none;
   font-size:9px;letter-spacing:.1em;color:var(--muted);text-transform:uppercase;
-  opacity:0;transition:opacity .35s;max-width:55vw;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
-}
+  opacity:0;transition:opacity .3s;max-width:55vw;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 #breadcrumb.show{opacity:1}
 #breadcrumb span{color:var(--gold2)}
 
-/* ── CANVAS ──────────────────────────────────────────── */
-#canvas{width:100%;height:100%;cursor:grab;display:block;position:relative;z-index:1}
+/* ── CANVAS ───────────────────────────────────────────── */
+#canvas{width:100%;height:100%;cursor:grab;display:block;
+  will-change:transform;transform:translateZ(0)}
 #canvas:active{cursor:grabbing}
 
-/* ── PANEL ───────────────────────────────────────────── */
-#panel{
-  position:fixed;right:calc(-1 * var(--panel-w));top:46px;bottom:0;
-  width:var(--panel-w);background:rgba(19,15,8,.97);
-  border-left:1px solid var(--border);box-shadow:-6px 0 28px rgba(0,0,0,.55);
-  z-index:300;display:flex;flex-direction:column;
-  transition:right .3s cubic-bezier(.34,1.2,.64,1);
-  overflow-y:auto;backdrop-filter:blur(18px);
-}
-#panel.open{right:0}
+/* ── PANEL — GPU-accelerated via transform ────────────── */
+#panel{position:fixed;right:0;top:46px;bottom:0;width:var(--pw);
+  background:rgba(19,15,8,.98);border-left:1px solid var(--border);
+  box-shadow:-6px 0 28px rgba(0,0,0,.5);z-index:300;
+  display:flex;flex-direction:column;
+  transform:translateX(var(--pw));
+  transition:transform .28s cubic-bezier(.34,1.15,.64,1);
+  will-change:transform;overflow-y:auto;backdrop-filter:blur(16px)}
+#panel.open{transform:translateX(0)}
 #panel::-webkit-scrollbar{width:2px}
 #panel::-webkit-scrollbar-thumb{background:var(--border)}
-#panel-close{
-  position:sticky;top:0;align-self:flex-end;margin:10px 10px -4px auto;
-  background:none;border:none;color:var(--muted);font-size:15px;
-  cursor:pointer;transition:color .18s;z-index:1;line-height:1;
-}
+#panel-close{position:sticky;top:0;align-self:flex-end;margin:10px 10px -4px auto;
+  background:none;border:none;color:var(--muted);font-size:15px;cursor:pointer;
+  transition:color .16s;z-index:1;line-height:1}
 #panel-close:hover{color:var(--gold)}
-#panel-path{padding:12px 14px 0;font-size:9px;letter-spacing:.1em;color:var(--muted);text-transform:uppercase;line-height:1.9}
+#panel-path{padding:12px 14px 0;font-size:9px;letter-spacing:.1em;
+  color:var(--muted);text-transform:uppercase;line-height:1.9}
 #panel-path span{color:var(--gold2)}
-#panel-title{padding:10px 14px 12px;font-family:'Cinzel',serif;font-size:12px;color:var(--gold2);line-height:1.45;border:1px solid var(--border);border-left:none;border-right:none;margin-top:8px;text-shadow:0 0 14px rgba(232,201,122,.18)}
-#panel-mem{padding:10px 14px 2px;font-size:9px;letter-spacing:.12em;color:var(--gold2);min-height:28px;text-shadow:0 0 8px rgba(232,201,122,.5)}
+#panel-title{padding:10px 14px 12px;font-family:'Cinzel',serif;font-size:12px;
+  color:var(--gold2);line-height:1.45;border:1px solid var(--border);
+  border-left:none;border-right:none;margin-top:8px;
+  text-shadow:0 0 12px rgba(232,201,122,.18)}
+#panel-mem{padding:10px 14px 2px;font-size:9px;letter-spacing:.12em;
+  color:var(--gold2);min-height:28px;text-shadow:0 0 8px rgba(232,201,122,.4)}
 #panel-btns{padding:12px 14px 16px;display:flex;flex-direction:column;gap:7px}
-.pbtn{
-  display:flex;align-items:center;gap:10px;padding:10px 13px;
+.pbtn{display:flex;align-items:center;gap:10px;padding:10px 13px;
   border:1px solid var(--border);background:transparent;color:var(--text);
   font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.06em;
-  cursor:pointer;text-align:left;transition:all .2s ease;
-  text-decoration:none;width:100%;
-}
+  cursor:pointer;text-align:left;transition:all .18s;text-decoration:none;width:100%}
 .pbtn:hover{border-color:var(--gold);color:var(--gold2);background:rgba(201,168,76,.06);
-  box-shadow:0 0 14px rgba(201,168,76,.1);transform:translateX(2px)}
+  box-shadow:0 0 12px rgba(201,168,76,.1);transform:translateX(2px)}
 .pbtn .icon{font-size:13px;width:18px;text-align:center;flex-shrink:0;opacity:.8}
-#panel-note{padding:12px 14px 18px;font-size:9px;color:var(--muted);line-height:1.7;border-top:1px solid var(--border);margin-top:auto}
+#panel-note{padding:12px 14px 18px;font-size:9px;color:var(--muted);
+  line-height:1.7;border-top:1px solid var(--border);margin-top:auto}
 
-/* ── CONTROLS ────────────────────────────────────────── */
+/* ── CONTROLS ─────────────────────────────────────────── */
 #controls{position:fixed;bottom:14px;right:14px;display:flex;gap:4px;z-index:150}
-.cbtn{
-  width:28px;height:28px;background:rgba(19,15,8,.9);
-  border:1px solid var(--border);color:var(--muted);
-  font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;
-  transition:all .18s;backdrop-filter:blur(8px);
-}
-.cbtn:hover{border-color:var(--gold);color:var(--gold);box-shadow:0 0 8px rgba(201,168,76,.2)}
+.cbtn{width:28px;height:28px;background:rgba(19,15,8,.9);border:1px solid var(--border);
+  color:var(--muted);font-size:14px;cursor:pointer;display:flex;align-items:center;
+  justify-content:center;transition:all .16s;backdrop-filter:blur(8px)}
+.cbtn:hover{border-color:var(--gold);color:var(--gold)}
+#hint{position:fixed;bottom:14px;left:50%;transform:translateX(-50%);
+  font-size:9px;letter-spacing:.08em;color:#251a0a;pointer-events:none;
+  text-transform:uppercase;white-space:nowrap;transition:opacity .3s}
 
-#hint{
-  position:fixed;bottom:14px;left:50%;transform:translateX(-50%);
-  font-size:9px;letter-spacing:.08em;color:#2e2010;
-  pointer-events:none;text-transform:uppercase;white-space:nowrap;transition:opacity .4s;
-}
-
-/* ── MINIMAP ─────────────────────────────────────────── */
-#minimap{
-  position:fixed;bottom:50px;left:14px;z-index:150;
-  background:rgba(12,9,4,.9);border:1px solid var(--border);
-  backdrop-filter:blur(8px);cursor:crosshair;
-  box-shadow:0 2px 12px rgba(0,0,0,.4);
-}
-#minimap canvas{display:block}
-#mm-label{
-  font-family:'Cinzel',serif;font-size:7px;letter-spacing:.15em;
-  color:var(--muted);text-transform:uppercase;text-align:center;
-  padding:3px 0 2px;border-bottom:1px solid var(--border);
-}
-
-/* ── LIST VIEW ───────────────────────────────────────── */
-#listview{position:fixed;top:46px;left:0;right:0;bottom:0;overflow-y:auto;background:var(--bg);display:none;z-index:50}
+/* ── LIST VIEW ────────────────────────────────────────── */
+#listview{position:fixed;top:46px;left:0;right:0;bottom:0;
+  overflow-y:auto;background:var(--bg);display:none;z-index:50}
 #listview.show{display:block}
 #listview::-webkit-scrollbar{width:3px}
 #listview::-webkit-scrollbar-thumb{background:var(--border)}
 .lv-level{border-bottom:1px solid var(--border)}
-.lv-lhdr{padding:13px 14px;font-family:'Cinzel',serif;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;cursor:pointer;display:flex;align-items:center;justify-content:space-between;user-select:none;transition:background .18s}
+.lv-lhdr{padding:13px 14px;font-family:'Cinzel',serif;font-size:10.5px;
+  letter-spacing:.14em;text-transform:uppercase;cursor:pointer;
+  display:flex;align-items:center;justify-content:space-between;
+  user-select:none;transition:background .16s}
 .lv-lhdr:hover{background:rgba(255,255,255,.018)}
-.lv-lhdr .ct{font-size:10px;transition:transform .26s cubic-bezier(.4,0,.2,1);color:var(--muted);flex-shrink:0}
-.lv-lhdr.open .ct{transform:rotate(90deg)}
-.lv-lbody{max-height:0;overflow:hidden;transition:max-height .36s cubic-bezier(.4,0,.2,1)}
+.lv-lhdr .ct,.lv-shdr .ct{font-size:10px;transition:transform .24s cubic-bezier(.4,0,.2,1);
+  color:var(--muted);flex-shrink:0}
+.lv-lhdr.open .ct,.lv-shdr.open .ct{transform:rotate(90deg)}
+.lv-lbody{max-height:0;overflow:hidden;transition:max-height .34s cubic-bezier(.4,0,.2,1)}
 .lv-lbody.open{max-height:20000px}
-.lv-subject{border-top:1px solid rgba(255,255,255,.032)}
-.lv-shdr{padding:8px 22px;font-size:9px;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;display:flex;align-items:center;gap:8px;user-select:none;transition:background .14s}
-.lv-shdr:hover{background:rgba(255,255,255,.016)}
-.lv-shdr .ct{transition:transform .2s cubic-bezier(.4,0,.2,1);color:var(--muted);margin-left:auto;flex-shrink:0}
-.lv-shdr.open .ct{transform:rotate(90deg)}
-.lv-sbody{max-height:0;overflow:hidden;transition:max-height .28s cubic-bezier(.4,0,.2,1);padding:0 28px}
+.lv-subject{border-top:1px solid rgba(255,255,255,.03)}
+.lv-shdr{padding:8px 22px;font-size:9px;letter-spacing:.12em;text-transform:uppercase;
+  cursor:pointer;display:flex;align-items:center;gap:8px;
+  user-select:none;transition:background .13s}
+.lv-shdr:hover{background:rgba(255,255,255,.015)}
+.lv-shdr .ct{margin-left:auto}
+.lv-sbody{max-height:0;overflow:hidden;transition:max-height .26s cubic-bezier(.4,0,.2,1);padding:0 28px}
 .lv-sbody.open{max-height:5000px;padding-bottom:10px}
-.lv-book{display:flex;align-items:center;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.02);gap:6px;min-height:29px}
+.lv-book{display:flex;align-items:center;padding:5px 0;
+  border-bottom:1px solid rgba(255,255,255,.02);gap:6px;min-height:29px}
 .lv-book-num{font-size:8px;color:var(--muted);width:14px;flex-shrink:0;text-align:right}
-.lv-book-name{font-size:9.5px;opacity:.72;flex:1;line-height:1.35;cursor:pointer;transition:opacity .14s}
+.lv-book-name{font-size:9.5px;opacity:.72;flex:1;line-height:1.35;cursor:pointer;transition:opacity .13s}
 .lv-book-name:hover{opacity:1}
-.lv-book-name.is-mem{color:var(--gold2);opacity:1;text-shadow:0 0 8px rgba(232,201,122,.45),0 0 18px rgba(201,168,76,.22);animation:mem-pulse 3.2s ease-in-out infinite}
-@keyframes mem-pulse{0%,100%{text-shadow:0 0 6px rgba(232,201,122,.4),0 0 14px rgba(201,168,76,.18)}50%{text-shadow:0 0 11px rgba(232,201,122,.7),0 0 26px rgba(201,168,76,.38)}}
+.lv-book-name.is-mem{color:var(--gold2);opacity:1;
+  text-shadow:0 0 8px rgba(232,201,122,.45),0 0 18px rgba(201,168,76,.22);
+  animation:mpulse 3.2s ease-in-out infinite}
+@keyframes mpulse{
+  0%,100%{text-shadow:0 0 6px rgba(232,201,122,.4),0 0 14px rgba(201,168,76,.18)}
+  50%{text-shadow:0 0 11px rgba(232,201,122,.7),0 0 26px rgba(201,168,76,.38)}}
 .lv-book-actions{display:flex;gap:3px;flex-shrink:0}
-.lv-btn{width:20px;height:20px;background:transparent;border:1px solid var(--border);color:var(--muted);font-size:9px;cursor:pointer;display:flex;align-items:center;justify-content:center;text-decoration:none;transition:all .15s;line-height:1}
+.lv-btn{width:20px;height:20px;background:transparent;border:1px solid var(--border);
+  color:var(--muted);font-size:9px;cursor:pointer;display:flex;align-items:center;
+  justify-content:center;text-decoration:none;transition:all .14s;line-height:1}
 .lv-btn:hover{border-color:var(--gold);color:var(--gold);background:rgba(201,168,76,.08)}
 @media(max-width:680px){.legend{display:none}#header h1{font-size:9px}.hbtn button{font-size:8px;padding:3px 5px}}
 </style>
 </head>
 <body>
 
-<!-- ── BISMILLAH SPLASH ─────────────────────────────── -->
+<!-- SPLASH — no ornaments, just the Basmala -->
 <div id="splash" onclick="dismissSplash()">
-  <div class="splash-ornament">&#10022; &nbsp; &#10022; &nbsp; &#10022;</div>
-  <div class="splash-arabic">&#xFDFD;</div>
-  <div class="splash-line"></div>
-  <div class="splash-english">In the name of Allah, the Most Gracious, the Most Merciful</div>
-  <div class="splash-skip">Tap anywhere to continue</div>
+  <div class="sp-bism">&#xFDFD;</div>
+  <div class="sp-line"></div>
+  <div class="sp-en">In the name of Allah, the Most Gracious, the Most Merciful</div>
 </div>
 
-<!-- ── HEADER ─────────────────────────────────────────── -->
+<!-- HEADER -->
 <div id="header">
   <h1>Talib al-&#x02BF;Ilm</h1>
   <div class="hsep"></div>
-  <div class="legend" id="legend-chips"></div>
+  <div class="legend" id="chips"></div>
   <div class="hbtn">
-    <button id="btn-search" title="Search (Ctrl+F)" onclick="toggleSearch()">&#x2315;</button>
+    <button id="btn-search" onclick="toggleSearch()" title="Search (Ctrl+F)">&#x2315;</button>
     <button id="btn-tree" class="active" onclick="setView('tree')">Tree</button>
     <button id="btn-list" onclick="setView('list')">List</button>
     <button onclick="expandAll()">Expand</button>
     <button onclick="collapseToLevels()">Collapse</button>
     <button onclick="resetZoom()">Reset</button>
-    <button onclick="exportPDF()">PDF</button>
   </div>
 </div>
 
-<!-- ── SEARCH ─────────────────────────────────────────── -->
+<!-- SEARCH -->
 <div id="search-wrap">
-  <input id="search-input" type="text" placeholder="Search texts…" oninput="onSearch(this.value)" onkeydown="onSearchKey(event)">
+  <input id="search-input" type="text" placeholder="Search texts…"
+    oninput="onSearch(this.value)"
+    onkeydown="if(event.key==='Escape')closeSearch()">
   <div id="search-results"></div>
 </div>
 
 <div id="breadcrumb"></div>
 <svg id="canvas"></svg>
 
-<!-- ── PANEL ─────────────────────────────────────────── -->
+<!-- PANEL -->
 <div id="panel">
   <button id="panel-close" onclick="closePanel()">&#x2715;</button>
   <div id="panel-path"></div>
@@ -271,34 +225,31 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
     <a class="pbtn" id="btn-pdf"   href="#" target="_blank" rel="noopener"><span class="icon">&#128196;</span>PDF</a>
     <a class="pbtn" id="btn-video" href="#" target="_blank" rel="noopener"><span class="icon">&#9654;</span>Recording</a>
   </div>
-  <div id="panel-note">Links will be added for each text.<br>Press Esc or click background to close.</div>
+  <div id="panel-note">Links will be added for each text.<br>Press Esc or click the background to close.</div>
 </div>
 
 <div id="listview"></div>
 
-<!-- ── MINIMAP ─────────────────────────────────────────── -->
-<div id="minimap">
-  <div id="mm-label">Map</div>
-  <canvas id="mm-canvas" width="180" height="96"></canvas>
-</div>
-
-<!-- ── CONTROLS ─────────────────────────────────────────── -->
 <div id="controls">
-  <button class="cbtn" id="zoom-in">+</button>
-  <button class="cbtn" id="zoom-out">&#8722;</button>
+  <button class="cbtn" id="zi">+</button>
+  <button class="cbtn" id="zo">&#8722;</button>
 </div>
-<div id="hint">Click level/subject to expand &nbsp;&bull;&nbsp; Click book for details &nbsp;&bull;&nbsp; Drag &amp; scroll to navigate</div>
+<div id="hint">Click level / subject to expand &nbsp;&bull;&nbsp; Click book for details &nbsp;&bull;&nbsp; Drag &amp; scroll to navigate</div>
 
 <script>
-// ════════════════════════════════════════════════════════
-// COLOURS
-// ════════════════════════════════════════════════════════
-const SC={poems:"#a8d5e2",aqeedah:"#ef9a9a",fiqh:"#80cbc4",hadith:"#ffcc80",nahw:"#a5d6a7",tajweed:"#80deea",usool:"#ce93d8",tafsir:"#fff59d",faraid:"#c5e1a5",balagha:"#ffe082",adab:"#bcaaa4",seerah:"#f48fb1",mustalah:"#b39ddb",qawaid:"#b2dfdb",lit:"#e6ee9c",sarf:"#a5d6a7",illal:"#b39ddb",history:"#ffab91",poetry:"#ffe082"};
+/* ════════════════════════════════════════════════════════
+   COLOURS
+════════════════════════════════════════════════════════ */
+const SC={poems:"#a8d5e2",aqeedah:"#ef9a9a",fiqh:"#80cbc4",hadith:"#ffcc80",
+  nahw:"#a5d6a7",tajweed:"#80deea",usool:"#ce93d8",tafsir:"#fff59d",
+  faraid:"#c5e1a5",balagha:"#ffe082",adab:"#bcaaa4",seerah:"#f48fb1",
+  mustalah:"#b39ddb",qawaid:"#b2dfdb",lit:"#e6ee9c",
+  sarf:"#a5d6a7",illal:"#b39ddb",history:"#ffab91",poetry:"#ffe082"};
 const LC={0:"#e0c97a",1:"#4caf50",2:"#42a5f5",3:"#ce93d8",4:"#ff8a65",5:"#c9a84c"};
 
-// ════════════════════════════════════════════════════════
-// DATA
-// ════════════════════════════════════════════════════════
+/* ════════════════════════════════════════════════════════
+   DATA
+════════════════════════════════════════════════════════ */
 const b=(n,m=false,i="#",p="#",v="#")=>({name:n,mem:m,type:"book",info:i,pdf:p,video:v});
 const s=(n,c,ch)=>({name:n,color:c,type:"subject",children:ch});
 
@@ -327,9 +278,7 @@ const TREE={name:"Talib al-Ilm",type:"root",children:[
   ]),
   s("Hadith",SC.hadith,[b("Al-Arba'un al-Nawawiyya",true)]),
   s("Nahw — Arabic Grammar",SC.nahw,[
-    b("Madinah Arabic Books (1–3)"),
-    b("Al-Nahw al-Wadih"),
-    b("Al-Ajurrumiyya"),
+    b("Madinah Arabic Books (1–3)"),b("Al-Nahw al-Wadih"),b("Al-Ajurrumiyya"),
   ]),
   s("Tajweed",SC.tajweed,[b("Tuhfat al-Atfal")]),
   s("Usool al-Fiqh",SC.usool,[b("Al-Waraqat — al-Juwayni")]),
@@ -505,7 +454,9 @@ const TREE={name:"Talib al-Ilm",type:"root",children:[
     b("Sharh Ilal al-Tirmidhi — Ibn Rajab al-Hanbali"),
     b("Al-Ilal al-Daraqutni"),
   ]),
-  s("Mustalah — Advanced",SC.mustalah,[b("Fath al-Mughith Sharh Alfiyyat al-Hadith — al-Sakhawi")]),
+  s("Mustalah — Advanced",SC.mustalah,[
+    b("Fath al-Mughith Sharh Alfiyyat al-Hadith — al-Sakhawi"),
+  ]),
   s("Fiqh — Advanced",SC.fiqh,[
     b("Umdat al-Talib li-Nayl al-Mathalib"),
     b("Balaght al-Wusool"),b("Rasm al-Mufti al-Hanbali"),
@@ -534,80 +485,83 @@ const TREE={name:"Talib al-Ilm",type:"root",children:[
 ]}
 ]};
 
-// ════════════════════════════════════════════════════════
-// SEARCH INDEX
-// ════════════════════════════════════════════════════════
-const searchIndex=[];
-(function buildIdx(node,ln,sn){
-  if(node.type==="book"){searchIndex.push({...node,levelName:ln,subjName:sn});return;}
-  (node.children||[]).forEach(c=>buildIdx(c,node.type==="level"?node.name:ln,node.type==="subject"?node.name:sn));
+/* ════════════════════════════════════════════════════════
+   SEARCH INDEX
+════════════════════════════════════════════════════════ */
+const SI=[];
+(function idx(node,ln,sn){
+  if(node.type==="book"){SI.push({...node,ln,sn});return;}
+  (node.children||[]).forEach(c=>idx(c,node.type==="level"?node.name:ln,node.type==="subject"?node.name:sn));
 })(TREE,"","");
 
-// ════════════════════════════════════════════════════════
-// BOOK REGISTRY for list view
-// ════════════════════════════════════════════════════════
-let BOOK_REG=[];
-const regBook=(bk,ln,sn)=>{const i=BOOK_REG.length;BOOK_REG.push({...bk,levelName:ln,subjName:sn});return i;};
+/* ════════════════════════════════════════════════════════
+   BOOK REGISTRY (list view)
+════════════════════════════════════════════════════════ */
+let BREG=[];
+const regBook=(bk,ln,sn)=>{const i=BREG.length;BREG.push({...bk,ln,sn});return i;};
 
-// ════════════════════════════════════════════════════════
-// STATE
-// ════════════════════════════════════════════════════════
-let focusedIds=null,activeFilters=new Set(),nodeId=0,listBuilt=false;
-let mmMinX=0,mmMinY=0,mmScale=1; // minimap transform cache
+/* ════════════════════════════════════════════════════════
+   STATE
+════════════════════════════════════════════════════════ */
+let focusedIds=null, activeFilters=new Set(), listBuilt=false;
 
-// ════════════════════════════════════════════════════════
-// D3 SETUP
-// ════════════════════════════════════════════════════════
-const W=window.innerWidth,H=window.innerHeight;
+/* ════════════════════════════════════════════════════════
+   D3 SETUP
+════════════════════════════════════════════════════════ */
+const W=window.innerWidth, H=window.innerHeight;
 const svg=d3.select("#canvas").attr("width",W).attr("height",H);
 
-// SVG defs — glow filters
+// Single lightweight glow filter for memorise labels
 const defs=svg.append("defs");
-const addFilter=(id,std,matrix)=>{
-  const f=defs.append("filter").attr("id",id).attr("x","-50%").attr("y","-100%").attr("width","200%").attr("height","300%");
-  f.append("feGaussianBlur").attr("in","SourceGraphic").attr("stdDeviation",std).attr("result","blur");
-  f.append("feColorMatrix").attr("in","blur").attr("type","matrix").attr("values",matrix).attr("result","c");
-  const m=f.append("feMerge");m.append("feMergeNode").attr("in","c");m.append("feMergeNode").attr("in","SourceGraphic");
-};
-addFilter("glow-gold","1.1","1.4 0.6 0 0 0  0.8 0.5 0 0 0  0 0.1 0 0 0  0 0 0 1.2 0");
-addFilter("glow-path","2.5","1.8 1.0 0 0 0  1.2 0.7 0 0 0  0 0.1 0 0 0  0 0 0 2 0");
+const gm=defs.append("filter").attr("id","gm")
+  .attr("x","-30%").attr("y","-80%").attr("width","160%").attr("height","260%");
+gm.append("feGaussianBlur").attr("in","SourceGraphic").attr("stdDeviation","1").attr("result","b");
+gm.append("feColorMatrix").attr("in","b").attr("type","matrix")
+  .attr("values","1.3 0.5 0 0 0  0.7 0.4 0 0 0  0 0 0 0 0  0 0 0 1.1 0").attr("result","c");
+const gm2=gm.append("feMerge");gm2.append("feMergeNode").attr("in","c");gm2.append("feMergeNode").attr("in","SourceGraphic");
 
+// Layer order: backgrounds → links → nodes → animation overlays
 const g=svg.append("g");
-const bgGroup=g.append("g").attr("class","bg");
-const linksGroup=g.append("g").attr("class","lkg");
-const nodesGroup=g.append("g").attr("class","ndg");
+const bgG=g.append("g").attr("pointer-events","none");
+const lkG=g.append("g").attr("pointer-events","none");
+const ndG=g.append("g");
+const animG=g.append("g").attr("pointer-events","none"); // path animation overlays on top
 
-const zoom=d3.zoom().scaleExtent([0.06,4]).on("zoom",e=>{
-  g.attr("transform",e.transform);
-  updateMinimap();
-});
+const zoom=d3.zoom().scaleExtent([0.05,4])
+  .on("zoom",e=>g.attr("transform",e.transform));
 svg.call(zoom).on("dblclick.zoom",null);
-svg.on("click",()=>{closePanel();});
-document.getElementById("zoom-in").onclick=()=>zoom.scaleBy(svg,1.3);
-document.getElementById("zoom-out").onclick=()=>zoom.scaleBy(svg,.77);
+svg.on("click",()=>closePanel());
+document.getElementById("zi").onclick=()=>zoom.scaleBy(svg,1.3);
+document.getElementById("zo").onclick=()=>zoom.scaleBy(svg,.77);
 
 const treeFn=d3.tree().nodeSize([20,264]);
 let root=d3.hierarchy(TREE);
-root.descendants().forEach(d=>{if(d.depth>=2){d._children=d.children;d.children=null;}});
-root.x0=0;root.y0=0;
 
-// ── Helpers ──────────────────────────────────────────────
-function nodeColor(d){
+// Pre-set IDs for ALL nodes including collapsed ones — essential for reliable animation
+let _nid=0;
+(function preId(d){d.id=++_nid;(d.children||d._children||[]).forEach(preId);})(root);
+root.descendants().forEach(d=>{if(d.depth>=2){d._children=d.children;d.children=null;}});
+root.x0=0; root.y0=0;
+
+/* ── Helpers ──────────────────────────────────────────── */
+function nColor(d){
   if(d.data.type==="root")return"#c9a84c";
   if(d.data.type==="level")return LC[d.data.level]||"#c9a84c";
   if(d.data.type==="subject")return d.data.color||"#888";
   return(d.parent&&d.parent.data.color)||"#a0a0c0";
 }
-function nodeR(d){return d.data.type==="root"?13:d.data.type==="level"?9:d.data.type==="subject"?6:4;}
-function nodeLabel(d){
+function nR(d){return d.data.type==="root"?13:d.data.type==="level"?9:d.data.type==="subject"?6:4;}
+function nLabel(d){
   if(d.data.type==="root")return"Talib al-Ilm";
   if(d.data.type==="level")return d.data.name+" — "+(d.data.subtitle||"");
   if(d.data.type==="subject"){const n=(d.children||d._children||[]).length;return d.data.name+(n?` [${n}]`:"");}
-  const nm=d.data.name.length>38?d.data.name.slice(0,36)+"…":d.data.name;
-  return nm;
+  return d.data.name.length>38?d.data.name.slice(0,36)+"…":d.data.name;
 }
-function diag(d){const sx=d.source.y,sy=d.source.x,tx=d.target.y,ty=d.target.x,mx=(sx+tx)/2;return`M${sx},${sy}C${mx},${sy} ${mx},${ty} ${tx},${ty}`;}
-function nodeOpacity(d){
+function diag(d){
+  const sx=d.source.y,sy=d.source.x,tx=d.target.y,ty=d.target.x,mx=(sx+tx)/2;
+  return`M${sx},${sy}C${mx},${sy} ${mx},${ty} ${tx},${ty}`;
+}
+function nOpacity(d){
   if(focusedIds)return focusedIds.has(d.id)?1:0.05;
   if(activeFilters.size){
     if(d.data.type==="root"||d.data.type==="level")return 1;
@@ -616,124 +570,138 @@ function nodeOpacity(d){
   }
   return 1;
 }
-function linkOpacity(d){
-  if(focusedIds)return(focusedIds.has(d.source.id)&&focusedIds.has(d.target.id))?0.85:0.04;
+function lOpacity(d){
+  if(focusedIds)return(focusedIds.has(d.source.id)&&focusedIds.has(d.target.id))?0.7:0.04;
   if(activeFilters.size){
-    const tc=d.target.data.type==="subject"?d.target.data.color:d.target.data.type==="book"?(d.target.parent&&d.target.parent.data.color):null;
-    return tc&&activeFilters.has(tc)?0.35:0.04;
+    const t=d.target,tc=t.data.type==="subject"?t.data.color:t.data.type==="book"?(t.parent&&t.parent.data.color):null;
+    return tc&&activeFilters.has(tc)?0.3:0.04;
   }
   return 0.22;
 }
 
-// ── Main update ──────────────────────────────────────────
+/* ── Update ───────────────────────────────────────────── */
 let fillTimer;
 function update(src){
   const td=treeFn(root);
-  const nodes=td.descendants(),links=td.links();
+  const nodes=td.descendants(), links=td.links();
 
-  // Links
-  const link=linksGroup.selectAll(".link").data(links,d=>d.target.id);
-  const le=link.enter().insert("path",":first-child")
-    .attr("class","link").attr("fill","none").attr("stroke-width",".8px")
+  // Links — keyed by stable "sourceId-targetId"
+  const lkSel=lkG.selectAll(".lk").data(links,d=>d.source.id+"-"+d.target.id);
+  const lkE=lkSel.enter().append("path").attr("class","lk")
+    .attr("fill","none").attr("stroke-width",".8px")
     .attr("d",()=>{const o={x:src.x0||0,y:src.y0||0};return diag({source:o,target:o});})
     .attr("stroke",d=>{const t=d.target;return t.data.type==="level"?LC[t.data.level]:t.data.type==="book"?(t.parent&&t.parent.data.color)||"#444":t.data.color||"#444";})
     .attr("opacity",0);
-  link.merge(le).transition().duration(290)
+  lkSel.merge(lkE).transition().duration(280).ease(d3.easeCubicInOut)
     .attr("d",diag)
     .attr("stroke",d=>{const t=d.target;return t.data.type==="level"?LC[t.data.level]:t.data.type==="book"?(t.parent&&t.parent.data.color)||"#444":t.data.color||"#444";})
-    .attr("opacity",linkOpacity);
-  link.exit().transition().duration(290).attr("d",()=>{const o={x:src.x,y:src.y};return diag({source:o,target:o});}).attr("opacity",0).remove();
+    .attr("opacity",lOpacity);
+  lkSel.exit().transition().duration(280)
+    .attr("d",()=>{const o={x:src.x,y:src.y};return diag({source:o,target:o});})
+    .attr("opacity",0).remove();
 
   // Nodes
-  const node=nodesGroup.selectAll(".node").data(nodes,d=>d.id||(d.id=++nodeId));
-  const ne=node.enter().append("g").attr("class","node")
+  const ndSel=ndG.selectAll(".nd").data(nodes,d=>d.id);
+  const ndE=ndSel.enter().append("g").attr("class","nd")
     .attr("transform",()=>`translate(${src.y0||0},${src.x0||0})`).attr("opacity",0);
-
-  ne.append("circle")
-    .attr("r",nodeR).attr("stroke-width",d=>d.data.type==="root"?2:1.5)
-    .attr("fill",d=>nodeColor(d)+(d.data.type==="book"?"18":d.data.type==="subject"?"2c":"3e"))
-    .attr("stroke",nodeColor);
-  ne.append("circle").attr("class","cd").attr("r",2.2).attr("fill",nodeColor).attr("opacity",0);
-  ne.append("text").attr("dy","0.31em")
+  ndE.append("circle")
+    .attr("r",nR)
+    .attr("fill",d=>nColor(d)+(d.data.type==="book"?"18":d.data.type==="subject"?"2c":"3e"))
+    .attr("stroke",nColor).attr("stroke-width",d=>d.data.type==="root"?2:1.5);
+  ndE.append("circle").attr("class","cd").attr("r",2.2).attr("fill",nColor).attr("opacity",0);
+  ndE.append("text").attr("dy","0.31em").attr("pointer-events","none")
     .attr("font-size",d=>d.data.type==="root"?"12px":d.data.type==="level"?"10px":d.data.type==="subject"?"9px":"8.5px")
     .attr("font-weight",d=>d.data.mem?"500":"400")
-    .attr("fill",d=>{if(d.data.mem&&d.data.type==="book")return"#e8c97a";const c=nodeColor(d);return d.data.type==="root"||d.data.type==="level"?c:d.data.type==="subject"?c+"cc":c+"99";})
-    .attr("filter",d=>d.data.mem&&d.data.type==="book"?"url(#glow-gold)":null)
+    .attr("fill",d=>{if(d.data.mem&&d.data.type==="book")return"#e8c97a";const c=nColor(d);return d.data.type==="root"||d.data.type==="level"?c:d.data.type==="subject"?c+"cc":c+"99";})
+    .attr("filter",d=>d.data.mem&&d.data.type==="book"?"url(#gm)":null)
     .attr("letter-spacing",d=>d.data.type==="level"?"0.1em":"0.03em")
-    .text(nodeLabel);
-
-  // Hover
-  ne.on("mouseover",function(e,d){
+    .text(nLabel);
+  ndE.on("mouseover",function(e,d){
       if(d.data.type==="root")return;
-      d3.select(this).select("circle").transition().duration(120).attr("r",nodeR(d)*1.38).attr("stroke-width",2);
+      d3.select(this).select("circle").transition().duration(110).attr("r",nR(d)*1.36).attr("stroke-width",2);
     })
     .on("mouseout",function(e,d){
-      d3.select(this).select("circle").transition().duration(180).attr("r",nodeR(d)).attr("stroke-width",d.data.type==="root"?2:1.5);
+      d3.select(this).select("circle").transition().duration(170).attr("r",nR(d)).attr("stroke-width",d.data.type==="root"?2:1.5);
     })
-    .on("click",handleNodeClick);
+    .on("click",handleClick);
 
-  const merged=node.merge(ne);
-  merged.transition().duration(290).ease(d3.easeCubicOut)
-    .attr("transform",d=>`translate(${d.y},${d.x})`)
-    .attr("opacity",nodeOpacity);
-  merged.select("text")
-    .attr("x",d=>{const r=nodeR(d);return(d.children||d._children)?-(r+5):(r+5);})
+  const mg=ndSel.merge(ndE);
+  mg.transition().duration(280).ease(d3.easeCubicInOut)
+    .attr("transform",d=>`translate(${d.y},${d.x})`).attr("opacity",nOpacity);
+  mg.select("text")
+    .attr("x",d=>{const r=nR(d);return(d.children||d._children)?-(r+5):(r+5);})
     .attr("text-anchor",d=>(d.children||d._children)?"end":"start");
-  merged.select(".cd").attr("opacity",d=>d._children&&d.data.type!=="book"?.75:0);
-  node.exit().transition().duration(290).attr("transform",`translate(${src.y},${src.x})`).attr("opacity",0).remove();
+  mg.select(".cd").attr("opacity",d=>d._children&&d.data.type!=="book"?.75:0);
+  ndSel.exit().transition().duration(280).attr("transform",`translate(${src.y},${src.x})`).attr("opacity",0).remove();
   nodes.forEach(d=>{d.x0=d.x;d.y0=d.y;});
 
-  // Schedule fills and minimap after transitions
   clearTimeout(fillTimer);
-  fillTimer=setTimeout(()=>{drawLevelFills();updateMinimap();},310);
+  fillTimer=setTimeout(drawFills,300);
 }
 
-// ── Level fills ──────────────────────────────────────────
-function drawLevelFills(){
-  bgGroup.selectAll("*").remove();
-  root.each(lNode=>{
-    if(lNode.data.type!=="level"||!lNode.children||!lNode.children.length)return;
-    const all=lNode.descendants();
-    const xs=all.map(n=>n.y),ys=all.map(n=>n.x);
-    const x0=Math.min(...xs)-18,x1=Math.max(...xs)+230;
-    const y0=Math.min(...ys)-16,y1=Math.max(...ys)+16;
-    const color=LC[lNode.data.level]||"#c9a84c";
-    bgGroup.append("rect")
-      .attr("x",x0).attr("y",y0).attr("width",x1-x0).attr("height",y1-y0)
-      .attr("rx",6).attr("ry",6)
-      .attr("fill",color+"08").attr("stroke",color+"20").attr("stroke-width",.8);
+/* ── Level fills ─────────────────────────────────────── */
+function drawFills(){
+  bgG.selectAll("*").remove();
+  root.each(lv=>{
+    if(lv.data.type!=="level"||!lv.children||!lv.children.length)return;
+    const all=lv.descendants();
+    const xs=all.map(n=>n.y), ys=all.map(n=>n.x);
+    const color=LC[lv.data.level]||"#c9a84c";
+    bgG.append("rect")
+      .attr("x",Math.min(...xs)-18).attr("y",Math.min(...ys)-16)
+      .attr("width",Math.max(...xs)-Math.min(...xs)+240)
+      .attr("height",Math.max(...ys)-Math.min(...ys)+32)
+      .attr("rx",6).attr("fill",color+"08").attr("stroke",color+"1a").attr("stroke-width",.8);
   });
 }
 
-// ── Animated path ─────────────────────────────────────────
+/* ── Animated path — OVERLAY approach (reliable, full path) ──
+   Instead of animating existing link elements (timing issues),
+   we READ their final rendered path and draw fresh overlay paths.
+   This guarantees the animation reaches every node including books. */
 function animatePath(d){
-  const anc=d.ancestors().reverse(); // root→level→subject→book
+  animG.selectAll("*").remove();
+  const anc=d.ancestors().reverse(); // [root, level, subject, book]
+  const DASH=2000;
+
   anc.forEach((node,i)=>{
     if(i>=anc.length-1)return;
-    const next=anc[i+1];
-    linksGroup.selectAll(".link").filter(function(ld){
-      return ld.source.id===node.id&&ld.target.id===next.id;
-    }).each(function(){
-      const el=this,len=el.getTotalLength();
-      d3.select(el)
-        .attr("stroke-dasharray",`${len} ${len}`)
-        .attr("stroke-dashoffset",len)
-        .attr("stroke","#e8c97a").attr("stroke-width",2.2)
-        .attr("opacity",1).attr("filter","url(#glow-path)")
-        .transition().delay(i*210).duration(360).ease(d3.easeCubicOut)
-        .attr("stroke-dashoffset",0);
+    const nxt=anc[i+1];
+    // Read the rendered 'd' attribute from the existing link element
+    let pathD=null;
+    lkG.selectAll(".lk").each(function(ld){
+      if(!pathD && ld.source.id===node.id && ld.target.id===nxt.id){
+        pathD=this.getAttribute("d");
+      }
     });
+    if(!pathD)return;
+
+    // Create a glow overlay — separate SVG filter defined inline
+    const overlay=animG.append("path")
+      .attr("fill","none")
+      .attr("d",pathD)
+      .attr("stroke","#e8c97a")
+      .attr("stroke-width",2.6)
+      .attr("stroke-linecap","round")
+      .attr("stroke-dasharray",`${DASH} ${DASH}`)
+      .attr("stroke-dashoffset",DASH)
+      .attr("opacity",1);
+
+    // Glow via filter on each overlay element
+    overlay.style("filter","drop-shadow(0 0 4px #e8c97a) drop-shadow(0 0 8px rgba(201,168,76,.6))");
+
+    overlay.transition()
+      .delay(i*240)
+      .duration(400)
+      .ease(d3.easeCubicInOut)
+      .attr("stroke-dashoffset",0);
   });
 }
 
-function resetLinkStyles(){
-  linksGroup.selectAll(".link")
-    .attr("stroke-dasharray",null).attr("stroke-dashoffset",null)
-    .attr("stroke-width",".8px").attr("filter",null);
-}
+function clearAnimPath(){animG.selectAll("*").remove();}
 
-// ── Node click ────────────────────────────────────────────
-function handleNodeClick(event,d){
+/* ── Click handler ───────────────────────────────────── */
+function handleClick(event,d){
   event.stopPropagation();
   if(d.data.type==="book"){focusNode(d);openPanel(d.data,d);return;}
   d.children?(d._children=d.children,d.children=null):(d.children=d._children,d._children=null);
@@ -742,9 +710,11 @@ function handleNodeClick(event,d){
 
 function focusNode(d){
   const anc=d.ancestors();
-  focusedIds=new Set(anc.map(a=>a.id));focusedIds.add(d.id);
+  focusedIds=new Set(anc.map(a=>a.id));
+  focusedIds.add(d.id);
   update(d);
-  setTimeout(()=>animatePath(d),310);
+  // Run animation after tree transitions complete
+  setTimeout(()=>animatePath(d),300);
   const parts=anc.reverse().map(a=>a.data.type==="root"?null:a.data.name).filter(Boolean);
   parts.push(d.data.name.length>28?d.data.name.slice(0,26)+"…":d.data.name);
   const bc=document.getElementById("breadcrumb");
@@ -753,22 +723,27 @@ function focusNode(d){
 }
 
 function clearFocus(){
-  if(!focusedIds&&!document.getElementById("breadcrumb").classList.contains("show"))return;
   focusedIds=null;
+  clearAnimPath();
   document.getElementById("breadcrumb").classList.remove("show");
-  resetLinkStyles();
-  nodesGroup.selectAll(".node").transition().duration(280).attr("opacity",nodeOpacity);
-  linksGroup.selectAll(".link").transition().duration(280).attr("opacity",linkOpacity);
+  ndG.selectAll(".nd").transition().duration(260).attr("opacity",nOpacity);
+  lkG.selectAll(".lk").transition().duration(260).attr("opacity",lOpacity);
 }
 
-// ════════════════════════════════════════════════════════
-// PANEL
-// ════════════════════════════════════════════════════════
+/* ════════════════════════════════════════════════════════
+   PANEL
+════════════════════════════════════════════════════════ */
 function openPanel(data,treeNode){
   document.getElementById("panel-title").textContent=data.name;
   let ph="";
-  if(treeNode){ph=treeNode.ancestors().reverse().map(a=>a.data.type==="root"?null:a.data.type==="level"||a.data.type==="subject"?`<span>${a.data.name}</span>`:null).filter(Boolean).join("&nbsp;&rsaquo;&nbsp;");}
-  else if(data.levelName){ph=`<span>${data.levelName}</span>&nbsp;&rsaquo;&nbsp;<span>${data.subjName}</span>`;}
+  if(treeNode){
+    ph=treeNode.ancestors().reverse()
+      .map(a=>a.data.type==="root"?null:
+           (a.data.type==="level"||a.data.type==="subject")?`<span>${a.data.name}</span>`:null)
+      .filter(Boolean).join("&nbsp;›&nbsp;");
+  } else if(data.ln){
+    ph=`<span>${data.ln}</span>&nbsp;›&nbsp;<span>${data.sn}</span>`;
+  }
   document.getElementById("panel-path").innerHTML=ph;
   document.getElementById("panel-mem").textContent=data.mem?"✦ Memorize this text":"";
   document.getElementById("btn-info").href=data.info||"#";
@@ -777,7 +752,6 @@ function openPanel(data,treeNode){
   document.getElementById("panel").classList.add("open");
   document.getElementById("hint").style.opacity="0";
 }
-
 function closePanel(){
   document.getElementById("panel").classList.remove("open");
   document.getElementById("hint").style.opacity="1";
@@ -788,143 +762,103 @@ document.addEventListener("keydown",e=>{
   if((e.ctrlKey||e.metaKey)&&e.key==="f"){e.preventDefault();toggleSearch();}
 });
 
-// ════════════════════════════════════════════════════════
-// SEARCH
-// ════════════════════════════════════════════════════════
-let searchOpen=false;
+/* ════════════════════════════════════════════════════════
+   SEARCH
+════════════════════════════════════════════════════════ */
+let _hits=[];
 function toggleSearch(){
-  searchOpen=!searchOpen;
   const w=document.getElementById("search-wrap");
-  w.classList.toggle("open",searchOpen);
-  if(searchOpen){setTimeout(()=>document.getElementById("search-input").focus(),50);}
-  else{document.getElementById("search-input").value="";document.getElementById("search-results").innerHTML="";}
+  const opening=!w.classList.contains("open");
+  w.classList.toggle("open",opening);
+  if(opening)setTimeout(()=>document.getElementById("search-input").focus(),30);
+  else resetSearch();
 }
-function closeSearch(){searchOpen=false;document.getElementById("search-wrap").classList.remove("open");document.getElementById("search-input").value="";document.getElementById("search-results").innerHTML="";}
+function closeSearch(){document.getElementById("search-wrap").classList.remove("open");resetSearch();}
+function resetSearch(){document.getElementById("search-input").value="";document.getElementById("search-results").innerHTML="";}
 function onSearch(q){
   const el=document.getElementById("search-results");
   if(!q.trim()){el.innerHTML="";return;}
-  const ql=q.toLowerCase();
-  const hits=searchIndex.filter(b=>b.name.toLowerCase().includes(ql)).slice(0,12);
-  if(!hits.length){el.innerHTML=`<div class="sr-none">No results</div>`;return;}
-  el.innerHTML=hits.map((b,i)=>`<div class="sr-item" onclick="navigateToBook(${i},'${q.replace(/'/g,"\\'")}')">
-    <div class="sr-name${b.mem?" mem":""}">${b.name}</div>
-    <div class="sr-path">${b.levelName} › ${b.subjName}</div>
+  _hits=SI.filter(bk=>bk.name.toLowerCase().includes(q.toLowerCase())).slice(0,14);
+  if(!_hits.length){el.innerHTML=`<div class="sr-none">No results</div>`;return;}
+  el.innerHTML=_hits.map((bk,i)=>`<div class="sr-item" onclick="jumpToBook(${i})">
+    <div class="sr-name${bk.mem?" mem":""}">${bk.name}</div>
+    <div class="sr-path">${bk.ln}&nbsp;›&nbsp;${bk.sn}</div>
   </div>`).join("");
-  el._hits=hits;
-}
-function onSearchKey(e){if(e.key==="Escape")closeSearch();}
-function navigateToBook(i,q){
-  const el=document.getElementById("search-results");
-  const hits=el._hits||(searchIndex.filter(b=>b.name.toLowerCase().includes(q.toLowerCase())).slice(0,12));
-  const target=hits[i];if(!target)return;
-  closeSearch();
-  // Expand tree to show this book
-  let found=null;
-  root.each(d=>{if(d.data.name===target.name&&d.data.type==="book")found=d;});
-  if(!found)return;
-  // Ensure ancestors are expanded
-  found.ancestors().forEach(a=>{if(a._children){a.children=a._children;a._children=null;}});
-  update(root);
-  // After transition, focus
-  setTimeout(()=>{
-    let node=null;root.each(d=>{if(d.data.name===target.name&&d.data.type==="book")node=d;});
-    if(!node)return;
-    focusNode(node);openPanel(node.data,node);
-    // Pan to node
-    svg.transition().duration(500).call(zoom.transform,d3.zoomIdentity.translate(W/2-node.y,H/2-node.x).scale(1));
-  },340);
 }
 
-// ════════════════════════════════════════════════════════
-// FILTER CHIPS
-// ════════════════════════════════════════════════════════
-const CATEGORIES=[
-  {label:"Poems",color:SC.poems},{label:"Aqeedah",color:SC.aqeedah},{label:"Fiqh",color:SC.fiqh},
-  {label:"Hadith",color:SC.hadith},{label:"Nahw",color:SC.nahw},{label:"Tajweed",color:SC.tajweed},
-  {label:"Usool",color:SC.usool},{label:"Tafsir",color:SC.tafsir},{label:"Fara'id",color:SC.faraid},
-  {label:"Balagha",color:SC.balagha},{label:"Adab",color:SC.adab},{label:"Seerah",color:SC.seerah},
-  {label:"Mustalah",color:SC.mustalah},{label:"Qawa'id",color:SC.qawaid},{label:"Literature",color:SC.lit},
+function jumpToBook(i){
+  const target=_hits[i];
+  if(!target)return;
+  closeSearch();
+  // Traverse all nodes (including _children) to find the hierarchy node
+  let found=null;
+  (function find(d){
+    if(!found&&d.data.name===target.name&&d.data.type==="book"){found=d;return;}
+    (d.children||d._children||[]).forEach(find);
+  })(root);
+  if(!found)return;
+  // Expand ancestors
+  found.ancestors().forEach(a=>{if(a._children){a.children=a._children;a._children=null;}});
+  update(root);
+  setTimeout(()=>{
+    treeFn(root); // ensure positions are fresh
+    const k=Math.max(d3.zoomTransform(svg.node()).k,0.8);
+    svg.transition().duration(460).ease(d3.easeCubicInOut)
+      .call(zoom.transform,d3.zoomIdentity.translate(W/2-found.y*k,H/2-found.x*k).scale(k));
+    focusNode(found);
+    openPanel(found.data,found);
+  },310);
+}
+
+/* ════════════════════════════════════════════════════════
+   FILTER CHIPS  (Poems excluded from chips, data intact)
+════════════════════════════════════════════════════════ */
+const CATS=[
+  {label:"Aqeedah",c:SC.aqeedah},{label:"Fiqh",c:SC.fiqh},
+  {label:"Hadith",c:SC.hadith},{label:"Nahw",c:SC.nahw},
+  {label:"Tajweed",c:SC.tajweed},{label:"Usool",c:SC.usool},
+  {label:"Tafsir",c:SC.tafsir},{label:"Fara'id",c:SC.faraid},
+  {label:"Balagha",c:SC.balagha},{label:"Adab",c:SC.adab},
+  {label:"Seerah",c:SC.seerah},{label:"Mustalah",c:SC.mustalah},
+  {label:"Qawa'id",c:SC.qawaid},{label:"Literature",c:SC.lit},
 ];
-(function buildChips(){
-  const container=document.getElementById("legend-chips");
-  CATEGORIES.forEach(cat=>{
+(()=>{
+  const con=document.getElementById("chips");
+  CATS.forEach(cat=>{
     const el=document.createElement("div");
     el.className="chip";
-    el.innerHTML=`<div class="ld" style="background:${cat.color}"></div>${cat.label}`;
-    el.title=`Filter: ${cat.label}`;
-    el.onclick=()=>toggleFilter(cat.color,el,cat);
-    container.appendChild(el);
+    el.innerHTML=`<div class="ld" style="background:${cat.c}"></div>${cat.label}`;
+    el.onclick=()=>{
+      const on=activeFilters.has(cat.c);
+      on?activeFilters.delete(cat.c):activeFilters.add(cat.c);
+      el.classList.toggle("active",!on);
+      el.style.background=on?"":cat.c;
+      el.style.color=on?"":"#0c0904";
+      clearFocus();update(root);
+    };
+    con.appendChild(el);
   });
 })();
-function toggleFilter(color,el,cat){
-  if(activeFilters.has(color)){
-    activeFilters.delete(color);
-    el.classList.remove("active");
-    el.style.background="";el.style.color="";
-  } else {
-    activeFilters.add(color);
-    el.classList.add("active");
-    el.style.background=color;el.style.color="#0c0904";
-  }
+
+/* ════════════════════════════════════════════════════════
+   TREE CONTROLS
+════════════════════════════════════════════════════════ */
+function resetZoom(){
+  svg.transition().duration(400).ease(d3.easeCubicInOut)
+    .call(zoom.transform,d3.zoomIdentity.translate(W*.07,H/2).scale(.92));
+}
+function expandAll(){
+  root.descendants().forEach(d=>{if(d._children){d.children=d._children;d._children=null;}});
+  clearFocus();update(root);
+}
+function collapseToLevels(){
+  root.descendants().forEach(d=>{if(d.depth>=2&&d.children){d._children=d.children;d.children=null;}});
   clearFocus();update(root);
 }
 
-// ════════════════════════════════════════════════════════
-// MINIMAP
-// ════════════════════════════════════════════════════════
-const mmCanvas=document.getElementById("mm-canvas");
-const mmCtx=mmCanvas.getContext("2d");
-const MM_W=mmCanvas.width,MM_H=mmCanvas.height,MM_PAD=7;
-
-document.getElementById("minimap").addEventListener("click",e=>{
-  const rect=mmCanvas.getBoundingClientRect();
-  const mx=e.clientX-rect.left,my=e.clientY-rect.top;
-  const svgX=(mx-MM_PAD)/mmScale+mmMinX;
-  const svgY=(my-MM_PAD)/mmScale+mmMinY;
-  const ct=d3.zoomTransform(svg.node());
-  svg.transition().duration(380).call(zoom.transform,d3.zoomIdentity.translate(W/2-svgX*ct.k,H/2-svgY*ct.k).scale(ct.k));
-});
-
-function updateMinimap(){
-  mmCtx.clearRect(0,0,MM_W,MM_H);
-  const visible=root.descendants().filter(d=>d.x0!==undefined);
-  if(!visible.length)return;
-  const xs=visible.map(d=>d.y),ys=visible.map(d=>d.x);
-  mmMinX=Math.min(...xs);mmMinY=Math.min(...ys);
-  const xRange=Math.max(...xs)-mmMinX||1,yRange=Math.max(...ys)-mmMinY||1;
-  mmScale=Math.min((MM_W-MM_PAD*2)/xRange,(MM_H-MM_PAD*2)/yRange);
-  const toX=v=>MM_PAD+(v-mmMinX)*mmScale;
-  const toY=v=>MM_PAD+(v-mmMinY)*mmScale;
-
-  // Links
-  mmCtx.strokeStyle="rgba(180,140,60,0.18)";mmCtx.lineWidth=0.5;
-  root.links().forEach(lk=>{
-    if(!lk.source.y||!lk.target.y)return;
-    mmCtx.beginPath();mmCtx.moveTo(toX(lk.source.y),toY(lk.source.x));mmCtx.lineTo(toX(lk.target.y),toY(lk.target.x));mmCtx.stroke();
-  });
-  // Nodes
-  visible.forEach(d=>{
-    const r=d.data.type==="root"?3:d.data.type==="level"?2:1.5;
-    mmCtx.fillStyle=nodeColor(d)+(d.data.type==="book"?"80":"cc");
-    mmCtx.beginPath();mmCtx.arc(toX(d.y),toY(d.x),r,0,Math.PI*2);mmCtx.fill();
-  });
-  // Viewport rect
-  const ct=d3.zoomTransform(svg.node());
-  const vx0=-ct.x/ct.k,vy0=-ct.y/ct.k,vx1=(W-ct.x)/ct.k,vy1=(H-ct.y)/ct.k;
-  mmCtx.strokeStyle="rgba(232,201,122,0.55)";mmCtx.lineWidth=1;
-  mmCtx.strokeRect(toX(vx0),toY(vy0),(vx1-vx0)*mmScale,(vy1-vy0)*mmScale);
-}
-
-// ════════════════════════════════════════════════════════
-// TREE CONTROLS
-// ════════════════════════════════════════════════════════
-function resetZoom(){svg.transition().duration(420).ease(d3.easeCubicOut).call(zoom.transform,d3.zoomIdentity.translate(W*.07,H/2).scale(.92));}
-function expandAll(){root.descendants().forEach(d=>{if(d._children){d.children=d._children;d._children=null;}});clearFocus();update(root);}
-function collapseToLevels(){root.descendants().forEach(d=>{if(d.depth>=2&&d.children){d._children=d.children;d.children=null;}});clearFocus();update(root);}
-
-// ════════════════════════════════════════════════════════
-// VIEW TOGGLE
-// ════════════════════════════════════════════════════════
+/* ════════════════════════════════════════════════════════
+   VIEW TOGGLE
+════════════════════════════════════════════════════════ */
 function setView(v){
   document.getElementById("btn-tree").classList.toggle("active",v==="tree");
   document.getElementById("btn-list").classList.toggle("active",v==="list");
@@ -932,29 +866,27 @@ function setView(v){
   document.getElementById("listview").classList.toggle("show",v==="list");
   document.getElementById("hint").style.display=v==="tree"?"block":"none";
   document.getElementById("controls").style.display=v==="tree"?"flex":"none";
-  document.getElementById("minimap").style.display=v==="tree"?"block":"none";
   if(v==="list"&&!listBuilt)buildList();
   if(v==="tree")closePanel();
 }
 
-// ════════════════════════════════════════════════════════
-// LIST VIEW
-// ════════════════════════════════════════════════════════
+/* ════════════════════════════════════════════════════════
+   LIST VIEW
+════════════════════════════════════════════════════════ */
 function buildList(){
-  BOOK_REG=[];
+  BREG=[];
   const lv=document.getElementById("listview");
   let html="";
   TREE.children.forEach(level=>{
     const lc=LC[level.level]||"#c9a84c";
-    html+=`<div class="lv-level"><div class="lv-lhdr" style="color:${lc};border-left:2px solid ${lc}44" onclick="toggleAcc(this)"><span style="border-left:2px solid ${lc};padding-left:8px">${level.name} — ${level.subtitle||""}</span><span class="ct">&#x203A;</span></div><div class="lv-lbody">`;
+    html+=`<div class="lv-level"><div class="lv-lhdr" style="color:${lc};border-left:2px solid ${lc}44" onclick="acc(this)"><span style="border-left:2px solid ${lc};padding-left:8px">${level.name} — ${level.subtitle||""}</span><span class="ct">›</span></div><div class="lv-lbody">`;
     (level.children||[]).forEach(subj=>{
       const sc=subj.color;
-      html+=`<div class="lv-subject"><div class="lv-shdr" style="color:${sc}99" onclick="toggleAcc(this)"><span style="flex:1">${subj.name}</span><span style="font-size:8px;color:${sc}55;margin-right:4px">${(subj.children||[]).length}</span><span class="ct">&#x203A;</span></div><div class="lv-sbody">`;
+      html+=`<div class="lv-subject"><div class="lv-shdr" style="color:${sc}99" onclick="acc(this)"><span style="flex:1">${subj.name}</span><span style="font-size:8px;color:${sc}55;margin-right:4px">${(subj.children||[]).length}</span><span class="ct">›</span></div><div class="lv-sbody">`;
       (subj.children||[]).forEach((book,bi)=>{
         const idx=regBook(book,level.name,subj.name);
-        const mc=book.mem?" is-mem":"";
-        const st=book.mem?"":`style="color:${sc}bb"`;
-        html+=`<div class="lv-book"><span class="lv-book-num" style="color:${sc}44">${bi+1}</span><span class="lv-book-name${mc}" ${st} onclick="openBookByIdx(${idx})">${book.name}</span><div class="lv-book-actions"><a class="lv-btn" href="${book.info||"#"}" target="_blank" rel="noopener" title="Information" onclick="event.stopPropagation()">&#9432;</a><a class="lv-btn" href="${book.pdf||"#"}" target="_blank" rel="noopener" title="PDF" onclick="event.stopPropagation()">&#8659;</a><a class="lv-btn" href="${book.video||"#"}" target="_blank" rel="noopener" title="Recording" onclick="event.stopPropagation()">&#9654;</a></div></div>`;
+        const mc=book.mem?" is-mem":"",st=book.mem?"":`style="color:${sc}bb"`;
+        html+=`<div class="lv-book"><span class="lv-book-num" style="color:${sc}44">${bi+1}</span><span class="lv-book-name${mc}" ${st} onclick="openBI(${idx})">${book.name}</span><div class="lv-book-actions"><a class="lv-btn" href="${book.info||"#"}" target="_blank" rel="noopener" onclick="event.stopPropagation()" title="Information">&#9432;</a><a class="lv-btn" href="${book.pdf||"#"}" target="_blank" rel="noopener" onclick="event.stopPropagation()" title="PDF">&#8659;</a><a class="lv-btn" href="${book.video||"#"}" target="_blank" rel="noopener" onclick="event.stopPropagation()" title="Recording">&#9654;</a></div></div>`;
       });
       html+=`</div></div>`;
     });
@@ -962,63 +894,24 @@ function buildList(){
   });
   lv.innerHTML=html;listBuilt=true;
 }
-function toggleAcc(el){el.classList.toggle("open");el.nextElementSibling.classList.toggle("open");}
-function openBookByIdx(idx){const data=BOOK_REG[idx];if(data)openPanel(data,null);}
+function acc(el){el.classList.toggle("open");el.nextElementSibling.classList.toggle("open");}
+function openBI(idx){const d=BREG[idx];if(d)openPanel(d,null);}
 
-// ════════════════════════════════════════════════════════
-// PDF EXPORT
-// ════════════════════════════════════════════════════════
-function exportPDF(){
-  const LC_PRINT={0:"#8b6914",1:"#276620",2:"#1a5c88",3:"#6a3090",4:"#9a3020",5:"#7a6010"};
-  const html=`<!DOCTYPE html><html><head><meta charset="UTF-8">
-<title>Talib al-Ilm — Islamic Studies Roadmap</title>
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Crimson+Pro:wght@400;600&display=swap" rel="stylesheet">
-<style>
-body{font-family:'Crimson Pro',Georgia,serif;background:#fff;color:#1a1005;margin:0;padding:0}
-.page{max-width:860px;margin:0 auto;padding:40px 44px 60px}
-h1{font-family:'Cinzel',serif;text-align:center;font-size:22px;color:#7a5c10;border-bottom:1px solid #c9a84c;padding-bottom:12px;margin-bottom:6px}
-.bismillah{text-align:center;font-family:serif;font-size:20px;color:#7a5c10;margin-bottom:6px}
-.sub{text-align:center;font-size:11px;color:#8b7040;margin-bottom:36px;letter-spacing:.15em;text-transform:uppercase}
-.level{margin-bottom:28px;page-break-inside:avoid}
-.ltitle{font-family:'Cinzel',serif;font-size:13px;border-left:3px solid;padding:5px 10px;margin-bottom:10px;text-transform:uppercase;letter-spacing:.1em}
-.subject{margin-bottom:10px}
-.sname{font-size:10.5px;color:#6b5030;text-transform:uppercase;letter-spacing:.09em;margin-bottom:3px;font-style:italic;padding-left:6px}
-ul{list-style:none;margin:0;padding:0}
-li{font-size:12.5px;padding:2px 0 2px 14px;border-bottom:1px solid #f5ecd8;position:relative}
-li::before{content:'·';position:absolute;left:4px;color:#c9a84c}
-li.mem{color:#7a4c10;font-style:italic}
-li.mem::before{content:'★';font-style:normal}
-@media print{*{-webkit-print-color-adjust:exact!important}}
-</style></head><body><div class="page">
-<div class="bismillah">بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ</div>
-<h1>Talib al-ʿIlm — Islamic Studies Roadmap</h1>
-<div class="sub">Complete Curriculum · Based on Saudi University Traditions</div>
-${TREE.children.map(level=>{
-  const lc=LC_PRINT[level.level]||"#7a5c10";
-  return`<div class="level"><div class="ltitle" style="border-color:${lc};color:${lc}">${level.name} — ${level.subtitle||""}</div>
-${(level.children||[]).map(subj=>`<div class="subject"><div class="sname">${subj.name}</div><ul>
-${(subj.children||[]).map(book=>`<li class="${book.mem?"mem":""}">${book.name}</li>`).join("")}
-</ul></div>`).join("")}</div>`;}).join("")}
-</div></body></html>`;
-  const win=window.open("","_blank");
-  win.document.write(html);win.document.close();
-  setTimeout(()=>win.print(),600);
-}
-
-// ════════════════════════════════════════════════════════
-// BISMILLAH
-// ════════════════════════════════════════════════════════
+/* ════════════════════════════════════════════════════════
+   SPLASH
+════════════════════════════════════════════════════════ */
 function dismissSplash(){
   const s=document.getElementById("splash");
-  s.style.transition="opacity 0.5s ease";s.style.opacity="0";
-  setTimeout(()=>s.remove(),500);
+  if(!s)return;
+  s.style.transition="opacity .4s ease";
+  s.style.opacity="0";
+  setTimeout(()=>s.remove(),400);
 }
-// Auto-dismiss after CSS animation (2.6s + 0.7s fade = 3.3s)
-setTimeout(()=>{const s=document.getElementById("splash");if(s)s.remove();},3350);
+setTimeout(()=>{const s=document.getElementById("splash");if(s)s.remove();},3450);
 
-// ════════════════════════════════════════════════════════
-// INIT
-// ════════════════════════════════════════════════════════
+/* ════════════════════════════════════════════════════════
+   INIT
+════════════════════════════════════════════════════════ */
 update(root);
 svg.call(zoom.transform,d3.zoomIdentity.translate(W*.07,H/2).scale(.92));
 window.addEventListener("resize",()=>svg.attr("width",window.innerWidth).attr("height",window.innerHeight));
