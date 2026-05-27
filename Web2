@@ -324,10 +324,10 @@ const s=(n,c,ch)=>({name:n,color:c,type:"subject",children:ch});
 const TREE={name:"Talib al-Ilm",type:"root",children:[
 {name:"Entry Level",subtitle:"First Steps",level:0,type:"level",children:[
   s("Short Poems",SC.poems,[
+    b("Mandhuma al-Ruh wal-Rayhan — al-Qadi",true),
     b("Mandhuma al-Tawhid wal-Iman",true),
     b("Mandhuma Ahsan al-Akhlaq",true),
     b("Al-Mandhuma al-Munira fi Muhimm Ilm al-Sira",true),
-    b("Mandhuma al-Ruh wal-Rayhan — al-Qadi",true),
   ]),
   s("Adab — Entry",SC.adab,[
     b("Khulasa Ta'dhim al-Ilm — al-Usaymi",true),
@@ -417,8 +417,8 @@ const TREE={name:"Talib al-Ilm",type:"root",children:[
     b("Hirz al-Amani — Al-Shatibiyya (7 Qira'at)",true),
   ]),
   s("Tafsir",SC.tafsir,[
-    b("Tafsir al-Jalalayn"),
     b("Tafsir al-Sa'di — Taysir al-Karim al-Rahman"),
+    b("Tafsir al-Jalalayn"),
   ]),
   s("Usool al-Tafsir",SC.tafsir,[b("Al-Niqaya fi Ulum al-Quran — al-Suyuti")]),
   s("Usool al-Fiqh — Hanbali",SC.usool,[
