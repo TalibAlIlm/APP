@@ -7,22 +7,27 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=IBM+Plex+Mono:wght@300;400;500&family=Noto+Naskh+Arabic:wght@400;700&display=swap" rel="stylesheet">
 <style>
+/* ═══ BASE / SEPIA THEME ══════════════════════════════ */
 *{margin:0;padding:0;box-sizing:border-box}
 :root{
-  --bg:#0c0904;--bg2:#130f08;
+  --bg:#0c0904;--bg2:#130f08;--bg3:#1c1510;
   --gold:#c9a84c;--gold2:#e8c97a;
   --muted:#6b5a3e;--border:#2c1e10;--text:#e8d5b7;
   --pw:292px;
+  --mh:#4caf50; /* hanbali */
+  --ms:#42a5f5; /* shafi */
+  --mm:#ce93d8; /* maliki */
+  --mf:#ff8a65; /* hanafi */
 }
 body{background:var(--bg);font-family:'IBM Plex Mono',monospace;overflow:hidden;width:100vw;height:100vh;color:var(--text)}
 body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
   background:radial-gradient(ellipse 55% 45% at 12% 20%,rgba(201,168,76,.05) 0%,transparent 65%),
   radial-gradient(ellipse 40% 50% at 88% 80%,rgba(160,100,30,.04) 0%,transparent 60%)}
 
-/* ── SPLASH ───────────────────────────────────────────── */
+/* ═══ SPLASH ══════════════════════════════════════════ */
 #splash{position:fixed;inset:0;z-index:9999;background:var(--bg);
   display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;
-  cursor:pointer;animation:splashOut .6s ease 2.8s forwards;pointer-events:auto}
+  cursor:pointer;animation:splashOut .6s ease 2.8s forwards}
 @keyframes splashOut{to{opacity:0;pointer-events:none}}
 .sp-bism{font-family:'Noto Naskh Arabic',serif;font-size:clamp(52px,9vw,96px);
   color:var(--gold2);line-height:1;text-align:center;
@@ -34,16 +39,98 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
   color:var(--muted);opacity:0;animation:spIn .5s ease 1.2s forwards}
 @keyframes spIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
 
-/* ── HEADER ───────────────────────────────────────────── */
+/* ═══ TRACK SELECTION SCREEN ════════════════════════ */
+#track-screen{
+  position:fixed;inset:0;z-index:8000;
+  background:rgba(12,9,4,.98);
+  display:none;flex-direction:column;align-items:center;
+  overflow-y:auto;padding:40px 20px 60px;
+  backdrop-filter:blur(8px);
+}
+#track-screen.show{display:flex}
+#track-screen::-webkit-scrollbar{width:3px}
+#track-screen::-webkit-scrollbar-thumb{background:var(--border)}
+
+.track-inner{width:100%;max-width:680px;display:flex;flex-direction:column;align-items:center;gap:28px}
+.track-bism{font-family:'Noto Naskh Arabic',serif;font-size:42px;color:var(--gold2);
+  text-shadow:0 0 30px rgba(232,201,122,.3);margin-bottom:4px}
+.track-title{font-family:'Cinzel',serif;font-size:22px;color:var(--gold2);
+  letter-spacing:.1em;text-align:center;line-height:1.3}
+.track-subtitle{font-size:10px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--muted);text-align:center}
+.track-divider{width:180px;height:1px;background:linear-gradient(to right,transparent,var(--gold),transparent)}
+
+.track-note{
+  width:100%;padding:18px 22px;
+  border:1px solid var(--border);border-left:3px solid var(--gold);
+  background:rgba(201,168,76,.04);
+}
+.track-note strong{
+  display:block;font-family:'Cinzel',serif;font-size:11px;
+  letter-spacing:.1em;text-transform:uppercase;color:var(--gold2);margin-bottom:8px}
+.track-note p{font-size:12px;color:#c8b48a;line-height:1.8}
+
+.track-choose-title{
+  font-family:'Cinzel',serif;font-size:14px;
+  letter-spacing:.14em;text-transform:uppercase;color:var(--gold);
+  text-align:center}
+.track-choose-sub{font-size:10px;color:var(--muted);text-align:center;
+  letter-spacing:.06em;margin-top:-18px}
+
+.madhab-grid{width:100%;display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.madhab-grid .m-all{grid-column:1/-1}
+
+.mbtn{
+  display:flex;flex-direction:column;gap:6px;
+  padding:16px 18px;border:1px solid var(--border);
+  background:transparent;cursor:pointer;text-align:left;
+  transition:all .2s ease;position:relative;overflow:hidden;
+}
+.mbtn::before{content:'';position:absolute;inset:0;opacity:0;transition:opacity .2s}
+.mbtn:hover{transform:translateY(-2px)}
+.mbtn:hover::before{opacity:1}
+.mbtn .m-name{font-family:'Cinzel',serif;font-size:13px;letter-spacing:.1em;
+  text-transform:uppercase}
+.mbtn .m-desc{font-size:9px;letter-spacing:.04em;color:var(--muted);line-height:1.4}
+.mbtn .m-imam{font-size:8px;letter-spacing:.06em;color:var(--muted);font-style:italic}
+
+.mbtn.han{border-color:#4caf5033}
+.mbtn.han::before{background:rgba(76,175,80,.06)}
+.mbtn.han .m-name{color:#81c784}
+.mbtn.han:hover{border-color:#4caf5066}
+
+.mbtn.sha{border-color:#42a5f533}
+.mbtn.sha::before{background:rgba(66,165,245,.06)}
+.mbtn.sha .m-name{color:#64b5f6}
+.mbtn.sha:hover{border-color:#42a5f566}
+
+.mbtn.mal{border-color:#ce93d833}
+.mbtn.mal::before{background:rgba(206,147,216,.06)}
+.mbtn.mal .m-name{color:#ce93d8}
+.mbtn.mal:hover{border-color:#ce93d866}
+
+.mbtn.haf{border-color:#ff8a6533}
+.mbtn.haf::before{background:rgba(255,138,101,.06)}
+.mbtn.haf .m-name{color:#ff8a65}
+.mbtn.haf:hover{border-color:#ff8a6566}
+
+.mbtn.all{border-color:rgba(201,168,76,.3)}
+.mbtn.all::before{background:rgba(201,168,76,.05)}
+.mbtn.all .m-name{color:var(--gold2)}
+.mbtn.all:hover{border-color:rgba(201,168,76,.6)}
+
+.track-change-note{font-size:9px;letter-spacing:.08em;color:var(--muted);text-align:center}
+
+/* ═══ HEADER ════════════════════════════════════════ */
 #header{position:fixed;top:0;left:0;right:0;height:46px;z-index:200;
   background:rgba(12,9,4,.97);border-bottom:1px solid var(--border);
   box-shadow:0 1px 18px rgba(0,0,0,.55);backdrop-filter:blur(12px);
-  display:flex;align-items:center;padding:0 12px;gap:10px;will-change:transform}
+  display:flex;align-items:center;padding:0 12px;gap:8px;will-change:transform}
 #header h1{font-family:'Cinzel',serif;font-size:11px;letter-spacing:.2em;
   color:var(--gold);white-space:nowrap;text-transform:uppercase;
-  text-shadow:0 0 14px rgba(201,168,76,.3)}
+  text-shadow:0 0 14px rgba(201,168,76,.28)}
 .hsep{width:1px;height:18px;background:var(--border);flex-shrink:0}
-.legend{display:flex;align-items:center;gap:3px;overflow:hidden}
+.legend{display:flex;align-items:center;gap:3px;overflow:hidden;flex-wrap:nowrap}
 .chip{display:flex;align-items:center;gap:2px;font-size:7px;letter-spacing:.03em;
   color:var(--muted);white-space:nowrap;padding:2px 5px;border-radius:2px;
   border:1px solid transparent;cursor:pointer;transition:all .16s;user-select:none}
@@ -57,8 +144,15 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
 .hbtn button:hover{border-color:var(--gold);color:var(--gold);background:rgba(201,168,76,.07)}
 .hbtn button.active{border-color:var(--gold);color:var(--gold);background:rgba(201,168,76,.1)}
 #btn-search{font-size:13px;padding:3px 8px}
+#madhab-badge{
+  padding:3px 8px;border-radius:2px;font-size:8px;
+  letter-spacing:.1em;text-transform:uppercase;
+  border:1px solid;cursor:pointer;transition:all .16s;
+  font-family:'IBM Plex Mono',monospace;white-space:nowrap;
+}
+#madhab-badge:hover{filter:brightness(1.2)}
 
-/* ── SEARCH ───────────────────────────────────────────── */
+/* ═══ SEARCH ══════════════════════════════════════════ */
 #search-wrap{position:fixed;top:56px;left:50%;transform:translateX(-50%);
   z-index:500;width:420px;max-width:92vw;opacity:0;pointer-events:none;transition:opacity .18s}
 #search-wrap.open{opacity:1;pointer-events:all}
@@ -78,19 +172,18 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
 .sr-path{font-size:8px;color:var(--muted);margin-top:2px;letter-spacing:.05em}
 .sr-none{padding:12px 14px;font-size:10px;color:var(--muted);text-align:center}
 
-/* ── BREADCRUMB ───────────────────────────────────────── */
+/* ═══ BREADCRUMB ═══════════════════════════════════════ */
 #breadcrumb{position:fixed;top:58px;left:16px;z-index:150;pointer-events:none;
   font-size:9px;letter-spacing:.1em;color:var(--muted);text-transform:uppercase;
   opacity:0;transition:opacity .3s;max-width:55vw;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 #breadcrumb.show{opacity:1}
 #breadcrumb span{color:var(--gold2)}
 
-/* ── CANVAS ───────────────────────────────────────────── */
-#canvas{width:100%;height:100%;cursor:grab;display:block;
-  will-change:transform;transform:translateZ(0)}
+/* ═══ CANVAS ══════════════════════════════════════════ */
+#canvas{width:100%;height:100%;cursor:grab;display:block;will-change:transform;transform:translateZ(0)}
 #canvas:active{cursor:grabbing}
 
-/* ── PANEL — GPU-accelerated via transform ────────────── */
+/* ═══ PANEL ════════════════════════════════════════════ */
 #panel{position:fixed;right:0;top:46px;bottom:0;width:var(--pw);
   background:rgba(19,15,8,.98);border-left:1px solid var(--border);
   box-shadow:-6px 0 28px rgba(0,0,0,.5);z-index:300;
@@ -105,8 +198,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
   background:none;border:none;color:var(--muted);font-size:15px;cursor:pointer;
   transition:color .16s;z-index:1;line-height:1}
 #panel-close:hover{color:var(--gold)}
-#panel-path{padding:12px 14px 0;font-size:9px;letter-spacing:.1em;
-  color:var(--muted);text-transform:uppercase;line-height:1.9}
+#panel-path{padding:12px 14px 0;font-size:9px;letter-spacing:.1em;color:var(--muted);text-transform:uppercase;line-height:1.9}
 #panel-path span{color:var(--gold2)}
 #panel-title{padding:10px 14px 12px;font-family:'Cinzel',serif;font-size:12px;
   color:var(--gold2);line-height:1.45;border:1px solid var(--border);
@@ -125,7 +217,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
 #panel-note{padding:12px 14px 18px;font-size:9px;color:var(--muted);
   line-height:1.7;border-top:1px solid var(--border);margin-top:auto}
 
-/* ── CONTROLS ─────────────────────────────────────────── */
+/* ═══ CONTROLS ════════════════════════════════════════ */
 #controls{position:fixed;bottom:14px;right:14px;display:flex;gap:4px;z-index:150}
 .cbtn{width:28px;height:28px;background:rgba(19,15,8,.9);border:1px solid var(--border);
   color:var(--muted);font-size:14px;cursor:pointer;display:flex;align-items:center;
@@ -135,125 +227,153 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
   font-size:9px;letter-spacing:.08em;color:#251a0a;pointer-events:none;
   text-transform:uppercase;white-space:nowrap;transition:opacity .3s}
 
-/* ── LIST VIEW ────────────────────────────────────────── */
-#listview{position:fixed;top:46px;left:0;right:0;bottom:0;
-  overflow-y:auto;background:var(--bg);display:none;z-index:50}
+/* ═══ LIST VIEW ═══════════════════════════════════════ */
+#listview{position:fixed;top:46px;left:0;right:0;bottom:0;overflow-y:auto;background:var(--bg);display:none;z-index:50}
 #listview.show{display:block}
 #listview::-webkit-scrollbar{width:3px}
 #listview::-webkit-scrollbar-thumb{background:var(--border)}
 .lv-level{border-bottom:1px solid var(--border)}
-.lv-lhdr{padding:13px 14px;font-family:'Cinzel',serif;font-size:10.5px;
-  letter-spacing:.14em;text-transform:uppercase;cursor:pointer;
-  display:flex;align-items:center;justify-content:space-between;
-  user-select:none;transition:background .16s}
+.lv-lhdr{padding:13px 14px;font-family:'Cinzel',serif;font-size:10.5px;letter-spacing:.14em;
+  text-transform:uppercase;cursor:pointer;display:flex;align-items:center;
+  justify-content:space-between;user-select:none;transition:background .16s}
 .lv-lhdr:hover{background:rgba(255,255,255,.018)}
-.lv-lhdr .ct,.lv-shdr .ct{font-size:10px;transition:transform .24s cubic-bezier(.4,0,.2,1);
-  color:var(--muted);flex-shrink:0}
+.lv-lhdr .ct,.lv-shdr .ct{font-size:10px;transition:transform .24s cubic-bezier(.4,0,.2,1);color:var(--muted);flex-shrink:0}
 .lv-lhdr.open .ct,.lv-shdr.open .ct{transform:rotate(90deg)}
 .lv-lbody{max-height:0;overflow:hidden;transition:max-height .34s cubic-bezier(.4,0,.2,1)}
 .lv-lbody.open{max-height:20000px}
 .lv-subject{border-top:1px solid rgba(255,255,255,.03)}
-.lv-shdr{padding:8px 22px;font-size:9px;letter-spacing:.12em;text-transform:uppercase;
-  cursor:pointer;display:flex;align-items:center;gap:8px;
-  user-select:none;transition:background .13s}
+.lv-shdr{padding:8px 22px;font-size:9px;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;
+  display:flex;align-items:center;gap:8px;user-select:none;transition:background .13s}
 .lv-shdr:hover{background:rgba(255,255,255,.015)}
+.lv-shdr.grayed{opacity:.2}
 .lv-shdr .ct{margin-left:auto}
 .lv-sbody{max-height:0;overflow:hidden;transition:max-height .26s cubic-bezier(.4,0,.2,1);padding:0 28px}
 .lv-sbody.open{max-height:5000px;padding-bottom:10px}
-.lv-book{display:flex;align-items:center;padding:5px 0;
-  border-bottom:1px solid rgba(255,255,255,.02);gap:6px;min-height:29px}
+.lv-book{display:flex;align-items:center;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.02);gap:6px;min-height:29px}
 .lv-book-num{font-size:8px;color:var(--muted);width:14px;flex-shrink:0;text-align:right}
 .lv-book-name{font-size:9.5px;opacity:.72;flex:1;line-height:1.35;cursor:pointer;transition:opacity .13s}
 .lv-book-name:hover{opacity:1}
 .lv-book-name.is-mem{color:var(--gold2);opacity:1;
   text-shadow:0 0 8px rgba(232,201,122,.45),0 0 18px rgba(201,168,76,.22);
   animation:mpulse 3.2s ease-in-out infinite}
-@keyframes mpulse{
-  0%,100%{text-shadow:0 0 6px rgba(232,201,122,.4),0 0 14px rgba(201,168,76,.18)}
+@keyframes mpulse{0%,100%{text-shadow:0 0 6px rgba(232,201,122,.4),0 0 14px rgba(201,168,76,.18)}
   50%{text-shadow:0 0 11px rgba(232,201,122,.7),0 0 26px rgba(201,168,76,.38)}}
 .lv-book-actions{display:flex;gap:3px;flex-shrink:0}
 .lv-btn{width:20px;height:20px;background:transparent;border:1px solid var(--border);
   color:var(--muted);font-size:9px;cursor:pointer;display:flex;align-items:center;
   justify-content:center;text-decoration:none;transition:all .14s;line-height:1}
 .lv-btn:hover{border-color:var(--gold);color:var(--gold);background:rgba(201,168,76,.08)}
-/* ── MOBILE ───────────────────────────────────────────── */
+
+/* ═══ MOBILE ══════════════════════════════════════════ */
 @media(max-width:700px){
-  /* Header */
   #header{padding:0 8px;gap:6px;height:50px}
   #header h1{font-size:9.5px;letter-spacing:.12em}
-  .legend{display:none}
-  .hsep{display:none}
-  .hbtn{gap:3px}
-  .hbtn button{font-size:8px;padding:4px 7px;letter-spacing:.04em}
-  #btn-search{font-size:12px;padding:4px 8px}
-
-  /* Canvas — still accessible but list is default */
+  .legend{display:none}.hsep{display:none}
+  .hbtn{gap:3px}.hbtn button{font-size:8px;padding:4px 6px}
+  #btn-search{font-size:12px;padding:4px 7px}
   #canvas{touch-action:none}
-
-  /* Panel — full screen on mobile */
-  #panel{
-    width:100vw;
-    top:50px;
-    border-left:none;
-    border-top:1px solid var(--border);
-    transform:translateY(100%);
-    transition:transform .28s cubic-bezier(.34,1.15,.64,1);
-    will-change:transform;
-  }
+  #panel{width:100vw;top:50px;border-left:none;border-top:1px solid var(--border);
+    transform:translateY(100%);transition:transform .28s cubic-bezier(.34,1.15,.64,1)}
   #panel.open{transform:translateY(0)}
   #panel-title{font-size:13px;padding:12px 16px}
   #panel-path{padding:14px 16px 0;font-size:10px}
   #panel-mem{padding:10px 16px 0;font-size:10px}
-  #panel-btns{padding:14px 16px 18px;gap:10px}
-  .pbtn{padding:13px 16px;font-size:11px}
-  .pbtn .icon{font-size:15px}
-  #panel-note{font-size:10px;padding:14px 16px 20px}
+  #panel-btns{padding:14px 16px 18px;gap:9px}
+  .pbtn{padding:13px 16px;font-size:11px}.pbtn .icon{font-size:15px}
   #panel-close{font-size:18px;margin:12px 12px -4px auto}
-
-  /* Search */
   #search-wrap{width:96vw;top:60px}
   #search-input{font-size:12px;padding:12px 14px}
-  .sr-item{padding:11px 14px}
-  .sr-name{font-size:11px}
-  .sr-path{font-size:9px;margin-top:3px}
-
-  /* Breadcrumb */
+  .sr-item{padding:11px 14px}.sr-name{font-size:11px}.sr-path{font-size:9px}
   #breadcrumb{top:60px;font-size:8.5px;max-width:80vw}
-
-  /* List view */
   #listview{top:50px}
   .lv-lhdr{padding:14px 14px;font-size:11px}
   .lv-shdr{padding:10px 20px;font-size:9.5px}
-  .lv-sbody{padding:0 20px}
-  .lv-sbody.open{padding-bottom:12px}
+  .lv-sbody{padding:0 20px}.lv-sbody.open{padding-bottom:12px}
   .lv-book{min-height:38px;padding:6px 0;gap:8px}
-  .lv-book-num{width:16px;font-size:8.5px}
-  .lv-book-name{font-size:10px;line-height:1.4}
+  .lv-book-name{font-size:10px}
   .lv-btn{width:26px;height:26px;font-size:11px}
-  .lv-book-actions{gap:4px}
-
-  /* Controls */
-  #controls{bottom:20px;right:12px}
-  .cbtn{width:34px;height:34px;font-size:16px}
+  #controls{bottom:20px;right:12px}.cbtn{width:34px;height:34px;font-size:16px}
   #hint{display:none}
+  .madhab-grid{grid-template-columns:1fr}
+  .track-title{font-size:18px}.track-bism{font-size:36px}
 }
-
-/* Safe-area support for notched/modern phones */
 @supports(padding:max(0px)){
   #header{padding-left:max(12px,env(safe-area-inset-left));padding-right:max(12px,env(safe-area-inset-right))}
   #listview{padding-bottom:env(safe-area-inset-bottom)}
   #panel{padding-bottom:env(safe-area-inset-bottom)}
-  #controls{right:max(14px,env(safe-area-inset-right));bottom:max(14px,env(safe-area-inset-bottom))}
 }
 </style>
 </head>
 <body>
 
-<!-- SPLASH — no ornaments, just the Basmala -->
+<!-- SPLASH -->
 <div id="splash" onclick="dismissSplash()">
   <div class="sp-bism">&#xFDFD;</div>
   <div class="sp-line"></div>
   <div class="sp-en">In the name of Allah, the Most Gracious, the Most Merciful</div>
+</div>
+
+<!-- TRACK SELECTION SCREEN -->
+<div id="track-screen">
+  <div class="track-inner">
+    <div class="track-bism">&#xFDFD;</div>
+    <h2 class="track-title">Welcome, Talib al-ʿIlm</h2>
+    <p class="track-subtitle">Your Path to Islamic Scholarship</p>
+    <div class="track-divider"></div>
+
+    <div class="track-note">
+      <strong>❀ On Intention — al-Niyyah</strong>
+      <p>
+        The Prophet ﷺ said: <em>"Actions are only by intentions, and every person will have only what they intended."</em> (Bukhari &amp; Muslim).
+        Before opening any book, renew your intention: you seek this knowledge to draw closer to Allah, to act upon it, and to serve the Ummah.
+        Ibn al-Mubarak said: <em>"Whoever seeks knowledge for other than Allah should prepare his seat in the Fire."</em>
+        Knowledge without sincerity is a hujja (proof) against you — not for you.
+      </p>
+    </div>
+
+    <div class="track-note">
+      <strong>📖 Study with a Qualified Shaykh</strong>
+      <p>
+        This roadmap is a guide only — it does not replace a living teacher.
+        The scholars unanimously warn: <em>"Whoever takes his knowledge from books alone has more errors than correct answers."</em>
+        Seek a Shaykh with a connected chain of transmission (isnād), sound creed (ʿaqīdah), and upright character.
+        Even reading a sharḥ (explanation) is not a substitute — the teacher corrects your pronunciation, your understanding, and your methodology.
+        If you cannot find a local Shaykh, study online with qualified teachers from established institutions such as IUM Madinah, IMSIU Riyadh, or Umm al-Qura Makkah.
+      </p>
+    </div>
+
+    <p class="track-choose-title">Choose Your Fiqh Specialization</p>
+    <p class="track-choose-sub">All four madhabs follow the Salafi ʿaqīdah. Choose your fiqh track. All other sciences remain fully visible for everyone.</p>
+
+    <div class="madhab-grid">
+      <button class="mbtn han" onclick="chooseTrack('hanbali')">
+        <span class="m-name">Hanbali</span>
+        <span class="m-imam">Imam Ahmad ibn Hanbal (d. 241 AH)</span>
+        <span class="m-desc">Dominant in Saudi Arabia, Qatar, Gulf region. The official school of the Saudi state. Strong emphasis on texts (Quran &amp; Sunnah) over analogy.</span>
+      </button>
+      <button class="mbtn sha" onclick="chooseTrack('shafi')">
+        <span class="m-name">Shafi&#x02BF;i</span>
+        <span class="m-imam">Imam Muhammad ibn Idris al-Shafi&#x02BF;i (d. 204 AH)</span>
+        <span class="m-desc">Dominant in Egypt, Levant, East Africa, SE Asia, Yemen. Known for the most systematic usool al-fiqh methodology.</span>
+      </button>
+      <button class="mbtn mal" onclick="chooseTrack('maliki')">
+        <span class="m-name">Maliki</span>
+        <span class="m-imam">Imam Malik ibn Anas (d. 179 AH)</span>
+        <span class="m-desc">Dominant in North Africa, West Africa, Mauritania, Morocco. Based on the practice of the people of Madinah as a source of law.</span>
+      </button>
+      <button class="mbtn haf" onclick="chooseTrack('hanafi')">
+        <span class="m-name">Hanafi</span>
+        <span class="m-imam">Imam Abu Hanifa al-Nu&#x02BF;man (d. 150 AH)</span>
+        <span class="m-desc">Dominant in Turkey, South Asia, Central Asia, the Balkans. The oldest school, known for extensive use of analogy (qiyas) and juristic preference (istihsan).</span>
+      </button>
+      <button class="mbtn all m-all" onclick="chooseTrack('all')">
+        <span class="m-name">All Madhabs — Comparative Study</span>
+        <span class="m-desc">For advanced students and researchers. Study all four schools simultaneously to understand the breadth of Islamic jurisprudence. Recommended only after mastering one madhab first.</span>
+      </button>
+    </div>
+
+    <p class="track-change-note">You can change your specialization at any time via the "Track" button in the header.</p>
+  </div>
 </div>
 
 <!-- HEADER -->
@@ -262,6 +382,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
   <div class="hsep"></div>
   <div class="legend" id="chips"></div>
   <div class="hbtn">
+    <span id="madhab-badge" onclick="showTrackScreen()" title="Change Madhab Track"></span>
     <button id="btn-search" onclick="toggleSearch()" title="Search (Ctrl+F)">&#x2315;</button>
     <button id="btn-tree" class="active" onclick="setView('tree')">Tree</button>
     <button id="btn-list" onclick="setView('list')">List</button>
@@ -274,8 +395,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
 <!-- SEARCH -->
 <div id="search-wrap">
   <input id="search-input" type="text" placeholder="Search texts…"
-    oninput="onSearch(this.value)"
-    onkeydown="if(event.key==='Escape')closeSearch()">
+    oninput="onSearch(this.value)" onkeydown="if(event.key==='Escape')closeSearch()">
   <div id="search-results"></div>
 </div>
 
@@ -293,7 +413,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
     <a class="pbtn" id="btn-pdf"   href="#" target="_blank" rel="noopener"><span class="icon">&#128196;</span>PDF</a>
     <a class="pbtn" id="btn-video" href="#" target="_blank" rel="noopener"><span class="icon">&#9654;</span>Recording</a>
   </div>
-  <div id="panel-note">Links will be added for each text.<br>Press Esc or click the background to close.</div>
+  <div id="panel-note">Links will be added for each text.<br>Press Esc or click background to close.</div>
 </div>
 
 <div id="listview"></div>
@@ -305,24 +425,43 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
 <div id="hint">Click level / subject to expand &nbsp;&bull;&nbsp; Click book for details &nbsp;&bull;&nbsp; Drag &amp; scroll to navigate</div>
 
 <script>
-/* ════════════════════════════════════════════════════════
-   COLOURS
-════════════════════════════════════════════════════════ */
-const SC={poems:"#a8d5e2",aqeedah:"#ef9a9a",fiqh:"#80cbc4",hadith:"#ffcc80",
-  nahw:"#a5d6a7",tajweed:"#80deea",usool:"#ce93d8",tafsir:"#fff59d",
-  faraid:"#c5e1a5",balagha:"#ffe082",adab:"#bcaaa4",seerah:"#f48fb1",
-  mustalah:"#b39ddb",qawaid:"#b2dfdb",lit:"#e6ee9c",
-  sarf:"#a5d6a7",illal:"#b39ddb",history:"#ffab91",poetry:"#ffe082"};
+/* ═══ COLOURS ════════════════════════════════════════ */
+const SC={
+  quran:"#69f0ae",   poems:"#a8d5e2",
+  aqeedah:"#ef9a9a", fiqh:"#80cbc4",
+  hadith:"#ffcc80",  nahw:"#a5d6a7",
+  tajweed:"#80deea", usool:"#ce93d8",
+  tafsir:"#fff59d",  faraid:"#c5e1a5",
+  balagha:"#ffe082", adab:"#bcaaa4",
+  seerah:"#f48fb1",  mustalah:"#b39ddb",
+  qawaid:"#b2dfdb",  lit:"#e6ee9c",
+  sarf:"#a5d6a7",    illal:"#b39ddb",
+  history:"#ffab91", poetry:"#ffe082"
+};
 const LC={0:"#e0c97a",1:"#4caf50",2:"#42a5f5",3:"#ce93d8",4:"#ff8a65",5:"#c9a84c"};
+const MCOL={hanbali:"#81c784",shafi:"#64b5f6",maliki:"#ce93d8",hanafi:"#ff8a65",all:"#e8c97a"};
+const MNAME={hanbali:"Hanbali",shafi:"Shafi'i",maliki:"Maliki",hanafi:"Hanafi",all:"All Madhabs"};
 
-/* ════════════════════════════════════════════════════════
-   DATA
-════════════════════════════════════════════════════════ */
+/* ═══ DATA HELPERS ════════════════════════════════════ */
+// b(name, memorize, info, pdf, video)
+// s(name, color, children, madhab)  — madhab is optional; only set for madhab-specific fiqh
 const b=(n,m=false,i="#",p="#",v="#")=>({name:n,mem:m,type:"book",info:i,pdf:p,video:v});
-const s=(n,c,ch)=>({name:n,color:c,type:"subject",children:ch});
+const s=(n,c,ch,m=null)=>({name:n,color:c,type:"subject",children:ch,madhab:m});
 
+/* ═══ TREE DATA ═══════════════════════════════════════
+   Top of each level = first to study.
+   Quran Hifz track ALWAYS first (most important).
+   30 Juz distributed:
+     Entry→ Juz 30 (1) | LI→ 29,28 (2) | LII→ 27,26,25 (3)
+     LIII→ 1-5 (5)    | LIV→ 6-15 (10) | LV→ 16-24 (9)
+════════════════════════════════════════════════════════ */
 const TREE={name:"Talib al-Ilm",type:"root",children:[
+
+/* ── ENTRY LEVEL ──────────────────────────────────── */
 {name:"Entry Level",subtitle:"First Steps",level:0,type:"level",children:[
+  s("Quran — Hifz",SC.quran,[
+    b("Juz 30 · Amma — An-Naba → An-Nas (37 surahs)",true),
+  ]),
   s("Short Poems",SC.poems,[
     b("Mandhuma al-Ruh wal-Rayhan — al-Qadi",true),
     b("Mandhuma al-Tawhid wal-Iman",true),
@@ -335,7 +474,13 @@ const TREE={name:"Talib al-Ilm",type:"root",children:[
     b("Hisnul Muslim — Fortress of the Muslim",true),
   ]),
 ]},
+
+/* ── LEVEL I — Foundation ─────────────────────────── */
 {name:"Level I",subtitle:"Foundation",level:1,type:"level",children:[
+  s("Quran — Hifz",SC.quran,[
+    b("Juz 29 · Tabarak — Al-Mulk → Al-Mursalat (11 surahs)",true),
+    b("Juz 28 · Qad Sami'a — Al-Mujadilah → At-Tahrim (9 surahs)",true),
+  ]),
   s("Aqeedah",SC.aqeedah,[
     b("Al-Usul al-Thalatha — The Three Fundamentals"),
     b("Al-Qawa'id al-Arba'a — The Four Principles"),
@@ -350,7 +495,9 @@ const TREE={name:"Talib al-Ilm",type:"root",children:[
     b("Al-Ziyadat — 8 Hadiths of Ibn Rajab",true),
   ]),
   s("Nahw — Arabic Grammar",SC.nahw,[
-    b("Madinah Arabic Books (1–3)"),b("Al-Nahw al-Wadih"),b("Al-Ajurrumiyya"),
+    b("Madinah Arabic Books (1–3)"),
+    b("Al-Nahw al-Wadih"),
+    b("Al-Ajurrumiyya"),
   ]),
   s("Tajweed",SC.tajweed,[b("Tuhfat al-Atfal")]),
   s("Usool al-Fiqh",SC.usool,[b("Al-Waraqat — al-Juwayni")]),
@@ -358,7 +505,14 @@ const TREE={name:"Talib al-Ilm",type:"root",children:[
   s("Fara'id — Inheritance",SC.faraid,[b("Al-Rahabiyya",true)]),
   s("Adab",SC.adab,[b("Hilyat Talib al-Ilm — Bakr Abu Zayd")]),
 ]},
+
+/* ── LEVEL II — Elementary ────────────────────────── */
 {name:"Level II",subtitle:"Elementary",level:2,type:"level",children:[
+  s("Quran — Hifz",SC.quran,[
+    b("Juz 27 · Qala Fama — Adh-Dhariyat → Al-Hadid (7 surahs)",true),
+    b("Juz 26 · Ha Mim — Al-Ahqaf → Qaf (6 surahs)",true),
+    b("Juz 25 · Ilayhi Yuraddu — Fussilat → Al-Jathiyah (5 surahs)",true),
+  ]),
   s("Aqeedah",SC.aqeedah,[
     b("Luma al-I'tiqad — Ibn Qudama"),
     b("Kitab al-Tawhid — Ibn Abd al-Wahhab"),
@@ -370,10 +524,18 @@ const TREE={name:"Talib al-Ilm",type:"root",children:[
   ]),
   s("Hadith",SC.hadith,[b("Umdat al-Ahkam — al-Maqdisi",true)]),
   s("Mustalah al-Hadith",SC.mustalah,[b("Al-Mandhuma al-Bayquniyya")]),
-  s("Fiqh — Hanbali",SC.fiqh,[b("Akhsar al-Mukhtasarat — Ibn Balban")]),
-  s("Fiqh — Shafi'i",SC.fiqh,[b("Matn al-Ghaya wal-Taqrib — Abu Shuja'")]),
-  s("Fiqh — Maliki",SC.fiqh,[b("Al-Qayrawaniyya — Ibn Abi Zayd al-Qayrawani")]),
-  s("Fiqh — Hanafi",SC.fiqh,[b("Mukhtasar al-Quduri")]),
+  s("Fiqh — Hanbali",SC.fiqh,[
+    b("Akhsar al-Mukhtasarat — Ibn Balban"),
+  ],"hanbali"),
+  s("Fiqh — Shafi'i",SC.fiqh,[
+    b("Matn al-Ghaya wal-Taqrib — Abu Shuja'"),
+  ],"shafi"),
+  s("Fiqh — Maliki",SC.fiqh,[
+    b("Al-Qayrawaniyya — Ibn Abi Zayd al-Qayrawani"),
+  ],"maliki"),
+  s("Fiqh — Hanafi",SC.fiqh,[
+    b("Mukhtasar al-Quduri — al-Quduri"),
+  ],"hanafi"),
   s("Tajweed / Qira'at",SC.tajweed,[
     b("Al-Muqaddima al-Jazariyya"),
     b("Na't al-Darajat fi Hukm al-Qira'at"),
@@ -388,7 +550,16 @@ const TREE={name:"Talib al-Ilm",type:"root",children:[
   ]),
   s("Seerah",SC.seerah,[b("Al-Urjuza al-Mi'iyya")]),
 ]},
+
+/* ── LEVEL III — Intermediate ─────────────────────── */
 {name:"Level III",subtitle:"Intermediate",level:3,type:"level",children:[
+  s("Quran — Hifz",SC.quran,[
+    b("Juz 1 · Alif Lam Mim — Al-Fatiha + Al-Baqarah 1-141",true),
+    b("Juz 2 · Sayaqool — Al-Baqarah 142-252",true),
+    b("Juz 3 · Tilkal-Rusul — Al-Baqarah 253 → Al-Imran 91",true),
+    b("Juz 4 · Lan Tanalo — Al-Imran 92 → An-Nisa 23",true),
+    b("Juz 5 · Wal-Muhsanat — An-Nisa 24-147",true),
+  ]),
   s("Aqeedah",SC.aqeedah,[
     b("Al-Aqida al-Wasitiyya — Ibn Taymiyya"),
     b("Al-Qawl al-Mufid Sharh Kitab al-Tawhid — Ibn Uthaymin"),
@@ -409,9 +580,22 @@ const TREE={name:"Talib al-Ilm",type:"root",children:[
     b("Al-Umdah fi al-Fiqh — Ibn Qudama"),
     b("Bidayat al-Abid wa Kifayat al-Zahid"),
     b("Dalil al-Talib li-Nayl al-Matalib"),
-  ]),
-  s("Fiqh — Shafi'i",SC.fiqh,[b("Al-Yaqut al-Nafis — al-Hadrami")]),
-  s("Fiqh — No Madhab",SC.fiqh,[b("Al-Durar al-Bahiyya — al-Shawkani",true)]),
+  ],"hanbali"),
+  s("Fiqh — Shafi'i",SC.fiqh,[
+    b("Al-Tanbih fi al-Fiqh al-Shafi'i — Abu Ishaq al-Shirazi"),
+    b("Al-Yaqut al-Nafis — al-Hadrami"),
+  ],"shafi"),
+  s("Fiqh — Maliki",SC.fiqh,[
+    b("Al-Ashmawiyya — al-Ashmawi"),
+    b("Al-Murshid al-Mu'in ala al-Daruri — Ibn Ashir",true),
+  ],"maliki"),
+  s("Fiqh — Hanafi",SC.fiqh,[
+    b("Al-Mukhtar li'l-Fatwa — al-Musili"),
+    b("Kanz al-Daqa'iq — al-Nasafi"),
+  ],"hanafi"),
+  s("Fiqh — No Madhab",SC.fiqh,[
+    b("Al-Durar al-Bahiyya — al-Shawkani",true),
+  ],"general"),
   s("Tajweed / Qira'at",SC.tajweed,[
     b("Al-Salsabil al-Shafi"),
     b("Hirz al-Amani — Al-Shatibiyya (7 Qira'at)",true),
@@ -427,8 +611,8 @@ const TREE={name:"Talib al-Ilm",type:"root",children:[
   ]),
   s("Balagha — Rhetoric",SC.balagha,[b("Al-Jawhar al-Maknun — al-Akhdhori")]),
   s("Qawa'id Fiqhiyya",SC.qawaid,[
-    b("Mandhuma al-Qawa'id al-Fiqhiyya — Ibn Uthaymin"),
     b("Al-Qawa'id al-Fiqhiyya — al-Sa'di"),
+    b("Mandhuma al-Qawa'id al-Fiqhiyya — Ibn Uthaymin"),
   ]),
   s("Adab / Tazkiyya",SC.adab,[
     b("Mandhuma Asbab Hayat al-Qulub — Ibn Atiq"),
@@ -444,7 +628,21 @@ const TREE={name:"Talib al-Ilm",type:"root",children:[
     b("Lamiyyat al-Arab — al-Shanfara",true),
   ]),
 ]},
+
+/* ── LEVEL IV — Advanced ──────────────────────────── */
 {name:"Level IV",subtitle:"Advanced",level:4,type:"level",children:[
+  s("Quran — Hifz",SC.quran,[
+    b("Juz 6 · La Yuhibbullah — An-Nisa 148 → Al-Ma'idah 81",true),
+    b("Juz 7 · Wa Idha Sami'oo — Al-Ma'idah 82 → Al-An'am 110",true),
+    b("Juz 8 · Wa Law Annana — Al-An'am 111 → Al-A'raf 87",true),
+    b("Juz 9 · Qalal-Mala'u — Al-A'raf 88 → Al-Anfal 40",true),
+    b("Juz 10 · Wa A'lamoo — Al-Anfal 41 → At-Tawbah 92",true),
+    b("Juz 11 · Ya'tadhiroona — At-Tawbah 93 → Hud 5",true),
+    b("Juz 12 · Wa Ma Min Dabbah — Hud 6 → Yusuf 52",true),
+    b("Juz 13 · Wa Ma Ubarri'u — Yusuf 53 → Ibrahim",true),
+    b("Juz 14 · Rubba Ma — Al-Hijr + An-Nahl",true),
+    b("Juz 15 · Subhana Alladhi — Al-Isra → Al-Kahf 74",true),
+  ]),
   s("Aqeedah",SC.aqeedah,[
     b("Al-Aqida al-Tahawiyya + Sharh Ibn Abi al-Izz"),
     b("Al-Fatawa al-Hamawiyya — Ibn Taymiyya"),
@@ -463,13 +661,19 @@ const TREE={name:"Talib al-Ilm",type:"root",children:[
     b("Ar-Rawdul-Murbi' Matn Zad al-Mustaqni'",true),
     b("Al-Nadhm al-Jali ma al-Ahmirar"),
     b("Ma la Yasi' al-Hanbali Jahluhu"),
-  ]),
+  ],"hanbali"),
   s("Fiqh — Shafi'i",SC.fiqh,[
     b("Matn al-Zubad — Ibn Raslan"),
     b("Umdat al-Salik wa Uddat al-Nasik"),
     b("Minhaj al-Talibin — Imam al-Nawawi",true),
-  ]),
-  s("Fiqh — Hanafi",SC.fiqh,[b("Al-Hidaya — al-Marghinani",true)]),
+  ],"shafi"),
+  s("Fiqh — Maliki",SC.fiqh,[
+    b("Mukhtasar Khalil — Khalil ibn Ishaq al-Maliki",true),
+  ],"maliki"),
+  s("Fiqh — Hanafi",SC.fiqh,[
+    b("Matn al-Wiqaya — Sadr al-Shari'a"),
+    b("Al-Hidaya — al-Marghinani",true),
+  ],"hanafi"),
   s("Tajweed / Qira'at",SC.tajweed,[
     b("Al-Durra al-Mudiyya — Ibn al-Jazari",true),
     b("Tayyibat al-Nashr fi al-Qira'at al-Ashr — Ibn al-Jazari",true),
@@ -497,7 +701,20 @@ const TREE={name:"Talib al-Ilm",type:"root",children:[
     b("Al-Mu'allaqat — Pre-Islamic Odes",true),
   ]),
 ]},
+
+/* ── LEVEL V — Mastery ────────────────────────────── */
 {name:"Level V",subtitle:"Mastery",level:5,type:"level",children:[
+  s("Quran — Hifz",SC.quran,[
+    b("Juz 16 · Qal Alam — Al-Kahf 75 → Ta-Ha 135",true),
+    b("Juz 17 · Iqtaraba — Ta-Ha 136 → Al-Hajj 78",true),
+    b("Juz 18 · Qad Aflaha — Al-Mu'minun → Al-Furqan 20",true),
+    b("Juz 19 · Wa Qalal-Ladhina — Al-Furqan 21 → An-Naml 55",true),
+    b("Juz 20 · Amman Khalaqa — An-Naml 56 → Al-Ankabut 45",true),
+    b("Juz 21 · Utlu Ma Uwhiya — Al-Ankabut 46 → Al-Ahzab 30",true),
+    b("Juz 22 · Wa Man Yaqnut — Al-Ahzab 31 → Ya-Sin 27",true),
+    b("Juz 23 · Wa Ma Liya — Ya-Sin 28 → Az-Zumar 31",true),
+    b("Juz 24 · Fa Man Adhlamu — Az-Zumar 32 → Fussilat 46 — Complete Hafidh ❀",true),
+  ]),
   s("Aqeedah — Encyclopedic",SC.aqeedah,[
     b("A'lam al-Sunna al-Mansura — al-Hakami"),
     b("Arwa al-Iman wa Dhura al-Jinan"),
@@ -529,12 +746,27 @@ const TREE={name:"Talib al-Ilm",type:"root",children:[
   s("Mustalah — Advanced",SC.mustalah,[
     b("Fath al-Mughith Sharh Alfiyyat al-Hadith — al-Sakhawi"),
   ]),
-  s("Fiqh — Advanced",SC.fiqh,[
+  s("Fiqh — Hanbali",SC.fiqh,[
     b("Umdat al-Talib li-Nayl al-Mathalib"),
     b("Balaght al-Wusool"),b("Rasm al-Mufti al-Hanbali"),
     b("Malh al-Nad fi Nadhm Zad al-Mustaqni'"),
     b("Al-Mughni — Ibn Qudama (10 volumes)"),
-  ]),
+  ],"hanbali"),
+  s("Fiqh — Shafi'i",SC.fiqh,[
+    b("Fath al-Qarib al-Mujib — Ibn Qasim al-Ghazzah"),
+    b("Rawdat al-Talibin — Imam al-Nawawi (12 volumes)"),
+    b("Al-Majmu' Sharh al-Muhadhdhab — Imam al-Nawawi"),
+  ],"shafi"),
+  s("Fiqh — Maliki",SC.fiqh,[
+    b("Bidayat al-Mujtahid wa Nihayat al-Muqtasid — Ibn Rushd"),
+    b("Al-Mudawwana — Imam Sahnun (compiled from Imam Malik)"),
+    b("Hashiyat al-Dusuqi ala al-Sharh al-Kabir"),
+  ],"maliki"),
+  s("Fiqh — Hanafi",SC.fiqh,[
+    b("Bada'i al-Sana'i fi Tartib al-Shara'i — al-Kasani"),
+    b("Al-Mabsut — al-Sarakhsi (30 volumes)"),
+    b("Tabyin al-Haqa'iq — al-Zayla'i"),
+  ],"hanafi"),
   s("Usool al-Fiqh — Advanced",SC.usool,[
     b("Rawdat al-Nadhir — Ibn Qudama"),
     b("Hanbalat Tashil al-Turuqat"),
@@ -557,50 +789,43 @@ const TREE={name:"Talib al-Ilm",type:"root",children:[
 ]}
 ]};
 
-/* ════════════════════════════════════════════════════════
-   SEARCH INDEX
-════════════════════════════════════════════════════════ */
+/* ═══ SEARCH INDEX ═══════════════════════════════════ */
 const SI=[];
 (function idx(node,ln,sn){
   if(node.type==="book"){SI.push({...node,ln,sn});return;}
   (node.children||[]).forEach(c=>idx(c,node.type==="level"?node.name:ln,node.type==="subject"?node.name:sn));
 })(TREE,"","");
 
-/* ════════════════════════════════════════════════════════
-   BOOK REGISTRY (list view)
-════════════════════════════════════════════════════════ */
+/* ═══ BOOK REGISTRY ════════════════════════════════════ */
 let BREG=[];
 const regBook=(bk,ln,sn)=>{const i=BREG.length;BREG.push({...bk,ln,sn});return i;};
 
-/* ════════════════════════════════════════════════════════
-   STATE
-════════════════════════════════════════════════════════ */
+/* ═══ STATE ═══════════════════════════════════════════ */
 let focusedIds=null, activeFilters=new Set(), listBuilt=false;
+let chosenMadhab=localStorage.getItem('talib_madhab')||null;
 
-/* ════════════════════════════════════════════════════════
-   D3 SETUP
-════════════════════════════════════════════════════════ */
+/* ═══ D3 SETUP ════════════════════════════════════════ */
 const W=window.innerWidth, H=window.innerHeight;
 const svg=d3.select("#canvas").attr("width",W).attr("height",H);
 
-// Single lightweight glow filter for memorise labels
+// SVG filters
 const defs=svg.append("defs");
-const gm=defs.append("filter").attr("id","gm")
-  .attr("x","-30%").attr("y","-80%").attr("width","160%").attr("height","260%");
-gm.append("feGaussianBlur").attr("in","SourceGraphic").attr("stdDeviation","1").attr("result","b");
-gm.append("feColorMatrix").attr("in","b").attr("type","matrix")
-  .attr("values","1.3 0.5 0 0 0  0.7 0.4 0 0 0  0 0 0 0 0  0 0 0 1.1 0").attr("result","c");
-const gm2=gm.append("feMerge");gm2.append("feMergeNode").attr("in","c");gm2.append("feMergeNode").attr("in","SourceGraphic");
+const addF=(id,std,mat)=>{
+  const f=defs.append("filter").attr("id",id).attr("x","-30%").attr("y","-80%").attr("width","160%").attr("height","260%");
+  f.append("feGaussianBlur").attr("in","SourceGraphic").attr("stdDeviation",std).attr("result","b");
+  f.append("feColorMatrix").attr("in","b").attr("type","matrix").attr("values",mat).attr("result","c");
+  const m=f.append("feMerge");m.append("feMergeNode").attr("in","c");m.append("feMergeNode").attr("in","SourceGraphic");
+};
+addF("gm","1","1.3 0.5 0 0 0  0.7 0.4 0 0 0  0 0 0 0 0  0 0 0 1.1 0");
+addF("gp","2.8","2 1.1 0 0 0  1.3 0.8 0 0 0  0 0.1 0 0 0  0 0 0 2.2 0");
 
-// Layer order: backgrounds → links → nodes → animation overlays
 const g=svg.append("g");
 const bgG=g.append("g").attr("pointer-events","none");
 const lkG=g.append("g").attr("pointer-events","none");
 const ndG=g.append("g");
-const animG=g.append("g").attr("pointer-events","none"); // path animation overlays on top
+const animG=g.append("g").attr("pointer-events","none");
 
-const zoom=d3.zoom().scaleExtent([0.05,4])
-  .on("zoom",e=>g.attr("transform",e.transform));
+const zoom=d3.zoom().scaleExtent([0.05,4]).on("zoom",e=>g.attr("transform",e.transform));
 svg.call(zoom).on("dblclick.zoom",null);
 svg.on("click",()=>closePanel());
 document.getElementById("zi").onclick=()=>zoom.scaleBy(svg,1.3);
@@ -608,14 +833,12 @@ document.getElementById("zo").onclick=()=>zoom.scaleBy(svg,.77);
 
 const treeFn=d3.tree().nodeSize([20,264]);
 let root=d3.hierarchy(TREE);
-
-// Pre-set IDs for ALL nodes including collapsed ones — essential for reliable animation
 let _nid=0;
 (function preId(d){d.id=++_nid;(d.children||d._children||[]).forEach(preId);})(root);
 root.descendants().forEach(d=>{if(d.depth>=2){d._children=d.children;d.children=null;}});
-root.x0=0; root.y0=0;
+root.x0=0;root.y0=0;
 
-/* ── Helpers ──────────────────────────────────────────── */
+/* ── Helpers ─────────────────────────────────────────── */
 function nColor(d){
   if(d.data.type==="root")return"#c9a84c";
   if(d.data.type==="level")return LC[d.data.level]||"#c9a84c";
@@ -629,10 +852,21 @@ function nLabel(d){
   if(d.data.type==="subject"){const n=(d.children||d._children||[]).length;return d.data.name+(n?` [${n}]`:"");}
   return d.data.name.length>38?d.data.name.slice(0,36)+"…":d.data.name;
 }
-function diag(d){
-  const sx=d.source.y,sy=d.source.x,tx=d.target.y,ty=d.target.x,mx=(sx+tx)/2;
-  return`M${sx},${sy}C${mx},${sy} ${mx},${ty} ${tx},${ty}`;
+function diag(d){const sx=d.source.y,sy=d.source.x,tx=d.target.y,ty=d.target.x,mx=(sx+tx)/2;return`M${sx},${sy}C${mx},${sy} ${mx},${ty} ${tx},${ty}`;}
+
+function isMadhabGrayed(d){
+  if(!chosenMadhab||chosenMadhab==="all")return false;
+  if(d.data.type==="subject"){
+    const m=d.data.madhab;
+    return m&&m!==chosenMadhab&&m!=="general";
+  }
+  if(d.data.type==="book"){
+    const m=d.parent&&d.parent.data.madhab;
+    return m&&m!==chosenMadhab&&m!=="general";
+  }
+  return false;
 }
+
 function nOpacity(d){
   if(focusedIds)return focusedIds.has(d.id)?1:0.05;
   if(activeFilters.size){
@@ -640,6 +874,7 @@ function nOpacity(d){
     if(d.data.type==="subject")return activeFilters.has(d.data.color)?1:0.06;
     return(d.parent&&activeFilters.has(d.parent.data.color))?1:0.06;
   }
+  if(isMadhabGrayed(d))return 0.13;
   return 1;
 }
 function lOpacity(d){
@@ -648,16 +883,16 @@ function lOpacity(d){
     const t=d.target,tc=t.data.type==="subject"?t.data.color:t.data.type==="book"?(t.parent&&t.parent.data.color):null;
     return tc&&activeFilters.has(tc)?0.3:0.04;
   }
+  if(isMadhabGrayed(d.target))return 0.05;
   return 0.22;
 }
 
-/* ── Update ───────────────────────────────────────────── */
+/* ── Update ──────────────────────────────────────────── */
 let fillTimer;
 function update(src){
   const td=treeFn(root);
-  const nodes=td.descendants(), links=td.links();
+  const nodes=td.descendants(),links=td.links();
 
-  // Links — keyed by stable "sourceId-targetId"
   const lkSel=lkG.selectAll(".lk").data(links,d=>d.source.id+"-"+d.target.id);
   const lkE=lkSel.enter().append("path").attr("class","lk")
     .attr("fill","none").attr("stroke-width",".8px")
@@ -668,16 +903,12 @@ function update(src){
     .attr("d",diag)
     .attr("stroke",d=>{const t=d.target;return t.data.type==="level"?LC[t.data.level]:t.data.type==="book"?(t.parent&&t.parent.data.color)||"#444":t.data.color||"#444";})
     .attr("opacity",lOpacity);
-  lkSel.exit().transition().duration(280)
-    .attr("d",()=>{const o={x:src.x,y:src.y};return diag({source:o,target:o});})
-    .attr("opacity",0).remove();
+  lkSel.exit().transition().duration(280).attr("d",()=>{const o={x:src.x,y:src.y};return diag({source:o,target:o});}).attr("opacity",0).remove();
 
-  // Nodes
   const ndSel=ndG.selectAll(".nd").data(nodes,d=>d.id);
   const ndE=ndSel.enter().append("g").attr("class","nd")
     .attr("transform",()=>`translate(${src.y0||0},${src.x0||0})`).attr("opacity",0);
-  ndE.append("circle")
-    .attr("r",nR)
+  ndE.append("circle").attr("r",nR)
     .attr("fill",d=>nColor(d)+(d.data.type==="book"?"18":d.data.type==="subject"?"2c":"3e"))
     .attr("stroke",nColor).attr("stroke-width",d=>d.data.type==="root"?2:1.5);
   ndE.append("circle").attr("class","cd").attr("r",2.2).attr("fill",nColor).attr("opacity",0);
@@ -706,7 +937,6 @@ function update(src){
   mg.select(".cd").attr("opacity",d=>d._children&&d.data.type!=="book"?.75:0);
   ndSel.exit().transition().duration(280).attr("transform",`translate(${src.y},${src.x})`).attr("opacity",0).remove();
   nodes.forEach(d=>{d.x0=d.x;d.y0=d.y;});
-
   clearTimeout(fillTimer);
   fillTimer=setTimeout(drawFills,300);
 }
@@ -717,7 +947,7 @@ function drawFills(){
   root.each(lv=>{
     if(lv.data.type!=="level"||!lv.children||!lv.children.length)return;
     const all=lv.descendants();
-    const xs=all.map(n=>n.y), ys=all.map(n=>n.x);
+    const xs=all.map(n=>n.y),ys=all.map(n=>n.x);
     const color=LC[lv.data.level]||"#c9a84c";
     bgG.append("rect")
       .attr("x",Math.min(...xs)-18).attr("y",Math.min(...ys)-16)
@@ -727,65 +957,39 @@ function drawFills(){
   });
 }
 
-/* ── Animated path — OVERLAY approach (reliable, full path) ──
-   Instead of animating existing link elements (timing issues),
-   we READ their final rendered path and draw fresh overlay paths.
-   This guarantees the animation reaches every node including books. */
+/* ── Animated path (overlay) ─────────────────────────── */
 function animatePath(d){
   animG.selectAll("*").remove();
-  const anc=d.ancestors().reverse(); // [root, level, subject, book]
+  const anc=d.ancestors().reverse();
   const DASH=2000;
-
   anc.forEach((node,i)=>{
     if(i>=anc.length-1)return;
     const nxt=anc[i+1];
-    // Read the rendered 'd' attribute from the existing link element
     let pathD=null;
     lkG.selectAll(".lk").each(function(ld){
-      if(!pathD && ld.source.id===node.id && ld.target.id===nxt.id){
-        pathD=this.getAttribute("d");
-      }
+      if(!pathD&&ld.source.id===node.id&&ld.target.id===nxt.id)pathD=this.getAttribute("d");
     });
     if(!pathD)return;
-
-    // Create a glow overlay — separate SVG filter defined inline
-    const overlay=animG.append("path")
-      .attr("fill","none")
-      .attr("d",pathD)
-      .attr("stroke","#e8c97a")
-      .attr("stroke-width",2.6)
-      .attr("stroke-linecap","round")
-      .attr("stroke-dasharray",`${DASH} ${DASH}`)
-      .attr("stroke-dashoffset",DASH)
-      .attr("opacity",1);
-
-    // Glow via filter on each overlay element
-    overlay.style("filter","drop-shadow(0 0 4px #e8c97a) drop-shadow(0 0 8px rgba(201,168,76,.6))");
-
-    overlay.transition()
-      .delay(i*240)
-      .duration(400)
-      .ease(d3.easeCubicInOut)
-      .attr("stroke-dashoffset",0);
+    animG.append("path").attr("fill","none").attr("d",pathD)
+      .attr("stroke","#e8c97a").attr("stroke-width",2.6).attr("stroke-linecap","round")
+      .attr("stroke-dasharray",`${DASH} ${DASH}`).attr("stroke-dashoffset",DASH)
+      .style("filter","drop-shadow(0 0 4px #e8c97a) drop-shadow(0 0 8px rgba(201,168,76,.6))")
+      .transition().delay(i*240).duration(400).ease(d3.easeCubicInOut).attr("stroke-dashoffset",0);
   });
 }
-
 function clearAnimPath(){animG.selectAll("*").remove();}
 
-/* ── Click handler ───────────────────────────────────── */
+/* ── Click / Focus ───────────────────────────────────── */
 function handleClick(event,d){
   event.stopPropagation();
   if(d.data.type==="book"){focusNode(d);openPanel(d.data,d);return;}
   d.children?(d._children=d.children,d.children=null):(d.children=d._children,d._children=null);
   clearFocus();update(d);
 }
-
 function focusNode(d){
   const anc=d.ancestors();
-  focusedIds=new Set(anc.map(a=>a.id));
-  focusedIds.add(d.id);
+  focusedIds=new Set(anc.map(a=>a.id));focusedIds.add(d.id);
   update(d);
-  // Run animation after tree transitions complete
   setTimeout(()=>animatePath(d),300);
   const parts=anc.reverse().map(a=>a.data.type==="root"?null:a.data.name).filter(Boolean);
   parts.push(d.data.name.length>28?d.data.name.slice(0,26)+"…":d.data.name);
@@ -793,25 +997,20 @@ function focusNode(d){
   bc.innerHTML=parts.map((p,i)=>i===parts.length-1?`<span>${p}</span>`:p).join(" ›&nbsp;");
   bc.classList.add("show");
 }
-
 function clearFocus(){
-  focusedIds=null;
-  clearAnimPath();
+  focusedIds=null;clearAnimPath();
   document.getElementById("breadcrumb").classList.remove("show");
   ndG.selectAll(".nd").transition().duration(260).attr("opacity",nOpacity);
   lkG.selectAll(".lk").transition().duration(260).attr("opacity",lOpacity);
 }
 
-/* ════════════════════════════════════════════════════════
-   PANEL
-════════════════════════════════════════════════════════ */
+/* ═══ PANEL ══════════════════════════════════════════ */
 function openPanel(data,treeNode){
   document.getElementById("panel-title").textContent=data.name;
   let ph="";
   if(treeNode){
     ph=treeNode.ancestors().reverse()
-      .map(a=>a.data.type==="root"?null:
-           (a.data.type==="level"||a.data.type==="subject")?`<span>${a.data.name}</span>`:null)
+      .map(a=>a.data.type==="root"?null:(a.data.type==="level"||a.data.type==="subject")?`<span>${a.data.name}</span>`:null)
       .filter(Boolean).join("&nbsp;›&nbsp;");
   } else if(data.ln){
     ph=`<span>${data.ln}</span>&nbsp;›&nbsp;<span>${data.sn}</span>`;
@@ -834,15 +1033,35 @@ document.addEventListener("keydown",e=>{
   if((e.ctrlKey||e.metaKey)&&e.key==="f"){e.preventDefault();toggleSearch();}
 });
 
-/* ════════════════════════════════════════════════════════
-   SEARCH
-════════════════════════════════════════════════════════ */
+/* ═══ TRACK / MADHAB ════════════════════════════════ */
+function showTrackScreen(){document.getElementById("track-screen").classList.add("show");}
+function hideTrackScreen(){document.getElementById("track-screen").classList.remove("show");}
+function chooseTrack(m){
+  chosenMadhab=m;
+  localStorage.setItem("talib_madhab",m);
+  hideTrackScreen();
+  updateMadhabBadge();
+  update(root);
+  if(listBuilt){listBuilt=false;buildList();}
+}
+function updateMadhabBadge(){
+  const badge=document.getElementById("madhab-badge");
+  if(!chosenMadhab){badge.textContent="";badge.style.display="none";return;}
+  const color=MCOL[chosenMadhab]||"#c9a84c";
+  badge.textContent=MNAME[chosenMadhab]||"";
+  badge.style.display="";
+  badge.style.color=color;
+  badge.style.borderColor=color+"66";
+  badge.style.background=color+"14";
+}
+
+/* ═══ SEARCH ══════════════════════════════════════════ */
 let _hits=[];
 function toggleSearch(){
   const w=document.getElementById("search-wrap");
-  const opening=!w.classList.contains("open");
-  w.classList.toggle("open",opening);
-  if(opening)setTimeout(()=>document.getElementById("search-input").focus(),30);
+  const op=!w.classList.contains("open");
+  w.classList.toggle("open",op);
+  if(op)setTimeout(()=>document.getElementById("search-input").focus(),30);
   else resetSearch();
 }
 function closeSearch(){document.getElementById("search-wrap").classList.remove("open");resetSearch();}
@@ -857,35 +1076,26 @@ function onSearch(q){
     <div class="sr-path">${bk.ln}&nbsp;›&nbsp;${bk.sn}</div>
   </div>`).join("");
 }
-
 function jumpToBook(i){
-  const target=_hits[i];
-  if(!target)return;
+  const target=_hits[i];if(!target)return;
   closeSearch();
-  // Traverse all nodes (including _children) to find the hierarchy node
   let found=null;
-  (function find(d){
-    if(!found&&d.data.name===target.name&&d.data.type==="book"){found=d;return;}
-    (d.children||d._children||[]).forEach(find);
-  })(root);
+  (function find(d){if(!found&&d.data.name===target.name&&d.data.type==="book"){found=d;return;}(d.children||d._children||[]).forEach(find);})(root);
   if(!found)return;
-  // Expand ancestors
   found.ancestors().forEach(a=>{if(a._children){a.children=a._children;a._children=null;}});
   update(root);
   setTimeout(()=>{
-    treeFn(root); // ensure positions are fresh
-    const k=Math.max(d3.zoomTransform(svg.node()).k,0.8);
+    treeFn(root);
+    const k=Math.max(d3.zoomTransform(svg.node()).k,.8);
     svg.transition().duration(460).ease(d3.easeCubicInOut)
       .call(zoom.transform,d3.zoomIdentity.translate(W/2-found.y*k,H/2-found.x*k).scale(k));
-    focusNode(found);
-    openPanel(found.data,found);
+    focusNode(found);openPanel(found.data,found);
   },310);
 }
 
-/* ════════════════════════════════════════════════════════
-   FILTER CHIPS  (Poems excluded from chips, data intact)
-════════════════════════════════════════════════════════ */
+/* ═══ FILTER CHIPS ═══════════════════════════════════ */
 const CATS=[
+  {label:"Quran",c:SC.quran},
   {label:"Aqeedah",c:SC.aqeedah},{label:"Fiqh",c:SC.fiqh},
   {label:"Hadith",c:SC.hadith},{label:"Nahw",c:SC.nahw},
   {label:"Tajweed",c:SC.tajweed},{label:"Usool",c:SC.usool},
@@ -897,40 +1107,25 @@ const CATS=[
 (()=>{
   const con=document.getElementById("chips");
   CATS.forEach(cat=>{
-    const el=document.createElement("div");
-    el.className="chip";
+    const el=document.createElement("div");el.className="chip";
     el.innerHTML=`<div class="ld" style="background:${cat.c}"></div>${cat.label}`;
     el.onclick=()=>{
       const on=activeFilters.has(cat.c);
       on?activeFilters.delete(cat.c):activeFilters.add(cat.c);
       el.classList.toggle("active",!on);
-      el.style.background=on?"":cat.c;
-      el.style.color=on?"":"#0c0904";
+      el.style.background=on?"":cat.c;el.style.color=on?"":"#0c0904";
       clearFocus();update(root);
     };
     con.appendChild(el);
   });
 })();
 
-/* ════════════════════════════════════════════════════════
-   TREE CONTROLS
-════════════════════════════════════════════════════════ */
-function resetZoom(){
-  svg.transition().duration(400).ease(d3.easeCubicInOut)
-    .call(zoom.transform,d3.zoomIdentity.translate(W*.07,H/2).scale(.92));
-}
-function expandAll(){
-  root.descendants().forEach(d=>{if(d._children){d.children=d._children;d._children=null;}});
-  clearFocus();update(root);
-}
-function collapseToLevels(){
-  root.descendants().forEach(d=>{if(d.depth>=2&&d.children){d._children=d.children;d.children=null;}});
-  clearFocus();update(root);
-}
+/* ═══ TREE CONTROLS ══════════════════════════════════ */
+function resetZoom(){svg.transition().duration(400).ease(d3.easeCubicInOut).call(zoom.transform,d3.zoomIdentity.translate(W*.07,H/2).scale(.92));}
+function expandAll(){root.descendants().forEach(d=>{if(d._children){d.children=d._children;d._children=null;}});clearFocus();update(root);}
+function collapseToLevels(){root.descendants().forEach(d=>{if(d.depth>=2&&d.children){d._children=d.children;d.children=null;}});clearFocus();update(root);}
 
-/* ════════════════════════════════════════════════════════
-   VIEW TOGGLE
-════════════════════════════════════════════════════════ */
+/* ═══ VIEW TOGGLE ════════════════════════════════════ */
 function setView(v){
   document.getElementById("btn-tree").classList.toggle("active",v==="tree");
   document.getElementById("btn-list").classList.toggle("active",v==="list");
@@ -942,9 +1137,7 @@ function setView(v){
   if(v==="tree")closePanel();
 }
 
-/* ════════════════════════════════════════════════════════
-   LIST VIEW
-════════════════════════════════════════════════════════ */
+/* ═══ LIST VIEW ════════════════════════════════════════ */
 function buildList(){
   BREG=[];
   const lv=document.getElementById("listview");
@@ -954,7 +1147,8 @@ function buildList(){
     html+=`<div class="lv-level"><div class="lv-lhdr" style="color:${lc};border-left:2px solid ${lc}44" onclick="acc(this)"><span style="border-left:2px solid ${lc};padding-left:8px">${level.name} — ${level.subtitle||""}</span><span class="ct">›</span></div><div class="lv-lbody">`;
     (level.children||[]).forEach(subj=>{
       const sc=subj.color;
-      html+=`<div class="lv-subject"><div class="lv-shdr" style="color:${sc}99" onclick="acc(this)"><span style="flex:1">${subj.name}</span><span style="font-size:8px;color:${sc}55;margin-right:4px">${(subj.children||[]).length}</span><span class="ct">›</span></div><div class="lv-sbody">`;
+      const isGrayed=chosenMadhab&&chosenMadhab!=="all"&&subj.madhab&&subj.madhab!==chosenMadhab&&subj.madhab!=="general";
+      html+=`<div class="lv-subject"><div class="lv-shdr${isGrayed?" grayed":""}" style="color:${sc}99" onclick="acc(this)"><span style="flex:1">${subj.name}</span><span style="font-size:8px;color:${sc}55;margin-right:4px">${(subj.children||[]).length}</span><span class="ct">›</span></div><div class="lv-sbody">`;
       (subj.children||[]).forEach((book,bi)=>{
         const idx=regBook(book,level.name,subj.name);
         const mc=book.mem?" is-mem":"",st=book.mem?"":`style="color:${sc}bb"`;
@@ -969,23 +1163,20 @@ function buildList(){
 function acc(el){el.classList.toggle("open");el.nextElementSibling.classList.toggle("open");}
 function openBI(idx){const d=BREG[idx];if(d)openPanel(d,null);}
 
-/* ════════════════════════════════════════════════════════
-   SPLASH
-════════════════════════════════════════════════════════ */
+/* ═══ SPLASH / INIT ════════════════════════════════════ */
 function dismissSplash(){
-  const s=document.getElementById("splash");
-  if(!s)return;
-  s.style.transition="opacity .4s ease";
-  s.style.opacity="0";
+  const s=document.getElementById("splash");if(!s)return;
+  s.style.transition="opacity .4s ease";s.style.opacity="0";
   setTimeout(()=>s.remove(),400);
 }
-setTimeout(()=>{const s=document.getElementById("splash");if(s)s.remove();},3450);
+setTimeout(()=>{
+  const s=document.getElementById("splash");if(s)s.remove();
+  if(!chosenMadhab)showTrackScreen();
+},3400);
 
-/* ════════════════════════════════════════════════════════
-   INIT
-════════════════════════════════════════════════════════ */
 update(root);
 svg.call(zoom.transform,d3.zoomIdentity.translate(W*.07,H/2).scale(.92));
+updateMadhabBadge();
 window.addEventListener("resize",()=>svg.attr("width",window.innerWidth).attr("height",window.innerHeight));
 if(window.innerWidth<=700)setView("list");
 </script>
