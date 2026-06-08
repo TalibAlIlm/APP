@@ -338,11 +338,14 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
     <div class="track-note">
       <strong>📖 Study with a Qualified Shaykh</strong>
       <p>
-        This roadmap is a guide only — it does not replace a living teacher.
-        The scholars unanimously warn: <em>"Whoever takes his knowledge from books alone has more errors than correct answers."</em>
-        Seek a Shaykh with a connected chain of transmission (isnād), sound creed (ʿaqīdah), and upright character.
-        Even reading a sharḥ (explanation) is not a substitute — the teacher corrects your pronunciation, your understanding, and your methodology.
-        If you cannot find a local Shaykh, study online with qualified teachers from established institutions such as IUM Madinah, IMSIU Riyadh, or Umm al-Qura Makkah.
+        The Messenger of Allah ﷺ said:<br>
+        <em>"Whoever travels a path in search of knowledge, Allah will make easy for him a path to Paradise. The angels lower their wings in approval for the seeker of knowledge. The scholars are the inheritors of the Prophets — the Prophets did not leave behind dinars or dirhams; they left behind knowledge. Whoever takes it has taken a great share."</em><br>
+        — Sunan Abu Dawud 3641 · Sunan Ibn Majah 223 · Sunan al-Tirmidhi 2682 (hasan)
+        <br><br>
+        Muhammad ibn Sirin (d. 110 AH) said — recorded in the Muqaddimah of Sahih Muslim:<br>
+        <em>"Verily this knowledge is the religion — so look carefully from whom you take your religion."</em>
+        <br><br>
+        This roadmap is a guide only. It does not replace a living teacher with a connected chain of transmission (isnād) and sound creed (ʿaqīdah). Seek a Shaykh who combines knowledge with practice, and whose methodology aligns with the Quran and authentic Sunnah as understood by the Salaf al-Salih. If no local teacher is available, seek the authenticated programs of IUM Madinah, IMSIU Riyadh, or Umm al-Qura Makkah.
       </p>
     </div>
 
@@ -368,7 +371,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
       <button class="mbtn haf" onclick="chooseTrack('hanafi')">
         <span class="m-name">Hanafi</span>
         <span class="m-imam">Imam Abu Hanifa al-Nu&#x02BF;man (d. 150 AH)</span>
-        <span class="m-desc">Dominant in Turkey, South Asia, Central Asia, the Balkans. The oldest school, known for extensive use of analogy (qiyas) and juristic preference (istihsan).</span>
+        <span class="m-desc">Dominant in Turkey, South Asia, Central Asia, the Balkans. Named after Imam Abu Hanifa al-Nu'man. One of the oldest and most widespread schools of fiqh, with a rich tradition of detailed legal reasoning.</span>
       </button>
       <button class="mbtn all m-all" onclick="chooseTrack('all')">
         <span class="m-name">All Madhabs — Comparative Study</span>
@@ -464,7 +467,7 @@ const TREE={name:"Talib al-Ilm",type:"root",children:[
 /* ── ENTRY LEVEL ──────────────────────────────────── */
 {name:"Entry Level",subtitle:"First Steps",level:0,type:"level",children:[
   s("Quran — Hifz",SC.quran,[
-    b("Juz 30 · Amma — An-Naba → An-Nas (37 surahs)",true),
+    b("Juz 30",true),
   ]),
   s("Short Poems",SC.poems,[
     b("Mandhuma al-Ruh wal-Rayhan — al-Qadi",true),
@@ -482,8 +485,8 @@ const TREE={name:"Talib al-Ilm",type:"root",children:[
 /* ── LEVEL I — Foundation ─────────────────────────── */
 {name:"Level I",subtitle:"Foundation",level:1,type:"level",children:[
   s("Quran — Hifz",SC.quran,[
-    b("Juz 29 · Tabarak — Al-Mulk → Al-Mursalat (11 surahs)",true),
-    b("Juz 28 · Qad Sami'a — Al-Mujadilah → At-Tahrim (9 surahs)",true),
+    b("Juz 29",true),
+    b("Juz 28",true),
   ]),
   s("Aqeedah",SC.aqeedah,[
     b("Al-Usul al-Thalatha — The Three Fundamentals"),
@@ -513,9 +516,9 @@ const TREE={name:"Talib al-Ilm",type:"root",children:[
 /* ── LEVEL II — Elementary ────────────────────────── */
 {name:"Level II",subtitle:"Elementary",level:2,type:"level",children:[
   s("Quran — Hifz",SC.quran,[
-    b("Juz 27 · Qala Fama — Adh-Dhariyat → Al-Hadid (7 surahs)",true),
-    b("Juz 26 · Ha Mim — Al-Ahqaf → Qaf (6 surahs)",true),
-    b("Juz 25 · Ilayhi Yuraddu — Fussilat → Al-Jathiyah (5 surahs)",true),
+    b("Juz 27",true),
+    b("Juz 26",true),
+    b("Juz 25",true),
   ]),
   s("Aqeedah",SC.aqeedah,[
     b("Luma al-I'tiqad — Ibn Qudama"),
@@ -558,11 +561,11 @@ const TREE={name:"Talib al-Ilm",type:"root",children:[
 /* ── LEVEL III — Intermediate ─────────────────────── */
 {name:"Level III",subtitle:"Intermediate",level:3,type:"level",children:[
   s("Quran — Hifz",SC.quran,[
-    b("Juz 1 · Alif Lam Mim — Al-Fatiha + Al-Baqarah 1-141",true),
-    b("Juz 2 · Sayaqool — Al-Baqarah 142-252",true),
-    b("Juz 3 · Tilkal-Rusul — Al-Baqarah 253 → Al-Imran 91",true),
-    b("Juz 4 · Lan Tanalo — Al-Imran 92 → An-Nisa 23",true),
-    b("Juz 5 · Wal-Muhsanat — An-Nisa 24-147",true),
+    b("Juz 1",true),
+    b("Juz 2",true),
+    b("Juz 3",true),
+    b("Juz 4",true),
+    b("Juz 5",true),
   ]),
   s("Aqeedah",SC.aqeedah,[
     b("Al-Aqida al-Wasitiyya — Ibn Taymiyya"),
@@ -590,8 +593,7 @@ const TREE={name:"Talib al-Ilm",type:"root",children:[
     b("Al-Yaqut al-Nafis — al-Hadrami"),
   ],"shafi"),
   s("Fiqh — Maliki",SC.fiqh,[
-    b("Al-Ashmawiyya — al-Ashmawi"),
-    b("Al-Murshid al-Mu'in ala al-Daruri — Ibn Ashir",true),
+    b("Bidayat al-Mujtahid wa Nihayat al-Muqtasid — Ibn Rushd (Study of Adillah)"),
   ],"maliki"),
   s("Fiqh — Hanafi",SC.fiqh,[
     b("Al-Mukhtar li'l-Fatwa — al-Musili"),
@@ -636,16 +638,8 @@ const TREE={name:"Talib al-Ilm",type:"root",children:[
 /* ── LEVEL IV — Advanced ──────────────────────────── */
 {name:"Level IV",subtitle:"Advanced",level:4,type:"level",children:[
   s("Quran — Hifz",SC.quran,[
-    b("Juz 6 · La Yuhibbullah — An-Nisa 148 → Al-Ma'idah 81",true),
-    b("Juz 7 · Wa Idha Sami'oo — Al-Ma'idah 82 → Al-An'am 110",true),
-    b("Juz 8 · Wa Law Annana — Al-An'am 111 → Al-A'raf 87",true),
-    b("Juz 9 · Qalal-Mala'u — Al-A'raf 88 → Al-Anfal 40",true),
-    b("Juz 10 · Wa A'lamoo — Al-Anfal 41 → At-Tawbah 92",true),
-    b("Juz 11 · Ya'tadhiroona — At-Tawbah 93 → Hud 5",true),
-    b("Juz 12 · Wa Ma Min Dabbah — Hud 6 → Yusuf 52",true),
-    b("Juz 13 · Wa Ma Ubarri'u — Yusuf 53 → Ibrahim",true),
-    b("Juz 14 · Rubba Ma — Al-Hijr + An-Nahl",true),
-    b("Juz 15 · Subhana Alladhi — Al-Isra → Al-Kahf 74",true),
+    b("Juz 6",true),b("Juz 7",true),b("Juz 8",true),b("Juz 9",true),b("Juz 10",true),
+    b("Juz 11",true),b("Juz 12",true),b("Juz 13",true),b("Juz 14",true),b("Juz 15",true),
   ]),
   s("Aqeedah",SC.aqeedah,[
     b("Al-Aqida al-Tahawiyya + Sharh Ibn Abi al-Izz"),
@@ -709,15 +703,9 @@ const TREE={name:"Talib al-Ilm",type:"root",children:[
 /* ── LEVEL V — Mastery ────────────────────────────── */
 {name:"Level V",subtitle:"Mastery",level:5,type:"level",children:[
   s("Quran — Hifz",SC.quran,[
-    b("Juz 16 · Qal Alam — Al-Kahf 75 → Ta-Ha 135",true),
-    b("Juz 17 · Iqtaraba — Ta-Ha 136 → Al-Hajj 78",true),
-    b("Juz 18 · Qad Aflaha — Al-Mu'minun → Al-Furqan 20",true),
-    b("Juz 19 · Wa Qalal-Ladhina — Al-Furqan 21 → An-Naml 55",true),
-    b("Juz 20 · Amman Khalaqa — An-Naml 56 → Al-Ankabut 45",true),
-    b("Juz 21 · Utlu Ma Uwhiya — Al-Ankabut 46 → Al-Ahzab 30",true),
-    b("Juz 22 · Wa Man Yaqnut — Al-Ahzab 31 → Ya-Sin 27",true),
-    b("Juz 23 · Wa Ma Liya — Ya-Sin 28 → Az-Zumar 31",true),
-    b("Juz 24 · Fa Man Adhlamu — Az-Zumar 32 → Fussilat 46 — Complete Hafidh ❀",true),
+    b("Juz 16",true),b("Juz 17",true),b("Juz 18",true),b("Juz 19",true),
+    b("Juz 20",true),b("Juz 21",true),b("Juz 22",true),b("Juz 23",true),
+    b("Juz 24 ❀",true),
   ]),
   s("Aqeedah — Encyclopedic",SC.aqeedah,[
     b("A'lam al-Sunna al-Mansura — al-Hakami"),
@@ -925,12 +913,14 @@ function update(src){
     .text(nLabel);
   ndE.on("mouseover",function(e,d){
       if(d.data.type==="root")return;
+      if(d.data.type==="book"&&d.parent&&d.parent.data.color===SC.quran)return;
       d3.select(this).select("circle").transition().duration(110).attr("r",nR(d)*1.36).attr("stroke-width",2);
     })
     .on("mouseout",function(e,d){
       d3.select(this).select("circle").transition().duration(170).attr("r",nR(d)).attr("stroke-width",d.data.type==="root"?2:1.5);
     })
-    .on("click",handleClick);
+    .on("click",handleClick)
+    .style("cursor",d=>d.data.type==="book"&&d.parent&&d.parent.data.color===SC.quran?"default":"pointer");
 
   const mg=ndSel.merge(ndE);
   mg.transition().duration(280).ease(d3.easeCubicInOut)
@@ -986,7 +976,10 @@ function clearAnimPath(){animG.selectAll("*").remove();}
 /* ── Click / Focus ───────────────────────────────────── */
 function handleClick(event,d){
   event.stopPropagation();
-  if(d.data.type==="book"){focusNode(d);openPanel(d.data,d);return;}
+  if(d.data.type==="book"){
+    if(d.parent&&d.parent.data.color===SC.quran)return; // Quran Hifz: display-only
+    focusNode(d);openPanel(d.data,d);return;
+  }
   d.children?(d._children=d.children,d.children=null):(d.children=d._children,d._children=null);
   clearFocus();update(d);
 }
@@ -1155,8 +1148,11 @@ function buildList(){
       html+=`<div class="lv-subject"><div class="lv-shdr${isGrayed?" grayed":""}" style="color:${sc}99" onclick="acc(this)"><span style="flex:1">${subj.name}</span><span style="font-size:8px;color:${sc}55;margin-right:4px">${(subj.children||[]).length}</span><span class="ct">›</span></div><div class="lv-sbody">`;
       (subj.children||[]).forEach((book,bi)=>{
         const idx=regBook(book,level.name,subj.name);
+        const isQuran=subj.color===SC.quran;
         const mc=book.mem?" is-mem":"",st=book.mem?"":`style="color:${sc}bb"`;
-        html+=`<div class="lv-book"><span class="lv-book-num" style="color:${sc}44">${bi+1}</span><span class="lv-book-name${mc}" ${st} onclick="openBI(${idx})">${book.name}</span><div class="lv-book-actions"><a class="lv-btn" href="${book.info||"#"}" target="_blank" rel="noopener" onclick="event.stopPropagation()" title="Information">&#9432;</a><a class="lv-btn" href="${book.pdf||"#"}" target="_blank" rel="noopener" onclick="event.stopPropagation()" title="PDF">&#8659;</a><a class="lv-btn" href="${book.video||"#"}" target="_blank" rel="noopener" onclick="event.stopPropagation()" title="Recording">&#9654;</a></div></div>`;
+        const clickAttr=isQuran?"":`onclick="openBI(${idx})"`;
+        const actionsHtml=isQuran?"":`<div class="lv-book-actions"><a class="lv-btn" href="${book.info||"#"}" target="_blank" rel="noopener" onclick="event.stopPropagation()" title="Information">&#9432;</a><a class="lv-btn" href="${book.pdf||"#"}" target="_blank" rel="noopener" onclick="event.stopPropagation()" title="PDF">&#8659;</a><a class="lv-btn" href="${book.video||"#"}" target="_blank" rel="noopener" onclick="event.stopPropagation()" title="Recording">&#9654;</a></div>`;
+        html+=`<div class="lv-book"><span class="lv-book-num" style="color:${sc}44">${bi+1}</span><span class="lv-book-name${mc}" ${st} ${clickAttr}>${book.name}</span>${actionsHtml}</div>`;
       });
       html+=`</div></div>`;
     });
