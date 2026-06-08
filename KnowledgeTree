@@ -338,11 +338,14 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
     <div class="track-note">
       <strong>📖 Study with a Qualified Shaykh</strong>
       <p>
-        This roadmap is a guide only — it does not replace a living teacher.
-        The scholars unanimously warn: <em>"Whoever takes his knowledge from books alone has more errors than correct answers."</em>
-        Seek a Shaykh with a connected chain of transmission (isnād), sound creed (ʿaqīdah), and upright character.
-        Even reading a sharḥ (explanation) is not a substitute — the teacher corrects your pronunciation, your understanding, and your methodology.
-        If you cannot find a local Shaykh, study online with qualified teachers from established institutions such as IUM Madinah, IMSIU Riyadh, or Umm al-Qura Makkah.
+        The Messenger of Allah ﷺ said:<br>
+        <em>"Whoever travels a path in search of knowledge, Allah will make easy for him a path to Paradise. The angels lower their wings in approval for the seeker of knowledge. The scholars are the inheritors of the Prophets — the Prophets did not leave behind dinars or dirhams; they left behind knowledge. Whoever takes it has taken a great share."</em><br>
+        — Sunan Abu Dawud 3641 · Sunan Ibn Majah 223 · Sunan al-Tirmidhi 2682 (hasan)
+        <br><br>
+        Muhammad ibn Sirin (d. 110 AH) said — recorded in the Muqaddimah of Sahih Muslim:<br>
+        <em>"Verily this knowledge is the religion — so look carefully from whom you take your religion."</em>
+        <br><br>
+        This roadmap is a guide only. It does not replace a living teacher with a connected chain of transmission (isnād) and sound creed (ʿaqīdah). Seek a Shaykh who combines knowledge with practice, and whose methodology aligns with the Quran and authentic Sunnah as understood by the Salaf al-Salih. If no local teacher is available, seek the authenticated programs of IUM Madinah, IMSIU Riyadh, or Umm al-Qura Makkah.
       </p>
     </div>
 
@@ -368,7 +371,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
       <button class="mbtn haf" onclick="chooseTrack('hanafi')">
         <span class="m-name">Hanafi</span>
         <span class="m-imam">Imam Abu Hanifa al-Nu&#x02BF;man (d. 150 AH)</span>
-        <span class="m-desc">Dominant in Turkey, South Asia, Central Asia, the Balkans. The oldest school, known for extensive use of analogy (qiyas) and juristic preference (istihsan).</span>
+        <span class="m-desc">Dominant in Turkey, South Asia, Central Asia, the Balkans. Named after Imam Abu Hanifa al-Nu'man. One of the oldest and most widespread schools of fiqh, with a rich tradition of detailed legal reasoning.</span>
       </button>
       <button class="mbtn all m-all" onclick="chooseTrack('all')">
         <span class="m-name">All Madhabs — Comparative Study</span>
@@ -590,8 +593,7 @@ const TREE={name:"Talib al-Ilm",type:"root",children:[
     b("Al-Yaqut al-Nafis — al-Hadrami"),
   ],"shafi"),
   s("Fiqh — Maliki",SC.fiqh,[
-    b("Al-Ashmawiyya — al-Ashmawi"),
-    b("Al-Murshid al-Mu'in ala al-Daruri — Ibn Ashir",true),
+    b("Bidayat al-Mujtahid wa Nihayat al-Muqtasid — Ibn Rushd (Study of Adillah)"),
   ],"maliki"),
   s("Fiqh — Hanafi",SC.fiqh,[
     b("Al-Mukhtar li'l-Fatwa — al-Musili"),
