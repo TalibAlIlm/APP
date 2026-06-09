@@ -11,7 +11,7 @@
 *{margin:0;padding:0;box-sizing:border-box}
 :root{
   --bg:#0c0904;--bg2:#130f08;--bg3:#1c1510;
-  --gold:#c9a84c;--gold2:#e8c97a;
+  --gold:#c9a84c;--gold2:#e8c97a;--gold3:#f5e2a8;
   --muted:#6b5a3e;--border:#2c1e10;--text:#e8d5b7;
   --pw:292px;
   --mh:#4caf50; /* hanbali */
@@ -125,30 +125,55 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
 #header{position:fixed;top:0;left:0;right:0;height:46px;z-index:200;
   background:rgba(12,9,4,.97);border-bottom:1px solid var(--border);
   box-shadow:0 1px 18px rgba(0,0,0,.55);backdrop-filter:blur(12px);
-  display:flex;align-items:center;padding:0 12px;gap:8px;will-change:transform}
-#header h1{font-family:'Cinzel',serif;font-size:11px;letter-spacing:.2em;
+  display:flex;align-items:center;padding:0 10px;gap:8px;will-change:transform;
+  overflow:hidden;}
+#header h1{font-family:'Cinzel',serif;font-size:11px;letter-spacing:.18em;
   color:var(--gold);white-space:nowrap;text-transform:uppercase;
-  text-shadow:0 0 14px rgba(201,168,76,.28)}
+  text-shadow:0 0 14px rgba(201,168,76,.28);flex-shrink:0}
 .hsep{width:1px;height:18px;background:var(--border);flex-shrink:0}
-.legend{display:flex;align-items:center;gap:3px;overflow:hidden;flex-wrap:nowrap}
+.legend{
+  display:flex;align-items:center;gap:3px;
+  overflow-x:auto;flex:1;min-width:0;
+  scrollbar-width:none;-ms-overflow-style:none;
+  padding-bottom:1px;/* prevents clipping on scroll */
+}
+.legend::-webkit-scrollbar{display:none}
 .chip{display:flex;align-items:center;gap:2px;font-size:7px;letter-spacing:.03em;
   color:var(--muted);white-space:nowrap;padding:2px 5px;border-radius:2px;
-  border:1px solid transparent;cursor:pointer;transition:all .16s;user-select:none}
+  border:1px solid transparent;cursor:pointer;transition:all .16s;user-select:none;flex-shrink:0}
 .chip:hover{border-color:rgba(255,255,255,.1);color:var(--text)}
 .chip.active{color:#0c0904}
 .chip .ld{width:5px;height:5px;border-radius:50%;flex-shrink:0}
-.hbtn{margin-left:auto;display:flex;gap:4px;flex-shrink:0}
+.hbtn{margin-left:0;display:flex;gap:3px;flex-shrink:0;align-items:center}
 .hbtn button{background:transparent;border:1px solid var(--border);color:var(--muted);
-  font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.07em;
-  padding:4px 8px;cursor:pointer;text-transform:uppercase;transition:all .16s;white-space:nowrap}
+  font-family:'IBM Plex Mono',monospace;font-size:8.5px;letter-spacing:.06em;
+  padding:4px 7px;cursor:pointer;text-transform:uppercase;transition:all .16s;white-space:nowrap}
 .hbtn button:hover{border-color:var(--gold);color:var(--gold);background:rgba(201,168,76,.07)}
 .hbtn button.active{border-color:var(--gold);color:var(--gold);background:rgba(201,168,76,.1)}
-#btn-search{font-size:13px;padding:3px 8px}
+#btn-search{font-size:13px;padding:3px 7px}
+#btn-notes{
+  display:flex;align-items:center;gap:5px;
+  padding:4px 9px;
+  background:linear-gradient(135deg,rgba(201,168,76,.18),rgba(232,201,122,.08));
+  border:1px solid rgba(201,168,76,.55);
+  color:var(--gold2);
+  font-family:'IBM Plex Mono',monospace;font-size:8.5px;letter-spacing:.08em;
+  text-decoration:none;text-transform:uppercase;white-space:nowrap;
+  cursor:pointer;transition:all .22s ease;
+  box-shadow:0 0 10px rgba(201,168,76,.1),inset 0 0 6px rgba(201,168,76,.04);
+}
+#btn-notes:hover{
+  background:linear-gradient(135deg,rgba(201,168,76,.28),rgba(232,201,122,.14));
+  border-color:var(--gold2);color:var(--gold3);
+  box-shadow:0 0 18px rgba(201,168,76,.22),inset 0 0 10px rgba(201,168,76,.07);
+  transform:translateY(-1px);
+}
+#btn-notes .note-icon{font-size:11px;line-height:1}
 #madhab-badge{
-  padding:3px 8px;border-radius:2px;font-size:8px;
-  letter-spacing:.1em;text-transform:uppercase;
+  padding:3px 7px;border-radius:2px;font-size:8px;
+  letter-spacing:.08em;text-transform:uppercase;
   border:1px solid;cursor:pointer;transition:all .16s;
-  font-family:'IBM Plex Mono',monospace;white-space:nowrap;
+  font-family:'IBM Plex Mono',monospace;white-space:nowrap;flex-shrink:0;
 }
 #madhab-badge:hover{filter:brightness(1.2)}
 
@@ -270,7 +295,8 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
   #header h1{font-size:9.5px;letter-spacing:.12em}
   .legend{display:none}.hsep{display:none}
   .hbtn{gap:3px}.hbtn button{font-size:8px;padding:4px 6px}
-  #btn-search{font-size:12px;padding:4px 7px}
+  #btn-notes{font-size:11px;padding:5px 8px}
+  #btn-notes .note-icon{font-size:14px}
   #canvas{touch-action:none}
   #panel{width:100vw;top:50px;border-left:none;border-top:1px solid var(--border);
     transform:translateY(100%);transition:transform .28s cubic-bezier(.34,1.15,.64,1)}
@@ -389,6 +415,9 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
   <div class="hsep"></div>
   <div class="legend" id="chips"></div>
   <div class="hbtn">
+    <a id="btn-notes" href="https://talibalilm.github.io/NOTES/" target="_blank" rel="noopener">
+      <span class="note-icon">&#x270E;</span>Notes
+    </a>
     <span id="madhab-badge" onclick="showTrackScreen()" title="Change Madhab Track"></span>
     <button id="btn-search" onclick="toggleSearch()" title="Search (Ctrl+F)">&#x2315;</button>
     <button id="btn-tree" class="active" onclick="setView('tree')">Tree</button>
@@ -478,7 +507,6 @@ const TREE={name:"Talib al-Ilm",type:"root",children:[
   s("Adab — Entry",SC.adab,[
     b("Khulasa Ta'dhim al-Ilm — al-Usaymi",true),
     b("Adhkar wal-Adaab — Mutoon Series",true),
-    b("Hisnul Muslim — Fortress of the Muslim",true),
   ]),
 ]},
 
@@ -1171,7 +1199,7 @@ function dismissSplash(){
 }
 setTimeout(()=>{
   const s=document.getElementById("splash");if(s)s.remove();
-  if(!chosenMadhab)showTrackScreen();
+  showTrackScreen();
 },3400);
 
 update(root);
