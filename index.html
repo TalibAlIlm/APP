@@ -827,7 +827,7 @@ const treeFn=d3.tree().nodeSize([20,264]);
 let root=d3.hierarchy(TREE);
 let _nid=0;
 (function preId(d){d.id=++_nid;(d.children||d._children||[]).forEach(preId);})(root);
-root.descendants().forEach(d=>{if(d.depth>=2){d._children=d.children;d.children=null;}});
+root.descendants().forEach(d=>{if(d.depth>=1){d._children=d.children;d.children=null;}});
 root.x0=0;root.y0=0;
 
 /* ── Helpers ─────────────────────────────────────────── */
