@@ -121,6 +121,40 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
 
 .track-change-note{font-size:9px;letter-spacing:.08em;color:var(--muted);text-align:center}
 
+/* ── API Hadith Box ── */
+.api-hadith-box{margin:10px 0 14px;display:flex;flex-direction:column;gap:12px}
+.api-loading{display:flex;gap:6px;align-items:center;padding:10px 0}
+.api-dot{width:6px;height:6px;border-radius:50%;background:var(--gold);opacity:.4;
+  animation:apiPulse 1.2s ease-in-out infinite}
+.api-dot:nth-child(2){animation-delay:.2s}
+.api-dot:nth-child(3){animation-delay:.4s}
+@keyframes apiPulse{0%,100%{opacity:.2;transform:scale(.8)}50%{opacity:.9;transform:scale(1)}}
+
+.hadith-arabic{
+  font-family:'Noto Naskh Arabic',serif;
+  font-size:clamp(16px,3vw,22px);
+  color:var(--gold2);line-height:2;
+  text-align:right;direction:rtl;
+  text-shadow:0 0 20px rgba(232,201,122,.2);
+  border-right:2px solid var(--gold);
+  padding-right:14px;
+}
+.hadith-english{
+  font-size:12px;color:#c8b48a;line-height:1.9;
+  font-style:italic;border-left:2px solid var(--border);
+  padding-left:14px;
+}
+.hadith-english em{color:var(--gold2);font-style:normal}
+.hadith-ref{
+  display:inline-flex;align-items:center;gap:6px;
+  font-size:8.5px;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--muted);border:1px solid var(--border);
+  padding:3px 9px;align-self:flex-start;
+}
+.hadith-ref a{color:var(--gold);text-decoration:none}
+.hadith-ref a:hover{text-decoration:underline}
+.api-error{font-size:11px;color:var(--muted);font-style:italic;padding:6px 0}
+
 /* ═══ HEADER ════════════════════════════════════════ */
 #header{position:fixed;top:0;left:0;right:0;height:46px;z-index:200;
   background:rgba(12,9,4,.97);border-bottom:1px solid var(--border);
@@ -349,14 +383,12 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
 
     <div class="track-note">
       <strong>❀ On Intention — al-Niyyah</strong>
-      <p>
-        The Messenger of Allah ﷺ said:<br>
-        <em>"Actions are only by intentions, and every person will have only what they intended. Whoever emigrates for the sake of Allah and His Messenger, his emigration is for Allah and His Messenger. And whoever emigrates to gain something of this world or to marry a woman, his emigration is for whatever he emigrated for."</em><br>
-        — Sahih al-Bukhari 1 · Sahih Muslim 1907
-        <br><br>
-        He ﷺ also said: <em>"Whoever Allah wishes good for, He grants him understanding (fiqh) of the religion."</em><br>
-        — Sahih al-Bukhari 71 · Sahih Muslim 1037
-        <br><br>
+      <div id="niyyah-hadith-box" class="api-hadith-box">
+        <div class="api-loading">
+          <span class="api-dot"></span><span class="api-dot"></span><span class="api-dot"></span>
+        </div>
+      </div>
+      <p id="niyyah-footer">
         Before opening any book, check your heart. You are not studying to debate, to gain status, or to be called a scholar. You are studying to act upon what you learn and to draw closer to Allah. The one who learns without acting is warned in the Quran itself (Surah al-Saff 61:2–3).
       </p>
     </div>
@@ -1059,7 +1091,12 @@ document.addEventListener("keydown",e=>{
 });
 
 /* ═══ TRACK / MADHAB ════════════════════════════════ */
-function showTrackScreen(){document.getElementById("track-screen").classList.add("show");}
+function showTrackScreen(){
+  const ts=document.getElementById("track-screen");
+  if(!ts||ts.classList.contains("show"))return;
+  ts.classList.add("show");
+  fetchNiyyahHadith();
+}
 function hideTrackScreen(){document.getElementById("track-screen").classList.remove("show");}
 function chooseTrack(m){
   chosenMadhab=m;
@@ -1191,16 +1228,73 @@ function buildList(){
 function acc(el){el.classList.toggle("open");el.nextElementSibling.classList.toggle("open");}
 function openBI(idx){const d=BREG[idx];if(d)openPanel(d,null);}
 
+/* ═══ SUNNAH.COM API — Niyyah Hadith ════════════════
+   Free API key → https://sunnah.com/developers
+   Replace the placeholder below with your own key.
+   The app works without it (fallback text shown).
+════════════════════════════════════════════════════ */
+const SUNNAH_API_KEY = "SqD712P3E82xnwOAEOkGd5JZH8s9wRR24TqNFzjk"; // demo key
+
+const FALLBACK_HADITH = {
+  arabic: "إِنَّمَا الْأَعْمَالُ بِالنِّيَّاتِ، وَإِنَّمَا لِكُلِّ امْرِئٍ مَا نَوَى",
+  english: "The Messenger of Allah ﷺ said: <em>\"Actions are only by intentions, and every person will have only what they intended. Whoever emigrates for Allah and His Messenger, his emigration is for Allah and His Messenger. And whoever emigrates to gain something of this world or to marry a woman, his emigration is for what he emigrated for.\"</em>",
+  ref: "Sahih al-Bukhari 1 · Sahih Muslim 1907",
+  url: "https://sunnah.com/bukhari:1"
+};
+
+function renderHadith(arabic, english, ref, url){
+  const box = document.getElementById("niyyah-hadith-box");
+  if(!box) return;
+  box.innerHTML = `
+    <div class="hadith-arabic">${arabic}</div>
+    <div class="hadith-english">${english}</div>
+    <div class="hadith-ref">
+      <span>&#128216;</span>
+      <a href="${url}" target="_blank" rel="noopener">${ref}</a>
+    </div>`;
+}
+
+async function fetchNiyyahHadith(){
+  try{
+    const res = await fetch(
+      "https://api.sunnah.com/v1/collections/bukhari/books/1/hadiths/1",
+      { headers:{ "X-API-Key": SUNNAH_API_KEY } }
+    );
+    if(!res.ok) throw new Error("API error "+res.status);
+    const data = await res.json();
+    const en = data.hadith.find(h=>h.lang==="en");
+    const ar = data.hadith.find(h=>h.lang==="ar");
+    if(!en) throw new Error("No English hadith");
+    // Strip narrator prefix for Arabic display — keep the core text
+    const arabicText = ar ? ar.body.replace(/<[^>]*>/g,"").trim() : FALLBACK_HADITH.arabic;
+    const englishBody = en.body.replace(/Narrated [^:]+:\s*/,"").trim();
+    renderHadith(
+      arabicText,
+      `The Messenger of Allah ﷺ said: <em>"${englishBody}"</em>`,
+      "Sahih al-Bukhari 1 · Sahih Muslim 1907",
+      "https://sunnah.com/bukhari:1"
+    );
+  } catch(e){
+    // API unavailable or key invalid — use fallback silently
+    renderHadith(
+      FALLBACK_HADITH.arabic,
+      FALLBACK_HADITH.english,
+      FALLBACK_HADITH.ref,
+      FALLBACK_HADITH.url
+    );
+  }
+}
+
 /* ═══ SPLASH / INIT ════════════════════════════════════ */
 function dismissSplash(){
   const s=document.getElementById("splash");if(!s)return;
+  showTrackScreen(); // welcome page appears while splash fades — no gap
   s.style.transition="opacity .4s ease";s.style.opacity="0";
   setTimeout(()=>s.remove(),400);
 }
-setTimeout(()=>{
-  const s=document.getElementById("splash");if(s)s.remove();
-  showTrackScreen();
-},3400);
+// Auto-dismiss: show welcome first, then remove splash
+setTimeout(showTrackScreen, 2800);   // appears as splash starts fading
+setTimeout(()=>{const s=document.getElementById("splash");if(s)s.remove();},3400);
 
 update(root);
 svg.call(zoom.transform,d3.zoomIdentity.translate(W*.07,H/2).scale(.92));
