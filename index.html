@@ -484,14 +484,15 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
 
     <div class="track-note">
       <strong>📖 Study with a Qualified Shaykh</strong>
+      <div id="shaykh-hadith-box" class="api-hadith-box">
+        <div class="api-loading">
+          <span class="api-dot"></span><span class="api-dot"></span><span class="api-dot"></span>
+        </div>
+      </div>
+      <div id="ibnsirin-hadith-box" class="api-hadith-box" style="display:none">
+        <!-- populated by API only if reachable -->
+      </div>
       <p>
-        The Messenger of Allah ﷺ said:<br>
-        <em>"Whoever travels a path in search of knowledge, Allah will make easy for him a path to Paradise. The angels lower their wings in approval for the seeker of knowledge. The scholars are the inheritors of the Prophets — the Prophets did not leave behind dinars or dirhams; they left behind knowledge. Whoever takes it has taken a great share."</em><br>
-        — Sunan Abu Dawud 3641 · Sunan Ibn Majah 223 · Sunan al-Tirmidhi 2682 (hasan)
-        <br><br>
-        Muhammad ibn Sirin (d. 110 AH) said — recorded in the Muqaddimah of Sahih Muslim:<br>
-        <em>"Verily this knowledge is the religion — so look carefully from whom you take your religion."</em>
-        <br><br>
         This roadmap is a guide only. It does not replace a living teacher with a connected chain of transmission (isnād) and sound creed (ʿaqīdah). Seek a Shaykh who combines knowledge with practice, and whose methodology aligns with the Quran and authentic Sunnah as understood by the Salaf al-Salih. If no local teacher is available, seek the authenticated programs of IUM Madinah, IMSIU Riyadh, or Umm al-Qura Makkah.
       </p>
     </div>
@@ -1043,7 +1044,69 @@ function handleProgressBtn(state,event){
   }
 }
 
-/* ── Export / Import ───────────────────────────────── */
+/* ── Scholars / Shaykh hadith (Abu Dawud 3641 / Tirmidhi 2682) ── */
+async function fetchShaykhHadith(){
+  const endpoints=[
+    // Abu Dawud 3641 — scholars are inheritors of the Prophets
+    {url:"https://api.sunnah.com/v1/collections/abudawud/hadiths/3641",
+     ref:"Sunan Abu Dawud 3641",link:"https://sunnah.com/abudawud:3641"},
+    // Tirmidhi 2682 — same hadith, backup
+    {url:"https://api.sunnah.com/v1/collections/tirmidhi/hadiths/2682",
+     ref:"Jami al-Tirmidhi 2682 (hasan)",link:"https://sunnah.com/tirmidhi:2682"},
+  ];
+  const box=document.getElementById("shaykh-hadith-box");
+  if(!box)return;
+  for(const ep of endpoints){
+    try{
+      const res=await fetch(ep.url,{headers:{"X-API-Key":SUNNAH_API_KEY}});
+      if(!res.ok)continue;
+      const data=await res.json();
+      const en=(data.hadith||[]).find(h=>h.lang==="en");
+      const ar=(data.hadith||[]).find(h=>h.lang==="ar");
+      if(!en)continue;
+      const arabic=ar?ar.body.replace(/<[^>]*>/g,"").trim():"";
+      const english=en.body.replace(/Narrated [^:]+:\s*/,"").trim();
+      let html=``;
+      if(arabic)html+=`<div class="hadith-arabic">${arabic}</div>`;
+      html+=`<div class="hadith-english">The Messenger of Allah ﷺ said: <em>"${english}"</em></div>
+             <div class="hadith-ref">&#128216; <a href="${ep.link}" target="_blank" rel="noopener">${ep.ref}</a></div>`;
+      box.innerHTML=html;
+      return; // success — stop trying
+    }catch(e){continue;}
+  }
+  // All endpoints failed — remove box
+  box.remove();
+}
+
+/* ── Ibn Sirin statement (Sahih Muslim muqaddimah) ── */
+async function fetchIbnSirinStatement(){
+  const box=document.getElementById("ibnsirin-hadith-box");
+  if(!box)return;
+  // Sahih Muslim muqaddimah — book 0 on sunnah.com, hadith 5 (Ibn Sirin on isnad)
+  const endpoints=[
+    {url:"https://api.sunnah.com/v1/collections/muslim/books/muqaddimah/hadiths/5",
+     ref:"Sahih Muslim — Muqaddimah 5",link:"https://sunnah.com/muslim/muqaddimah/5"},
+    {url:"https://api.sunnah.com/v1/collections/muslim/books/0/hadiths/5",
+     ref:"Sahih Muslim — Muqaddimah 5",link:"https://sunnah.com/muslim/muqaddimah/5"},
+  ];
+  for(const ep of endpoints){
+    try{
+      const res=await fetch(ep.url,{headers:{"X-API-Key":SUNNAH_API_KEY}});
+      if(!res.ok)continue;
+      const data=await res.json();
+      const en=(data.hadith||[]).find(h=>h.lang==="en");
+      if(!en)continue;
+      const body=en.body.replace(/<[^>]*>/g,"").trim();
+      box.innerHTML=`<div class="hadith-english"><em>"${body}"</em></div>
+        <div class="hadith-ref">&#128216; <a href="${ep.link}" target="_blank" rel="noopener">${ep.ref} · Statement of Ibn Sirin (d. 110 AH)</a></div>`;
+      box.style.display="flex";
+      box.style.flexDirection="column";
+      return;
+    }catch(e){continue;}
+  }
+  // Not reachable via API — remove per user instruction
+  box.remove();
+}
 function exportProgress(){
   const payload={version:1,date:new Date().toISOString(),progress:progressData};
   const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
@@ -1328,6 +1391,8 @@ function showTrackScreen(){
   if(!ts||ts.classList.contains("show"))return;
   ts.classList.add("show");
   fetchNiyyahHadith();
+  fetchShaykhHadith();
+  fetchIbnSirinStatement();
 }
 function hideTrackScreen(){document.getElementById("track-screen").classList.remove("show");}
 function chooseTrack(m){
