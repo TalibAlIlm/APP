@@ -278,6 +278,90 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
 
 /* ═══ CONTROLS ════════════════════════════════════════ */
 #controls{position:fixed;bottom:14px;right:14px;display:flex;gap:4px;z-index:150}
+
+/* ── Progress Panel ── */
+#progress-panel{
+  position:fixed;bottom:14px;left:14px;z-index:150;
+  background:rgba(12,9,4,.95);border:1px solid var(--border);
+  padding:10px 12px;min-width:200px;
+  backdrop-filter:blur(10px);
+  box-shadow:0 2px 16px rgba(0,0,0,.5);
+}
+.prog-row{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.prog-row:last-of-type{margin-bottom:0}
+.prog-label{font-size:8px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--muted);width:48px;flex-shrink:0}
+.prog-track{flex:1;height:4px;background:rgba(255,255,255,.06);border-radius:2px;overflow:hidden}
+.prog-fill{height:100%;border-radius:2px;width:0%;transition:width .6s cubic-bezier(.4,0,.2,1)}
+.prog-fill.s-fill{background:linear-gradient(to right,#c9a84c,#e8c97a)}
+.prog-fill.f-fill{background:linear-gradient(to right,#4caf50,#69f0ae)}
+.prog-pct{font-size:8px;color:var(--muted);width:28px;text-align:right;flex-shrink:0;
+  font-variant-numeric:tabular-nums}
+.prog-actions{display:flex;gap:5px;margin-top:8px;padding-top:8px;border-top:1px solid var(--border)}
+.prog-action-btn{
+  flex:1;padding:4px 0;
+  background:transparent;border:1px solid var(--border);
+  color:var(--muted);font-family:'IBM Plex Mono',monospace;
+  font-size:8px;letter-spacing:.08em;text-transform:uppercase;
+  cursor:pointer;transition:all .16s;text-align:center;
+}
+.prog-action-btn:hover{border-color:var(--gold);color:var(--gold)}
+.import-lbl{
+  flex:1;padding:4px 0;text-align:center;
+  background:transparent;border:1px solid var(--border);
+  color:var(--muted);font-family:'IBM Plex Mono',monospace;
+  font-size:8px;letter-spacing:.08em;text-transform:uppercase;
+  cursor:pointer;transition:all .16s;
+}
+.import-lbl:hover{border-color:var(--gold);color:var(--gold)}
+
+/* ── Panel Progress Buttons ── */
+#panel-progress{
+  display:grid;grid-template-columns:1fr 1fr;gap:8px;
+  padding:10px 14px 4px;
+}
+.ppbtn{
+  position:relative;overflow:hidden;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:5px;padding:14px 8px;
+  border:1px solid var(--border);background:transparent;
+  font-family:'IBM Plex Mono',monospace;font-size:9px;
+  letter-spacing:.08em;text-transform:uppercase;
+  cursor:pointer;transition:all .25s ease;color:var(--muted);
+  user-select:none;
+}
+.ppbtn .ppicon{font-size:18px;line-height:1;transition:transform .2s ease}
+.ppbtn:hover{border-color:rgba(255,255,255,.2);color:var(--text);transform:translateY(-1px)}
+.ppbtn:active{transform:scale(.96)}
+
+/* Started active state */
+.ppbtn.pb-started.is-active{
+  border-color:#e8c97a;color:#e8c97a;
+  background:rgba(232,201,122,.1);
+  box-shadow:0 0 20px rgba(232,201,122,.25),inset 0 0 14px rgba(232,201,122,.08);
+}
+.ppbtn.pb-started.is-active .ppicon{transform:scale(1.15);filter:drop-shadow(0 0 6px #e8c97a)}
+
+/* Finished active state */
+.ppbtn.pb-finished.is-active{
+  border-color:#69f0ae;color:#69f0ae;
+  background:rgba(105,240,174,.08);
+  box-shadow:0 0 20px rgba(105,240,174,.2),inset 0 0 14px rgba(105,240,174,.06);
+}
+.ppbtn.pb-finished.is-active .ppicon{transform:scale(1.15);filter:drop-shadow(0 0 6px #69f0ae)}
+
+/* Ripple */
+.ppbtn-ripple{
+  position:absolute;border-radius:50%;
+  transform:scale(0);animation:ppRipple .5s ease-out forwards;
+  pointer-events:none;
+}
+@keyframes ppRipple{
+  to{transform:scale(4);opacity:0}
+}
+
+/* Node progress ring */
+.prog-ring{pointer-events:none}
 .cbtn{width:28px;height:28px;background:rgba(19,15,8,.9);border:1px solid var(--border);
   color:var(--muted);font-size:14px;cursor:pointer;display:flex;align-items:center;
   justify-content:center;transition:all .16s;backdrop-filter:blur(8px)}
@@ -354,6 +438,11 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
   .lv-btn{width:26px;height:26px;font-size:11px}
   #controls{bottom:20px;right:12px}.cbtn{width:34px;height:34px;font-size:16px}
   #hint{display:none}
+  #progress-panel{bottom:20px;left:12px;min-width:160px;padding:8px 10px}
+  .prog-label{width:42px;font-size:7.5px}
+  #panel-progress{padding:10px 16px 4px;gap:10px}
+  .ppbtn{padding:16px 8px;font-size:10px}
+  .ppbtn .ppicon{font-size:20px}
   .madhab-grid{grid-template-columns:1fr}
   .track-title{font-size:18px}.track-bism{font-size:36px}
 }
@@ -476,6 +565,14 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
   <div id="panel-path"></div>
   <div id="panel-title"></div>
   <div id="panel-mem"></div>
+  <div id="panel-progress">
+    <button class="ppbtn pb-started" id="pb-started" onclick="handleProgressBtn('started',event)">
+      <span class="ppicon">◐</span>Started
+    </button>
+    <button class="ppbtn pb-finished" id="pb-finished" onclick="handleProgressBtn('finished',event)">
+      <span class="ppicon">✓</span>Finished
+    </button>
+  </div>
   <div id="panel-btns">
     <a class="pbtn" id="btn-info"  href="#" target="_blank" rel="noopener"><span class="icon">&#9432;</span>Information</a>
     <a class="pbtn" id="btn-pdf"   href="#" target="_blank" rel="noopener"><span class="icon">&#128196;</span>PDF</a>
@@ -485,6 +582,24 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
 </div>
 
 <div id="listview"></div>
+
+<!-- Progress Panel -->
+<div id="progress-panel">
+  <div class="prog-row">
+    <span class="prog-label">Started</span>
+    <div class="prog-track"><div class="prog-fill s-fill" id="s-fill"></div></div>
+    <span class="prog-pct" id="s-pct">0%</span>
+  </div>
+  <div class="prog-row">
+    <span class="prog-label">Finished</span>
+    <div class="prog-track"><div class="prog-fill f-fill" id="f-fill"></div></div>
+    <span class="prog-pct" id="f-pct">0%</span>
+  </div>
+  <div class="prog-actions">
+    <button class="prog-action-btn" onclick="exportProgress()">&#8659; Export</button>
+    <label class="import-lbl">&#8657; Import<input type="file" id="import-file" accept=".json" style="display:none" onchange="importProgress(event)"></label>
+  </div>
+</div>
 
 <div id="controls">
   <button class="cbtn" id="zi">+</button>
@@ -855,6 +970,101 @@ const regBook=(bk,ln,sn)=>{const i=BREG.length;BREG.push({...bk,ln,sn});return i
 /* ═══ STATE ═══════════════════════════════════════════ */
 let focusedIds=null, activeFilters=new Set(), listBuilt=false;
 let chosenMadhab=localStorage.getItem('talib_madhab')||null;
+let progressData=JSON.parse(localStorage.getItem('talib_progress')||'{}');
+let _currentPanelBook=null; // tracks which book is open in panel
+
+/* ── Progress helpers ──────────────────────────────── */
+function saveProgress(){localStorage.setItem('talib_progress',JSON.stringify(progressData));}
+
+function setBookProgress(name,state){
+  if(progressData[name]===state){delete progressData[name];}
+  else{progressData[name]=state;}
+  saveProgress();
+  updateProgressBars();
+  updateNodeRing(name);
+  refreshPanelProgress(name);
+}
+
+function getBookProgress(name){return progressData[name]||null;}
+
+function updateProgressBars(){
+  const total=SI.length||1;
+  const started=SI.filter(b=>progressData[b.name]==='started').length;
+  const finished=SI.filter(b=>progressData[b.name]==='finished').length;
+  const sPct=Math.round(started/total*100);
+  const fPct=Math.round(finished/total*100);
+  const sf=document.getElementById('s-fill'),ff=document.getElementById('f-fill');
+  const sp=document.getElementById('s-pct'),fp=document.getElementById('f-pct');
+  if(sf)sf.style.width=sPct+'%';
+  if(ff)ff.style.width=fPct+'%';
+  if(sp)sp.textContent=sPct+'%';
+  if(fp)fp.textContent=fPct+'%';
+}
+
+function updateNodeRing(name){
+  ndG.selectAll('.nd').each(function(d){
+    if(d.data.name===name&&d.data.type==='book'){
+      const p=progressData[name];
+      d3.select(this).select('.prog-ring')
+        .transition().duration(280)
+        .attr('stroke',p==='finished'?'#69f0ae':p==='started'?'#e8c97a':'none')
+        .attr('opacity',p?1:0)
+        .attr('stroke-width',p==='finished'?2:1.5);
+      d3.select(this).select('circle')
+        .transition().duration(280)
+        .attr('stroke',p==='finished'?'#69f0ae':p==='started'?'#e8c97a':null)
+        .attr('fill',p==='finished'?'#69f0ae18':p==='started'?'#e8c97a18':null);
+    }
+  });
+}
+
+function refreshPanelProgress(name){
+  if(_currentPanelBook!==name)return;
+  const p=progressData[name];
+  const bs=document.getElementById('pb-started');
+  const bf=document.getElementById('pb-finished');
+  if(bs)bs.classList.toggle('is-active',p==='started');
+  if(bf)bf.classList.toggle('is-active',p==='finished');
+}
+
+function handleProgressBtn(state,event){
+  if(!_currentPanelBook)return;
+  setBookProgress(_currentPanelBook,state);
+  // premium ripple
+  if(event){
+    const btn=event.currentTarget;
+    const r=document.createElement('span');
+    r.className='ppbtn-ripple';
+    const size=Math.max(btn.offsetWidth,btn.offsetHeight);
+    const color=state==='finished'?'rgba(105,240,174,.35)':'rgba(232,201,122,.35)';
+    r.style.cssText=`width:${size}px;height:${size}px;left:50%;top:50%;margin-left:-${size/2}px;margin-top:-${size/2}px;background:${color}`;
+    btn.appendChild(r);
+    setTimeout(()=>r.remove(),500);
+  }
+}
+
+/* ── Export / Import ───────────────────────────────── */
+function exportProgress(){
+  const payload={version:1,date:new Date().toISOString(),progress:progressData};
+  const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download=`talib-progress-${new Date().toISOString().slice(0,10)}.json`;
+  a.click();URL.revokeObjectURL(a.href);
+}
+function importProgress(e){
+  const file=e.target.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=ev=>{
+    try{
+      const parsed=JSON.parse(ev.target.result);
+      progressData=parsed.progress||parsed; // support both formats
+      saveProgress();updateProgressBars();update(root);
+    }catch{alert('Invalid progress file.');}
+    e.target.value='';
+  };
+  reader.readAsText(file);
+}
 
 /* ═══ D3 SETUP ════════════════════════════════════════ */
 const W=window.innerWidth, H=window.innerHeight;
@@ -964,6 +1174,11 @@ function update(src){
     .attr("fill",d=>nColor(d)+(d.data.type==="book"?"18":d.data.type==="subject"?"2c":"3e"))
     .attr("stroke",nColor).attr("stroke-width",d=>d.data.type==="root"?2:1.5);
   ndE.append("circle").attr("class","cd").attr("r",2.2).attr("fill",nColor).attr("opacity",0);
+  // Progress ring — outside main circle, color-coded
+  ndE.append("circle").attr("class","prog-ring")
+    .attr("r",7).attr("fill","none")
+    .attr("stroke","none").attr("stroke-width",1.5)
+    .attr("opacity",0);
   ndE.append("text").attr("dy","0.31em").attr("pointer-events","none")
     .attr("font-size",d=>d.data.type==="root"?"12px":d.data.type==="level"?"10px":d.data.type==="subject"?"9px":"8.5px")
     .attr("font-weight",d=>d.data.mem?"500":"400")
@@ -989,6 +1204,15 @@ function update(src){
     .attr("x",d=>{const r=nR(d);return(d.children||d._children)?-(r+5):(r+5);})
     .attr("text-anchor",d=>(d.children||d._children)?"end":"start");
   mg.select(".cd").attr("opacity",d=>d._children&&d.data.type!=="book"?.75:0);
+  // Refresh progress rings for all book nodes
+  mg.select(".prog-ring")
+    .attr("stroke",d=>{
+      if(d.data.type!=="book")return"none";
+      const p=progressData[d.data.name];
+      return p==="finished"?"#69f0ae":p==="started"?"#e8c97a":"none";
+    })
+    .attr("opacity",d=>d.data.type==="book"&&progressData[d.data.name]?1:0)
+    .attr("stroke-width",d=>progressData[d.data.name]==="finished"?2:1.5);
   ndSel.exit().transition().duration(280).attr("transform",`translate(${src.y},${src.x})`).attr("opacity",0).remove();
   nodes.forEach(d=>{d.x0=d.x;d.y0=d.y;});
   clearTimeout(fillTimer);
@@ -1037,7 +1261,6 @@ function clearAnimPath(){animG.selectAll("*").remove();}
 function handleClick(event,d){
   event.stopPropagation();
   if(d.data.type==="book"){
-    if(d.parent&&d.parent.data.color===SC.quran)return; // Quran Hifz: display-only
     focusNode(d);openPanel(d.data,d);return;
   }
   d.children?(d._children=d.children,d.children=null):(d.children=d._children,d._children=null);
@@ -1063,7 +1286,9 @@ function clearFocus(){
 
 /* ═══ PANEL ══════════════════════════════════════════ */
 function openPanel(data,treeNode){
+  _currentPanelBook=data.name;
   document.getElementById("panel-title").textContent=data.name;
+  const isQuran=treeNode&&treeNode.parent&&treeNode.parent.data.color===SC.quran;
   let ph="";
   if(treeNode){
     ph=treeNode.ancestors().reverse()
@@ -1074,6 +1299,12 @@ function openPanel(data,treeNode){
   }
   document.getElementById("panel-path").innerHTML=ph;
   document.getElementById("panel-mem").textContent=data.mem?"❀ Memorize this text":"";
+  // Refresh progress buttons
+  const p=getBookProgress(data.name);
+  document.getElementById("pb-started").classList.toggle("is-active",p==="started");
+  document.getElementById("pb-finished").classList.toggle("is-active",p==="finished");
+  // Hide action buttons for Quran Hifz nodes
+  document.getElementById("panel-btns").style.display=isQuran?"none":"flex";
   document.getElementById("btn-info").href=data.info||"#";
   document.getElementById("btn-pdf").href=data.pdf||"#";
   document.getElementById("btn-video").href=data.video||"#";
@@ -1081,6 +1312,7 @@ function openPanel(data,treeNode){
   document.getElementById("hint").style.opacity="0";
 }
 function closePanel(){
+  _currentPanelBook=null;
   document.getElementById("panel").classList.remove("open");
   document.getElementById("hint").style.opacity="1";
   clearFocus();
@@ -1226,7 +1458,10 @@ function buildList(){
   lv.innerHTML=html;listBuilt=true;
 }
 function acc(el){el.classList.toggle("open");el.nextElementSibling.classList.toggle("open");}
-function openBI(idx){const d=BREG[idx];if(d)openPanel(d,null);}
+function openBI(idx){
+  const d=BREG[idx];
+  if(d)openPanel(d,null);
+}
 
 /* ═══ SUNNAH.COM API — Niyyah Hadith ════════════════
    Free API key → https://sunnah.com/developers
@@ -1299,6 +1534,7 @@ setTimeout(()=>{const s=document.getElementById("splash");if(s)s.remove();},3400
 update(root);
 svg.call(zoom.transform,d3.zoomIdentity.translate(W*.07,H/2).scale(.92));
 updateMadhabBadge();
+updateProgressBars();
 window.addEventListener("resize",()=>svg.attr("width",window.innerWidth).attr("height",window.innerHeight));
 if(window.innerWidth<=700)setView("list");
 </script>
