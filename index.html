@@ -276,6 +276,24 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
 #panel-note{padding:12px 14px 18px;font-size:9px;color:var(--muted);
   line-height:1.7;border-top:1px solid var(--border);margin-top:auto}
 
+/* Description block (replaces Info button for poems) */
+#panel-desc{padding:12px 14px 10px;border-bottom:1px solid var(--border)}
+#panel-desc p{font-size:10.5px;color:#c8b48a;line-height:1.85;font-style:italic}
+
+/* Verse counter */
+#panel-verses{padding:14px 14px 6px}
+.verses-box{
+  padding:14px 16px;border:1px solid var(--border);
+  background:rgba(201,168,76,.04);
+  display:flex;flex-direction:column;gap:4px;
+}
+.verses-label{font-size:8px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.verses-num{
+  font-family:'Cinzel',serif;font-size:36px;font-weight:600;
+  color:var(--gold2);letter-spacing:.05em;line-height:1;
+  text-shadow:0 0 20px rgba(232,201,122,.35);
+}
+
 /* ═══ CONTROLS ════════════════════════════════════════ */
 #controls{position:fixed;bottom:14px;right:14px;display:flex;gap:4px;z-index:150}
 
@@ -392,6 +410,19 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
 .lv-shdr .ct{margin-left:auto}
 .lv-sbody{max-height:0;overflow:hidden;transition:max-height .26s cubic-bezier(.4,0,.2,1);padding:0 28px}
 .lv-sbody.open{max-height:5000px;padding-bottom:10px}
+
+/* Cascade entrance for book rows */
+.lv-sbody.open .lv-book{
+  animation:cascadeIn .4s cubic-bezier(.22,1,.36,1) both;
+}
+@keyframes cascadeIn{
+  from{opacity:0;transform:translateX(-12px)}
+  to{opacity:1;transform:translateX(0)}
+}
+/* Cascade for subjects when a level opens */
+.lv-lbody.open .lv-subject{
+  animation:cascadeIn .42s cubic-bezier(.22,1,.36,1) both;
+}
 .lv-book{display:flex;align-items:center;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.02);gap:6px;min-height:29px}
 .lv-book-num{font-size:8px;color:var(--muted);width:14px;flex-shrink:0;text-align:right}
 .lv-book-name{font-size:9.5px;opacity:.72;flex:1;line-height:1.35;cursor:pointer;transition:opacity .13s}
@@ -574,12 +605,23 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
       <span class="ppicon">✓</span>Finished
     </button>
   </div>
+  <!-- Description replaces Info button for poems/specific texts -->
+  <div id="panel-desc" style="display:none">
+    <p id="panel-desc-text"></p>
+  </div>
   <div id="panel-btns">
     <a class="pbtn" id="btn-info"  href="#" target="_blank" rel="noopener"><span class="icon">&#9432;</span>Information</a>
     <a class="pbtn" id="btn-pdf"   href="#" target="_blank" rel="noopener"><span class="icon">&#128196;</span>PDF</a>
     <a class="pbtn" id="btn-video" href="#" target="_blank" rel="noopener"><span class="icon">&#9654;</span>Recording</a>
   </div>
-  <div id="panel-note">Links will be added for each text.<br>Press Esc or click background to close.</div>
+  <!-- Verse counter -->
+  <div id="panel-verses" style="display:none">
+    <div class="verses-box">
+      <span class="verses-label">Number of Verses</span>
+      <span class="verses-num" id="verses-num">0</span>
+    </div>
+  </div>
+  <div id="panel-note">Press Esc or click background to close.</div>
 </div>
 
 <div id="listview"></div>
@@ -629,7 +671,7 @@ const MNAME={hanbali:"Hanbali",shafi:"Shafi'i",maliki:"Maliki",hanafi:"Hanafi",a
 /* ═══ DATA HELPERS ════════════════════════════════════ */
 // b(name, memorize, info, pdf, video)
 // s(name, color, children, madhab)  — madhab is optional; only set for madhab-specific fiqh
-const b=(n,m=false,i="#",p="#",v="#")=>({name:n,mem:m,type:"book",info:i,pdf:p,video:v});
+const b=(n,m=false,i="#",p="#",v="#",desc=null,verses=null)=>({name:n,mem:m,type:"book",info:i,pdf:p,video:v,desc,verses});
 const s=(n,c,ch,m=null)=>({name:n,color:c,type:"subject",children:ch,madhab:m});
 
 /* ═══ TREE DATA ═══════════════════════════════════════
@@ -643,24 +685,50 @@ const TREE={name:"Talib al-Ilm",type:"root",children:[
 
 /* ── ENTRY LEVEL ──────────────────────────────────── */
 {name:"Entry Level",subtitle:"First Steps",level:0,type:"level",children:[
-  s("Quran — Hifz",SC.quran,[
+  s("Qur'an — Hifdh",SC.quran,[
     b("Juz 30",true),
   ]),
   s("Short Poems",SC.poems,[
-    b("Mandhuma al-Ruh wal-Rayhan — al-Qadi",true),
-    b("Mandhuma al-Tawhid wal-Iman",true),
-    b("Mandhuma Ahsan al-Akhlaq",true),
-    b("Al-Mandhuma al-Munira fi Muhimm Ilm al-Sira",true),
+    b("Mandhuma al-Ruh wal-Rayhan — al-Qadi",true,
+      "#",
+      "https://drive.google.com/file/d/1NxAtJ60IU4WowRgzbWLDGPrx62IyiEs-/view",
+      "https://www.youtube.com/watch?v=ljekC2q1R1w",
+      "A brief poetic text (Mandhuma) consisting of 20 verses, in which Sheikh Tamim bin Abdul Aziz Al-Qadi versified the Beautiful Names of Allah (Asmā al-Ḥusnā).",
+      20),
+    b("Mandhuma al-Tawhid wal-Iman",true,
+      "#",
+      "https://drive.google.com/file/d/1ne0BJMW13uj9U7aLrFpWwNSbvSMcn69h/view",
+      "https://www.youtube.com/watch?v=3MkM5Mqe4L0",
+      "A very concise poetic text (Nadhm) consisting of 31 verses by Dr. Amer Bahjat, may Allah preserve him. In it, he outlines the core of the Islamic creed (ʿAqīdah) through the six pillars of faith mentioned in the famous Hadith of Gabriel. He concluded it with prominent matters regarding the fundamentals of the creed of Ahl al-Sunnah. Despite its brevity, it has come to be — Allah willing — one of the most beneficial texts for children to memorize regarding faith.",
+      31),
+    b("Mandhuma Ahsan al-Akhlaq",true,
+      "#",
+      "https://drive.google.com/file/d/14N-VQNuDtyhtrM1lDTCfxgK0a03uZVHY/view",
+      "https://www.youtube.com/watch?v=qtyP79xsps8",
+      "A brief poetic text (Mandhuma) consisting of 29 verses, in which Sheikh Dr. Amer bin Muhammad Fida Bahjat, may Allah preserve him, mentioned a beneficial collection of the most sublime praiseworthy morals found in the Book of Allah, from the lips of the Prophet ﷺ, and in the speech of scholars and people of wisdom.",
+      29),
+    b("Al-Mandhuma al-Munira fi Muhimm Ilm al-Sira",true,
+      "#",
+      "https://drive.google.com/file/d/1Qs6Gh7iCajdq_iqpie2uVHyU_Hy_cFs_/view",
+      "https://www.youtube.com/watch?v=8SjoAK_oAng",
+      "A very concise poetic text (Mandhuma) consisting of only 20 verses, in which Sheikh Dr. Saleh bin Abdullah Al-Usaymi versified the most prominent general features of the Prophet's biography (Sīrah), may Allah bless him and grant him peace.",
+      20),
   ]),
   s("Adab — Entry",SC.adab,[
-    b("Khulasa Ta'dhim al-Ilm — al-Usaymi",true),
-    b("Adhkar wal-Adaab — Mutoon Series",true),
+    b("Khulasa Ta'dhim al-Ilm — al-Usaymi",true,
+      "https://www.sifatusafwa.com/en/al-ilm-wa-talab-al-ilm/sharh-khulasah-ta-dhim-al-ilm-salih-al-usaymi.html",
+      "https://drive.google.com/file/d/1ZHsl7sdmrLkmug6oOyCwIKBRMQHmRcK2/view",
+      "https://www.youtube.com/watch?v=XlrSvL9eXGg&list=PLV8-LnIygGsnIiXbilybl78u-qkpwSlQy"),
+    b("Adhkar wal-Adaab — Mutoon Series",true,
+      "https://www.sifatusafwa.com/en/reminders-and-other-topics/al-adhkar-wa-al-adab-mustawa-tamhidi-mutun-talib-al-ilm.html",
+      "https://a-alqasim.com/books/0101athkaar/",
+      "https://www.youtube.com/watch?v=A4KgGffrjuw"),
   ]),
 ]},
 
 /* ── LEVEL I — Foundation ─────────────────────────── */
 {name:"Level I",subtitle:"Foundation",level:1,type:"level",children:[
-  s("Quran — Hifz",SC.quran,[
+  s("Qur'an — Hifdh",SC.quran,[
     b("Juz 29",true),
     b("Juz 28",true),
   ]),
@@ -691,7 +759,7 @@ const TREE={name:"Talib al-Ilm",type:"root",children:[
 
 /* ── LEVEL II — Elementary ────────────────────────── */
 {name:"Level II",subtitle:"Elementary",level:2,type:"level",children:[
-  s("Quran — Hifz",SC.quran,[
+  s("Qur'an — Hifdh",SC.quran,[
     b("Juz 27",true),
     b("Juz 26",true),
     b("Juz 25",true),
@@ -736,7 +804,7 @@ const TREE={name:"Talib al-Ilm",type:"root",children:[
 
 /* ── LEVEL III — Intermediate ─────────────────────── */
 {name:"Level III",subtitle:"Intermediate",level:3,type:"level",children:[
-  s("Quran — Hifz",SC.quran,[
+  s("Qur'an — Hifdh",SC.quran,[
     b("Juz 1",true),
     b("Juz 2",true),
     b("Juz 3",true),
@@ -813,7 +881,7 @@ const TREE={name:"Talib al-Ilm",type:"root",children:[
 
 /* ── LEVEL IV — Advanced ──────────────────────────── */
 {name:"Level IV",subtitle:"Advanced",level:4,type:"level",children:[
-  s("Quran — Hifz",SC.quran,[
+  s("Qur'an — Hifdh",SC.quran,[
     b("Juz 6",true),b("Juz 7",true),b("Juz 8",true),b("Juz 9",true),b("Juz 10",true),
     b("Juz 11",true),b("Juz 12",true),b("Juz 13",true),b("Juz 14",true),b("Juz 15",true),
   ]),
@@ -878,7 +946,7 @@ const TREE={name:"Talib al-Ilm",type:"root",children:[
 
 /* ── LEVEL V — Mastery ────────────────────────────── */
 {name:"Level V",subtitle:"Mastery",level:5,type:"level",children:[
-  s("Quran — Hifz",SC.quran,[
+  s("Qur'an — Hifdh",SC.quran,[
     b("Juz 16",true),b("Juz 17",true),b("Juz 18",true),b("Juz 19",true),
     b("Juz 20",true),b("Juz 21",true),b("Juz 22",true),b("Juz 23",true),
     b("Juz 24 ❀",true),
@@ -1224,7 +1292,12 @@ function update(src){
     .attr("d",()=>{const o={x:src.x0||0,y:src.y0||0};return diag({source:o,target:o});})
     .attr("stroke",d=>{const t=d.target;return t.data.type==="level"?LC[t.data.level]:t.data.type==="book"?(t.parent&&t.parent.data.color)||"#444":t.data.color||"#444";})
     .attr("opacity",0);
-  lkSel.merge(lkE).transition().duration(280).ease(d3.easeCubicInOut)
+  lkSel.merge(lkE).transition().duration(440)
+    .delay(d=>{
+      // links fan with their target node's vertical order
+      return 0;
+    })
+    .ease(d3.easeCubicOut)
     .attr("d",diag)
     .attr("stroke",d=>{const t=d.target;return t.data.type==="level"?LC[t.data.level]:t.data.type==="book"?(t.parent&&t.parent.data.color)||"#444":t.data.color||"#444";})
     .attr("opacity",lOpacity);
@@ -1233,7 +1306,7 @@ function update(src){
   const ndSel=ndG.selectAll(".nd").data(nodes,d=>d.id);
   const ndE=ndSel.enter().append("g").attr("class","nd")
     .attr("transform",()=>`translate(${src.y0||0},${src.x0||0})`).attr("opacity",0);
-  ndE.append("circle").attr("r",nR)
+  ndE.append("circle").attr("r",0)
     .attr("fill",d=>nColor(d)+(d.data.type==="book"?"18":d.data.type==="subject"?"2c":"3e"))
     .attr("stroke",nColor).attr("stroke-width",d=>d.data.type==="root"?2:1.5);
   ndE.append("circle").attr("class","cd").attr("r",2.2).attr("fill",nColor).attr("opacity",0);
@@ -1242,7 +1315,7 @@ function update(src){
     .attr("r",7).attr("fill","none")
     .attr("stroke","none").attr("stroke-width",1.5)
     .attr("opacity",0);
-  ndE.append("text").attr("dy","0.31em").attr("pointer-events","none")
+  ndE.append("text").attr("dy","0.31em").attr("pointer-events","none").attr("opacity",0)
     .attr("font-size",d=>d.data.type==="root"?"12px":d.data.type==="level"?"10px":d.data.type==="subject"?"9px":"8.5px")
     .attr("font-weight",d=>d.data.mem?"500":"400")
     .attr("fill",d=>{if(d.data.mem&&d.data.type==="book")return"#e8c97a";const c=nColor(d);return d.data.type==="root"||d.data.type==="level"?c:d.data.type==="subject"?c+"cc":c+"99";})
@@ -1251,18 +1324,37 @@ function update(src){
     .text(nLabel);
   ndE.on("mouseover",function(e,d){
       if(d.data.type==="root")return;
-      if(d.data.type==="book"&&d.parent&&d.parent.data.color===SC.quran)return;
       d3.select(this).select("circle").transition().duration(110).attr("r",nR(d)*1.36).attr("stroke-width",2);
     })
     .on("mouseout",function(e,d){
       d3.select(this).select("circle").transition().duration(170).attr("r",nR(d)).attr("stroke-width",d.data.type==="root"?2:1.5);
     })
     .on("click",handleClick)
-    .style("cursor",d=>d.data.type==="book"&&d.parent&&d.parent.data.color===SC.quran?"default":"pointer");
+    .style("cursor","pointer");
+
+  // ── Fan-out entrance ──
+  // Children emerge from the parent point and sweep to their positions
+  // in strict vertical order, each slightly delayed → smooth fan effect.
+  const entering=ndE.nodes().map(n=>d3.select(n).datum());
+  const ordered=[...entering].sort((a,b)=>(a.x-b.x));
+  const delayMap=new Map();
+  ordered.forEach((d,i)=>delayMap.set(d.id, i*42));
+  const fanDelay=d=>delayMap.has(d.id)?delayMap.get(d.id):0;
 
   const mg=ndSel.merge(ndE);
-  mg.transition().duration(280).ease(d3.easeCubicInOut)
-    .attr("transform",d=>`translate(${d.y},${d.x})`).attr("opacity",nOpacity);
+  // Existing nodes glide; entering nodes fan out from parent with back-ease
+  mg.transition().duration(440)
+    .delay(d=>fanDelay(d))
+    .ease(d3.easeBackOut.overshoot(1.3))
+    .attr("transform",d=>`translate(${d.y},${d.x})`)
+    .attr("opacity",nOpacity);
+  // Circle scale-pop synced to the fan
+  ndE.select("circle:first-child").transition().duration(400).delay(fanDelay).ease(d3.easeBackOut.overshoot(2.2))
+    .attr("r",nR);
+  // Text fades in just after its node lands
+  ndE.select("text").transition().duration(320).delay(d=>fanDelay(d)+120).ease(d3.easeCubicOut)
+    .attr("opacity",1);
+
   mg.select("text")
     .attr("x",d=>{const r=nR(d);return(d.children||d._children)?-(r+5):(r+5);})
     .attr("text-anchor",d=>(d.children||d._children)?"end":"start");
@@ -1276,7 +1368,7 @@ function update(src){
     })
     .attr("opacity",d=>d.data.type==="book"&&progressData[d.data.name]?1:0)
     .attr("stroke-width",d=>progressData[d.data.name]==="finished"?2:1.5);
-  ndSel.exit().transition().duration(280).attr("transform",`translate(${src.y},${src.x})`).attr("opacity",0).remove();
+  ndSel.exit().transition().duration(240).attr("transform",`translate(${src.y},${src.x})`).attr("opacity",0).remove();
   nodes.forEach(d=>{d.x0=d.x;d.y0=d.y;});
   clearTimeout(fillTimer);
   fillTimer=setTimeout(drawFills,300);
@@ -1351,7 +1443,9 @@ function clearFocus(){
 function openPanel(data,treeNode){
   _currentPanelBook=data.name;
   document.getElementById("panel-title").textContent=data.name;
-  const isQuran=treeNode&&treeNode.parent&&treeNode.parent.data.color===SC.quran;
+  const isQuran=(treeNode&&treeNode.parent&&treeNode.parent.data.color===SC.quran)
+    || (data.sn&&data.sn.indexOf("Hifdh")!==-1)
+    || (data.sn&&data.sn.indexOf("Hifz")!==-1);
   let ph="";
   if(treeNode){
     ph=treeNode.ancestors().reverse()
@@ -1362,17 +1456,58 @@ function openPanel(data,treeNode){
   }
   document.getElementById("panel-path").innerHTML=ph;
   document.getElementById("panel-mem").textContent=data.mem?"❀ Memorize this text":"";
-  // Refresh progress buttons
+
+  // Progress buttons
   const p=getBookProgress(data.name);
   document.getElementById("pb-started").classList.toggle("is-active",p==="started");
   document.getElementById("pb-finished").classList.toggle("is-active",p==="finished");
-  // Hide action buttons for Quran Hifz nodes
+
+  // Description mode: hide Info button, show description text
+  const hasDesc=!!data.desc;
+  const descEl=document.getElementById("panel-desc");
+  const descText=document.getElementById("panel-desc-text");
+  const btnInfo=document.getElementById("btn-info");
+  if(hasDesc){
+    descEl.style.display="block";
+    descText.textContent=data.desc;
+    btnInfo.style.display="none";
+  } else {
+    descEl.style.display="none";
+    btnInfo.style.display="flex";
+    btnInfo.href=data.info||"#";
+  }
+
+  // Action buttons: hidden for Quran Hifz (Juz nodes keep only progress buttons)
   document.getElementById("panel-btns").style.display=isQuran?"none":"flex";
-  document.getElementById("btn-info").href=data.info||"#";
   document.getElementById("btn-pdf").href=data.pdf||"#";
   document.getElementById("btn-video").href=data.video||"#";
+
+  // Verse counter
+  const versesEl=document.getElementById("panel-verses");
+  const versesNum=document.getElementById("verses-num");
+  if(data.verses&&!isQuran){
+    versesEl.style.display="block";
+    animateCount(versesNum,data.verses);
+  } else {
+    versesEl.style.display="none";
+    versesNum.textContent="0";
+  }
+
   document.getElementById("panel").classList.add("open");
   document.getElementById("hint").style.opacity="0";
+}
+
+function animateCount(el,target,duration=900){
+  let start=null;
+  const step=ts=>{
+    if(!start)start=ts;
+    const prog=Math.min((ts-start)/duration,1);
+    const ease=1-Math.pow(1-prog,3); // ease-out cubic
+    el.textContent=Math.round(ease*target);
+    if(prog<1)requestAnimationFrame(step);
+  };
+  el.textContent="0";
+  requestAnimationFrame(step);
 }
 function closePanel(){
   _currentPanelBook=null;
@@ -1492,6 +1627,7 @@ function setView(v){
   document.getElementById("listview").classList.toggle("show",v==="list");
   document.getElementById("hint").style.display=v==="tree"?"block":"none";
   document.getElementById("controls").style.display=v==="tree"?"flex":"none";
+  document.getElementById("progress-panel").style.display=v==="tree"?"block":"none";
   if(v==="list"&&!listBuilt)buildList();
   if(v==="tree")closePanel();
 }
@@ -1512,9 +1648,9 @@ function buildList(){
         const idx=regBook(book,level.name,subj.name);
         const isQuran=subj.color===SC.quran;
         const mc=book.mem?" is-mem":"",st=book.mem?"":`style="color:${sc}bb"`;
-        const clickAttr=isQuran?"":`onclick="openBI(${idx})"`;
-        const actionsHtml=isQuran?"":`<div class="lv-book-actions"><a class="lv-btn" href="${book.info||"#"}" target="_blank" rel="noopener" onclick="event.stopPropagation()" title="Information">&#9432;</a><a class="lv-btn" href="${book.pdf||"#"}" target="_blank" rel="noopener" onclick="event.stopPropagation()" title="PDF">&#8659;</a><a class="lv-btn" href="${book.video||"#"}" target="_blank" rel="noopener" onclick="event.stopPropagation()" title="Recording">&#9654;</a></div>`;
-        html+=`<div class="lv-book"><span class="lv-book-num" style="color:${sc}44">${bi+1}</span><span class="lv-book-name${mc}" ${st} ${clickAttr}>${book.name}</span>${actionsHtml}</div>`;
+        const infoBtn=book.desc?"":`<a class="lv-btn" href="${book.info||"#"}" target="_blank" rel="noopener" onclick="event.stopPropagation()" title="Information">&#9432;</a>`;
+        const actionsHtml=isQuran?"":`<div class="lv-book-actions">${infoBtn}<a class="lv-btn" href="${book.pdf||"#"}" target="_blank" rel="noopener" onclick="event.stopPropagation()" title="PDF">&#8659;</a><a class="lv-btn" href="${book.video||"#"}" target="_blank" rel="noopener" onclick="event.stopPropagation()" title="Recording">&#9654;</a></div>`;
+        html+=`<div class="lv-book"><span class="lv-book-num" style="color:${sc}44">${bi+1}</span><span class="lv-book-name${mc}" ${st} onclick="openBI(${idx})">${book.name}</span>${actionsHtml}</div>`;
       });
       html+=`</div></div>`;
     });
@@ -1522,7 +1658,23 @@ function buildList(){
   });
   lv.innerHTML=html;listBuilt=true;
 }
-function acc(el){el.classList.toggle("open");el.nextElementSibling.classList.toggle("open");}
+function acc(el){
+  const opening=!el.classList.contains("open");
+  el.classList.toggle("open");
+  const body=el.nextElementSibling;
+  body.classList.toggle("open");
+  if(opening){
+    // Stagger children for cascade effect
+    const items=body.querySelectorAll(":scope > .lv-book, :scope > .lv-subject");
+    items.forEach((item,i)=>{
+      item.style.animation="none";
+      // force reflow so the animation restarts
+      void item.offsetWidth;
+      item.style.animation="";
+      item.style.animationDelay=(i*0.045)+"s";
+    });
+  }
+}
 function openBI(idx){
   const d=BREG[idx];
   if(d)openPanel(d,null);
