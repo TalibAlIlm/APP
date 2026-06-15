@@ -23,6 +23,15 @@ body{background:var(--bg);font-family:'IBM Plex Mono',monospace;overflow:hidden;
 body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
   background:radial-gradient(ellipse 55% 45% at 12% 20%,rgba(201,168,76,.05) 0%,transparent 65%),
   radial-gradient(ellipse 40% 50% at 88% 80%,rgba(160,100,30,.04) 0%,transparent 60%)}
+/* Parchment grain texture */
+body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.5;
+  background-image:
+    repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(201,168,76,.012) 2px,rgba(201,168,76,.012) 3px),
+    repeating-linear-gradient(90deg,transparent,transparent 2px,rgba(120,90,40,.01) 2px,rgba(120,90,40,.01) 3px),
+    radial-gradient(circle at 30% 40%,rgba(201,168,76,.015) 0%,transparent 8%),
+    radial-gradient(circle at 70% 65%,rgba(160,110,50,.012) 0%,transparent 7%),
+    radial-gradient(circle at 50% 85%,rgba(201,168,76,.01) 0%,transparent 6%);
+  mix-blend-mode:soft-light;}
 
 /* ═══ SPLASH ══════════════════════════════════════════ */
 #splash{position:fixed;inset:0;z-index:9999;background:var(--bg);
@@ -211,6 +220,73 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
 }
 #madhab-badge:hover{filter:brightness(1.2)}
 
+/* ── Review badge ── */
+#review-badge{
+  display:none;align-items:center;gap:4px;
+  padding:3px 8px;border-radius:2px;
+  font-size:8px;letter-spacing:.06em;
+  border:1px solid #69f0ae66;color:#69f0ae;background:rgba(105,240,174,.12);
+  cursor:pointer;transition:all .16s;flex-shrink:0;
+  font-family:'IBM Plex Mono',monospace;
+}
+#review-badge:hover{background:rgba(105,240,174,.2);box-shadow:0 0 10px rgba(105,240,174,.25)}
+#review-badge .rv-icon{font-size:11px;animation:rvSpin 6s linear infinite}
+#review-badge .rv-count{font-weight:600;font-variant-numeric:tabular-nums}
+@keyframes rvSpin{to{transform:rotate(360deg)}}
+
+/* ── Review modal ── */
+#review-modal{
+  position:fixed;inset:0;z-index:7000;
+  background:rgba(6,5,3,.82);backdrop-filter:blur(8px);
+  display:none;align-items:center;justify-content:center;padding:20px;
+}
+#review-modal.show{display:flex;animation:rvFade .3s ease}
+@keyframes rvFade{from{opacity:0}to{opacity:1}}
+.rv-card{
+  width:100%;max-width:440px;position:relative;
+  background:rgba(19,15,8,.99);border:1px solid var(--border);
+  box-shadow:0 16px 60px rgba(0,0,0,.6),0 0 40px rgba(105,240,174,.05);
+  padding:28px 26px 24px;
+  animation:rvPop .4s cubic-bezier(.22,1,.36,1);
+}
+@keyframes rvPop{from{opacity:0;transform:scale(.94) translateY(12px)}to{opacity:1;transform:none}}
+.rv-close{position:absolute;top:14px;right:14px;background:none;border:none;
+  color:var(--muted);font-size:16px;cursor:pointer;transition:color .16s;line-height:1}
+.rv-close:hover{color:var(--gold)}
+.rv-header{display:flex;align-items:center;gap:10px;
+  font-family:'Cinzel',serif;font-size:13px;letter-spacing:.14em;text-transform:uppercase;
+  color:#69f0ae;margin-bottom:18px}
+.rv-header-icon{font-size:16px}
+.rv-progress-text{font-size:9px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--muted);margin-bottom:6px}
+.rv-track{height:3px;background:rgba(255,255,255,.06);border-radius:2px;overflow:hidden;margin-bottom:24px}
+.rv-track-fill{height:100%;width:0%;background:linear-gradient(to right,#4caf50,#69f0ae);
+  border-radius:2px;transition:width .4s cubic-bezier(.4,0,.2,1)}
+.rv-body{text-align:center;padding:14px 0 26px}
+.rv-text-path{font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
+.rv-text-name{font-family:'Cinzel',serif;font-size:18px;color:var(--gold2);line-height:1.4;
+  margin-bottom:20px;text-shadow:0 0 16px rgba(232,201,122,.2)}
+.rv-prompt{font-size:11px;color:#c8b48a;line-height:1.6;font-style:italic}
+.rv-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.rv-btn{display:flex;flex-direction:column;align-items:center;gap:4px;
+  padding:16px 12px;border:1px solid var(--border);background:transparent;
+  font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.06em;
+  text-transform:uppercase;cursor:pointer;transition:all .2s;color:var(--text)}
+.rv-btn-icon{font-size:20px;line-height:1}
+.rv-btn-sub{font-size:7.5px;letter-spacing:.04em;color:var(--muted);text-transform:none}
+.rv-fail:hover{border-color:#e0a05a;color:#e0a05a;background:rgba(224,160,90,.06);transform:translateY(-1px)}
+.rv-pass:hover{border-color:#69f0ae;color:#69f0ae;background:rgba(105,240,174,.06);transform:translateY(-1px);
+  box-shadow:0 0 16px rgba(105,240,174,.12)}
+.rv-done{display:none;text-align:center;padding:20px 0 6px}
+.rv-done.show{display:block;animation:rvFade .35s ease}
+.rv-done-icon{font-size:42px;color:#69f0ae;text-shadow:0 0 24px rgba(105,240,174,.5);margin-bottom:14px}
+.rv-done-title{font-family:'Cinzel',serif;font-size:16px;letter-spacing:.1em;color:var(--gold2);margin-bottom:8px}
+.rv-done-sub{font-size:10px;color:var(--muted);line-height:1.6;margin-bottom:22px}
+.rv-done-btn{padding:10px 28px;border:1px solid #69f0ae66;background:rgba(105,240,174,.1);
+  color:#69f0ae;font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.1em;
+  text-transform:uppercase;cursor:pointer;transition:all .18s}
+.rv-done-btn:hover{background:rgba(105,240,174,.2);box-shadow:0 0 14px rgba(105,240,174,.2)}
+
 /* ═══ SEARCH ══════════════════════════════════════════ */
 #search-wrap{position:fixed;top:56px;left:50%;transform:translateX(-50%);
   z-index:500;width:420px;max-width:92vw;opacity:0;pointer-events:none;transition:opacity .18s}
@@ -247,10 +323,19 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
   background:rgba(19,15,8,.98);border-left:1px solid var(--border);
   box-shadow:-6px 0 28px rgba(0,0,0,.5);z-index:300;
   display:flex;flex-direction:column;
-  transform:translateX(var(--pw));
-  transition:transform .28s cubic-bezier(.34,1.15,.64,1);
-  will-change:transform;overflow-y:auto;backdrop-filter:blur(16px)}
-#panel.open{transform:translateX(0)}
+  transform:translateX(var(--pw));opacity:0;
+  transition:transform .42s cubic-bezier(.22,.61,.36,1),opacity .34s ease;
+  will-change:transform,opacity;overflow-y:auto;backdrop-filter:blur(16px)}
+#panel.open{transform:translateX(0);opacity:1}
+/* Staggered reveal of panel contents when opening */
+#panel.open #panel-path{animation:panelItem .5s ease .08s both}
+#panel.open #panel-title{animation:panelItem .5s ease .12s both}
+#panel.open #panel-mem{animation:panelItem .5s ease .16s both}
+#panel.open #panel-progress{animation:panelItem .5s ease .2s both}
+#panel.open #panel-desc{animation:panelItem .5s ease .24s both}
+#panel.open #panel-btns{animation:panelItem .5s ease .26s both}
+#panel.open #panel-verses{animation:panelItem .5s ease .3s both}
+@keyframes panelItem{from{opacity:0;transform:translateX(10px)}to{opacity:1;transform:none}}
 #panel::-webkit-scrollbar{width:2px}
 #panel::-webkit-scrollbar-thumb{background:var(--border)}
 #panel-close{position:sticky;top:0;align-self:flex-end;margin:10px 10px -4px auto;
@@ -294,10 +379,43 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
   text-shadow:0 0 20px rgba(232,201,122,.35);
 }
 
+/* ═══ GUIDED TUTORIAL ═══ */
+#tutorial{position:fixed;inset:0;z-index:7500;display:none}
+#tutorial.show{display:block}
+#tut-spotlight{
+  position:absolute;border-radius:8px;pointer-events:none;
+  box-shadow:0 0 0 9999px rgba(6,5,3,.82);
+  transition:all .45s cubic-bezier(.22,1,.36,1);
+  border:1px solid rgba(201,168,76,.5);opacity:0;
+}
+#tut-spotlight.show{opacity:1}
+#tut-tip{
+  position:absolute;width:300px;max-width:86vw;
+  background:rgba(19,15,8,.99);border:1px solid var(--border);
+  border-left:3px solid var(--gold);
+  box-shadow:0 12px 48px rgba(0,0,0,.6);
+  padding:18px 20px;z-index:7600;
+  transition:all .45s cubic-bezier(.22,1,.36,1);
+}
+.tut-step-count{font-size:8px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);margin-bottom:8px}
+.tut-title{font-family:'Cinzel',serif;font-size:14px;color:var(--gold2);letter-spacing:.06em;margin-bottom:10px;line-height:1.3}
+.tut-text{font-size:11px;color:#c8b48a;line-height:1.75;margin-bottom:16px}
+.tut-controls{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.tut-skip{background:none;border:none;color:var(--muted);font-family:'IBM Plex Mono',monospace;
+  font-size:8.5px;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;transition:color .16s}
+.tut-skip:hover{color:var(--text)}
+.tut-nav{display:flex;gap:6px}
+.tut-prev,.tut-next{padding:6px 14px;border:1px solid var(--border);background:transparent;
+  font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.08em;text-transform:uppercase;
+  cursor:pointer;transition:all .16s;color:var(--muted)}
+.tut-prev:hover{border-color:var(--gold);color:var(--gold)}
+.tut-next{border-color:var(--gold);color:var(--gold);background:rgba(201,168,76,.1)}
+.tut-next:hover{background:rgba(201,168,76,.2);box-shadow:0 0 12px rgba(201,168,76,.2)}
+.tut-prev.hidden{visibility:hidden}
+@media(max-width:700px){#tut-tip{width:88vw;left:6vw !important;right:auto}}
+
 /* ═══ CONTROLS ════════════════════════════════════════ */
 #controls{position:fixed;bottom:14px;right:14px;display:flex;gap:4px;z-index:150}
-
-/* ── Progress Panel ── */
 #progress-panel{
   position:fixed;bottom:14px;left:14px;z-index:150;
   background:rgba(12,9,4,.95);border:1px solid var(--border);
@@ -332,6 +450,38 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
   cursor:pointer;transition:all .16s;
 }
 .import-lbl:hover{border-color:var(--gold);color:var(--gold)}
+
+/* Panel review status line */
+#panel-review{
+  margin:0 14px 4px;padding:9px 12px;
+  border:1px solid rgba(105,240,174,.25);
+  background:rgba(105,240,174,.05);
+  font-size:9px;letter-spacing:.05em;line-height:1.6;
+  color:#8fdcb4;display:flex;align-items:center;gap:8px;
+}
+#panel-review .pr-icon{font-size:13px;color:#69f0ae;flex-shrink:0}
+
+/* Saved indicator pulse */
+#saved-indicator{
+  display:block;font-size:8px;letter-spacing:.1em;text-transform:uppercase;
+  color:#69f0ae;margin-top:6px;text-align:right;
+  opacity:0;transition:opacity .25s;
+}
+#saved-indicator.show{opacity:1;animation:savedPulse 1.4s ease}
+@keyframes savedPulse{0%{opacity:0;transform:translateY(-2px)}25%{opacity:1;transform:none}80%{opacity:1}100%{opacity:0}}
+
+/* Status filter */
+.prog-filter{display:flex;gap:3px;margin-top:8px;padding-top:8px;border-top:1px solid var(--border)}
+.pf-btn{
+  flex:1;padding:3px 0;background:transparent;border:1px solid var(--border);
+  color:var(--muted);font-family:'IBM Plex Mono',monospace;font-size:7.5px;
+  letter-spacing:.05em;text-transform:uppercase;cursor:pointer;transition:all .15s;
+}
+.pf-btn:hover{border-color:var(--gold);color:var(--gold)}
+.pf-btn.active{border-color:var(--gold);color:#0c0904;background:var(--gold)}
+
+.prog-reset{color:#c97a6b !important;border-color:#3a201a !important}
+.prog-reset:hover{border-color:#c97a6b !important;background:rgba(201,122,107,.08) !important}
 
 /* ── Panel Progress Buttons ── */
 #panel-progress{
@@ -380,6 +530,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
 
 /* Node progress ring */
 .prog-ring{pointer-events:none}
+.level-ring{pointer-events:none}
 .cbtn{width:28px;height:28px;background:rgba(19,15,8,.9);border:1px solid var(--border);
   color:var(--muted);font-size:14px;cursor:pointer;display:flex;align-items:center;
   justify-content:center;transition:all .16s;backdrop-filter:blur(8px)}
@@ -448,8 +599,9 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
   #btn-notes .note-icon{font-size:14px}
   #canvas{touch-action:none}
   #panel{width:100vw;top:50px;border-left:none;border-top:1px solid var(--border);
-    transform:translateY(100%);transition:transform .28s cubic-bezier(.34,1.15,.64,1)}
-  #panel.open{transform:translateY(0)}
+    transform:translateY(100%);opacity:0;
+    transition:transform .42s cubic-bezier(.22,.61,.36,1),opacity .34s ease}
+  #panel.open{transform:translateY(0);opacity:1}
   #panel-title{font-size:13px;padding:12px 16px}
   #panel-path{padding:14px 16px 0;font-size:10px}
   #panel-mem{padding:10px 16px 0;font-size:10px}
@@ -469,7 +621,10 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
   .lv-btn{width:26px;height:26px;font-size:11px}
   #controls{bottom:20px;right:12px}.cbtn{width:34px;height:34px;font-size:16px}
   #hint{display:none}
-  #progress-panel{bottom:20px;left:12px;min-width:160px;padding:8px 10px}
+  #progress-panel{bottom:20px;left:12px;min-width:150px;max-width:46vw;padding:7px 9px}
+  .prog-label{width:38px;font-size:7px}
+  .pf-btn{font-size:6.5px;padding:3px 0}
+  .prog-action-btn,.import-lbl{font-size:7px}
   .prog-label{width:42px;font-size:7.5px}
   #panel-progress{padding:10px 16px 4px;gap:10px}
   .ppbtn{padding:16px 8px;font-size:10px}
@@ -483,6 +638,10 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
   #panel{padding-bottom:env(safe-area-inset-bottom)}
 }
 </style>
+<meta name="theme-color" content="#0c0904">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Talib al-Ilm">
 </head>
 <body>
 
@@ -571,6 +730,9 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
     <a id="btn-notes" href="https://talibalilm.github.io/NOTES/" target="_blank" rel="noopener">
       <span class="note-icon">&#x270E;</span>Notes
     </a>
+    <span id="review-badge" onclick="openReviewSession()" title="Texts due for review" style="display:none">
+      <span class="rv-icon">&#10227;</span><span class="rv-count">0</span>
+    </span>
     <span id="madhab-badge" onclick="showTrackScreen()" title="Change Madhab Track"></span>
     <button id="btn-search" onclick="toggleSearch()" title="Search (Ctrl+F)">&#x2315;</button>
     <button id="btn-tree" class="active" onclick="setView('tree')">Tree</button>
@@ -605,6 +767,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
       <span class="ppicon">✓</span>Finished
     </button>
   </div>
+  <div id="panel-review" style="display:none"></div>
   <!-- Description replaces Info button for poems/specific texts -->
   <div id="panel-desc" style="display:none">
     <p id="panel-desc-text"></p>
@@ -626,6 +789,40 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
 
 <div id="listview"></div>
 
+<!-- ═══ SPACED REPETITION REVIEW MODAL ═══ -->
+<div id="review-modal">
+  <div class="rv-card">
+    <button class="rv-close" onclick="closeReviewSession()">&#x2715;</button>
+    <div class="rv-header">
+      <span class="rv-header-icon">&#10227;</span>
+      <span>Review Session</span>
+    </div>
+    <div class="rv-progress-text" id="rv-progress-text">0 of 0</div>
+    <div class="rv-track"><div class="rv-track-fill" id="rv-track-fill"></div></div>
+    <div class="rv-body">
+      <div class="rv-text-path" id="rv-text-path"></div>
+      <div class="rv-text-name" id="rv-text-name"></div>
+      <div class="rv-prompt">Have you reviewed and recalled this text well?</div>
+    </div>
+    <div class="rv-actions">
+      <button class="rv-btn rv-fail" onclick="answerReview(false)">
+        <span class="rv-btn-icon">&#8635;</span>Needs Work
+        <span class="rv-btn-sub">Review again soon</span>
+      </button>
+      <button class="rv-btn rv-pass" onclick="answerReview(true)">
+        <span class="rv-btn-icon">&#10003;</span>Solid
+        <span class="rv-btn-sub" id="rv-next-interval">Next: 3 days</span>
+      </button>
+    </div>
+    <div class="rv-done" id="rv-done">
+      <div class="rv-done-icon">&#10003;</div>
+      <div class="rv-done-title">Review Complete</div>
+      <div class="rv-done-sub">May Allah preserve what you have memorized.</div>
+      <button class="rv-done-btn" onclick="closeReviewSession()">Done</button>
+    </div>
+  </div>
+</div>
+
 <!-- Progress Panel -->
 <div id="progress-panel">
   <div class="prog-row">
@@ -638,19 +835,66 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
     <div class="prog-track"><div class="prog-fill f-fill" id="f-fill"></div></div>
     <span class="prog-pct" id="f-pct">0%</span>
   </div>
+  <span id="saved-indicator">&#10003; Saved</span>
+  <!-- Status filter -->
+  <div class="prog-filter">
+    <button class="pf-btn active" data-status="all" onclick="setStatusFilter('all',this)">All</button>
+    <button class="pf-btn" data-status="none" onclick="setStatusFilter('none',this)">New</button>
+    <button class="pf-btn" data-status="started" onclick="setStatusFilter('started',this)">Started</button>
+    <button class="pf-btn" data-status="finished" onclick="setStatusFilter('finished',this)">Done</button>
+  </div>
   <div class="prog-actions">
+    <button class="prog-action-btn" onclick="jumpToNextUnstarted()">&#8594; Next</button>
     <button class="prog-action-btn" onclick="exportProgress()">&#8659; Export</button>
     <label class="import-lbl">&#8657; Import<input type="file" id="import-file" accept=".json" style="display:none" onchange="importProgress(event)"></label>
+  </div>
+  <div class="prog-actions">
+    <button class="prog-action-btn prog-reset" onclick="resetProgress()">&#10005; Reset All Progress</button>
   </div>
 </div>
 
 <div id="controls">
   <button class="cbtn" id="zi">+</button>
   <button class="cbtn" id="zo">&#8722;</button>
+</div><div id="hint">Click level / subject to expand &nbsp;&bull;&nbsp; Click book for details &nbsp;&bull;&nbsp; Drag &amp; scroll to navigate</div>
+
+<!-- ═══ GUIDED TUTORIAL ═══ -->
+<div id="tutorial">
+  <div id="tut-spotlight"></div>
+  <div id="tut-tip">
+    <div class="tut-step-count" id="tut-step-count">1 / 9</div>
+    <div class="tut-title" id="tut-title"></div>
+    <div class="tut-text" id="tut-text"></div>
+    <div class="tut-controls">
+      <button class="tut-skip" onclick="endTutorial()">Skip tour</button>
+      <div class="tut-nav">
+        <button class="tut-prev" id="tut-prev" onclick="tutPrev()">Back</button>
+        <button class="tut-next" id="tut-next" onclick="tutNext()">Next</button>
+      </div>
+    </div>
+  </div>
 </div>
-<div id="hint">Click level / subject to expand &nbsp;&bull;&nbsp; Click book for details &nbsp;&bull;&nbsp; Drag &amp; scroll to navigate</div>
 
 <script>
+/* Early safety net — swallow opaque cross-origin "Script error." noise */
+window.addEventListener("error",function(ev){
+  if(ev&&ev.message&&/Script error/i.test(ev.message)){if(ev.preventDefault)ev.preventDefault();return true;}
+},true);
+window.addEventListener("unhandledrejection",function(ev){if(ev&&ev.preventDefault)ev.preventDefault();},true);
+
+/* Guard: ensure D3 actually loaded from the CDN before using it */
+if(typeof d3==="undefined"){
+  document.addEventListener("DOMContentLoaded",function(){
+    var s=document.getElementById("splash");
+    if(s){s.innerHTML='<div style="text-align:center;color:#e8c97a;font-family:serif;padding:30px;line-height:1.8">'
+      +'<div style="font-size:40px">&#xFDFD;</div>'
+      +'<div style="font-size:13px;margin-top:16px;letter-spacing:.1em">Loading library failed</div>'
+      +'<div style="font-size:11px;color:#6b5a3e;margin-top:10px">Please check your connection and reload.</div></div>';
+      s.style.animation="none";s.style.opacity="1";}
+  });
+  throw new Error("D3 not loaded");
+}
+
 /* ═══ COLOURS ════════════════════════════════════════ */
 const SC={
   quran:"#69f0ae",   poems:"#a8d5e2",
@@ -671,7 +915,7 @@ const MNAME={hanbali:"Hanbali",shafi:"Shafi'i",maliki:"Maliki",hanafi:"Hanafi",a
 /* ═══ DATA HELPERS ════════════════════════════════════ */
 // b(name, memorize, info, pdf, video)
 // s(name, color, children, madhab)  — madhab is optional; only set for madhab-specific fiqh
-const b=(n,m=false,i="#",p="#",v="#",desc=null,verses=null)=>({name:n,mem:m,type:"book",info:i,pdf:p,video:v,desc,verses});
+const b=(n,m=false,i="#",p="#",v="#",desc=null,verses=null,opts=null)=>({name:n,mem:m,type:"book",info:i,pdf:p,video:v,desc,verses,noVideo:opts&&opts.noVideo,noPdf:opts&&opts.noPdf,noInfo:opts&&opts.noInfo,cat:opts&&opts.cat});
 const s=(n,c,ch,m=null)=>({name:n,color:c,type:"subject",children:ch,madhab:m});
 
 /* ═══ TREE DATA ═══════════════════════════════════════
@@ -694,25 +938,25 @@ const TREE={name:"Talib al-Ilm",type:"root",children:[
       "https://drive.google.com/file/d/1NxAtJ60IU4WowRgzbWLDGPrx62IyiEs-/view",
       "https://www.youtube.com/watch?v=ljekC2q1R1w",
       "A brief poetic text (Mandhuma) consisting of 20 verses, in which Sheikh Tamim bin Abdul Aziz Al-Qadi versified the Beautiful Names of Allah (Asmā al-Ḥusnā).",
-      20),
+      20,{cat:SC.aqeedah}),
     b("Mandhuma al-Tawhid wal-Iman",true,
       "#",
       "https://drive.google.com/file/d/1ne0BJMW13uj9U7aLrFpWwNSbvSMcn69h/view",
       "https://www.youtube.com/watch?v=3MkM5Mqe4L0",
       "A very concise poetic text (Nadhm) consisting of 31 verses by Dr. Amer Bahjat, may Allah preserve him. In it, he outlines the core of the Islamic creed (ʿAqīdah) through the six pillars of faith mentioned in the famous Hadith of Gabriel. He concluded it with prominent matters regarding the fundamentals of the creed of Ahl al-Sunnah. Despite its brevity, it has come to be — Allah willing — one of the most beneficial texts for children to memorize regarding faith.",
-      31),
+      31,{cat:SC.aqeedah}),
     b("Mandhuma Ahsan al-Akhlaq",true,
       "#",
       "https://drive.google.com/file/d/14N-VQNuDtyhtrM1lDTCfxgK0a03uZVHY/view",
       "https://www.youtube.com/watch?v=qtyP79xsps8",
       "A brief poetic text (Mandhuma) consisting of 29 verses, in which Sheikh Dr. Amer bin Muhammad Fida Bahjat, may Allah preserve him, mentioned a beneficial collection of the most sublime praiseworthy morals found in the Book of Allah, from the lips of the Prophet ﷺ, and in the speech of scholars and people of wisdom.",
-      29),
+      29,{cat:SC.adab}),
     b("Al-Mandhuma al-Munira fi Muhimm Ilm al-Sira",true,
       "#",
       "https://drive.google.com/file/d/1Qs6Gh7iCajdq_iqpie2uVHyU_Hy_cFs_/view",
       "https://www.youtube.com/watch?v=8SjoAK_oAng",
       "A very concise poetic text (Mandhuma) consisting of only 20 verses, in which Sheikh Dr. Saleh bin Abdullah Al-Usaymi versified the most prominent general features of the Prophet's biography (Sīrah), may Allah bless him and grant him peace.",
-      20),
+      20,{cat:SC.seerah}),
   ]),
   s("Adab — Entry",SC.adab,[
     b("Khulasa Ta'dhim al-Ilm — al-Usaymi",true,
@@ -733,28 +977,88 @@ const TREE={name:"Talib al-Ilm",type:"root",children:[
     b("Juz 28",true),
   ]),
   s("Aqeedah",SC.aqeedah,[
-    b("Al-Usul al-Thalatha — The Three Fundamentals"),
-    b("Al-Qawa'id al-Arba'a — The Four Principles"),
-    b("Nawaqid al-Islam — Nullifiers of Islam"),
+    b("Al-Usul al-Thalatha — The Three Fundamentals",false,
+      "https://www.sifatusafwa.com/en/matn-of-aqeedah/thalathat-ul-usul-shurut-us-salat-al-qawa-id-ul-arba-a-harakat.html",
+      "https://a-alqasim.com/books/02mutoon/",
+      "https://www.youtube.com/watch?v=z4HQ_Z82J5g"),
+    b("Al-Qawa'id al-Arba'a — The Four Principles",false,
+      "https://www.sifatusafwa.com/en/matn-of-aqeedah/thalathat-ul-usul-shurut-us-salat-al-qawa-id-ul-arba-a-harakat.html",
+      "https://a-alqasim.com/books/02mutoon/",
+      "https://www.youtube.com/watch?v=rkOyb-s1fLs"),
+    b("Nawaqid al-Islam — Nullifiers of Islam",false,
+      "#",
+      "https://a-alqasim.com/books/02mutoon/",
+      "https://www.youtube.com/watch?v=9y-JmPnN2bI",
+      "It consists of ten nullifiers of Islam compiled by Imam Muhammad bin Abdul Wahhab as a sincere advice to Muslims, so that they may know them and beware of them."),
   ]),
   s("Fiqh",SC.fiqh,[
-    b("Al-Nadhm al-Bayin fi al-Fiqh al-Mutayin"),
-    b("Shurut al-Salah — Conditions, Pillars & Obligations"),
+    b("Al-Nadhm al-Bayin fi al-Fiqh al-Muta'in",false,
+      "#",
+      "https://drive.google.com/file/d/12KfLPx4WsPHIN5iE_vO_NV4Q9LepoSzz/view",
+      "https://www.youtube.com/watch?v=eYPhS4QKMUE",
+      "A very concise poetic text (Mandhuma), in which Dr. Amer Bahjat, may Allah preserve him, versified the rulings that are individually obligatory for most Muslims to know and act upon.",
+      51),
+    b("Shurut al-Salah — Conditions, Pillars & Obligations",false,
+      "https://www.sifatusafwa.com/en/matn-of-aqeedah/thalathat-ul-usul-shurut-us-salat-al-qawa-id-ul-arba-a-harakat.html",
+      "https://a-alqasim.com/books/03mutoon/",
+      "https://www.youtube.com/watch?v=V-MboNltheM&list=PLKpkWh3ZAKTfd_ngT6Pb8dJjcHlnv7pd0"),
   ]),
   s("Hadith",SC.hadith,[
-    b("Al-Arba'un al-Nawawiyya",true),
-    b("Al-Ziyadat — 8 Hadiths of Ibn Rajab",true),
+    b("Al-Arba'un al-Nawawiyya",true,
+      "https://www.sifatusafwa.com/en/matn-of-hadeeth/matn-al-arba-een-an-nawawiyyah-harakat.html",
+      "https://a-alqasim.com/books/02mutoon/",
+      "https://www.youtube.com/watch?v=8cAqVJN0Hnk"),
+    b("Al-Ziyadat — 8 Hadiths of Ibn Rajab",true,
+      "https://www.sifatusafwa.com/ar/shrwh-ktb-alahadyth/jaami-al-uloom-wal-hikam-fi-sharh-50-hadeeth-ibn-rajab.html",
+      "https://a-alqasim.com/books/02mutoon/",
+      "https://www.youtube.com/watch?v=EGsL8LrCGBw&list=PLGeu80ApFDrl8uOXwpuiHW07_6BUPESVR&index=45"),
   ]),
   s("Nahw — Arabic Grammar",SC.nahw,[
-    b("Madinah Arabic Books (1–3)"),
-    b("Al-Nahw al-Wadih"),
-    b("Al-Ajurrumiyya"),
+    b("Madinah Arabic Books (1–3)",false,
+      "#",
+      "https://darpdfs.org/product-category/all-books/arabic-language/",
+      "#",
+      null,null,{noVideo:true,noInfo:true}),
+    b("Al-Nahw al-Wadih",false,
+      "https://www.sifatusafwa.com/en/grammar-an-nahw/an-nahu-al-wadih-volume-1-and-2-with-corrections-of-exercises.html",
+      "https://archive.org/details/1-1-3/النحو%20الواضح%20-%201%20%281-3%20small%29/",
+      "#",
+      null,null,{noVideo:true}),
+    b("Al-Ajurrumiyya",false,
+      "https://www.sifatusafwa.com/en/matn-of-arabic/matn-al-ajrumiyyah-harakat.html",
+      "https://darpdfs.org/product/matn-text-of-al-muqaddimah-al-ajroomyah/",
+      "https://www.youtube.com/watch?v=oSbQm9QPJBM"),
   ]),
-  s("Tajweed",SC.tajweed,[b("Tuhfat al-Atfal")]),
-  s("Usool al-Fiqh",SC.usool,[b("Al-Waraqat — al-Juwayni")]),
-  s("Usool al-Tafsir",SC.tafsir,[b("Muqaddima fi Usool al-Tafsir — Ibn Taymiyya (Summary)")]),
-  s("Fara'id — Inheritance",SC.faraid,[b("Al-Rahabiyya",true)]),
-  s("Adab",SC.adab,[b("Hilyat Talib al-Ilm — Bakr Abu Zayd")]),
+  s("Tajweed",SC.tajweed,[
+    b("Tuhfat al-Atfal",false,
+      "https://www.sifatusafwa.com/en/matn-of-tajweed/mandhumah-tuhfat-al-atfal-matn-fi-tajwid-al-quran.html",
+      "https://a-alqasim.com/books/03mutoon/",
+      "https://www.youtube.com/watch?v=mhn1lxHQlGY"),
+  ]),
+  s("Usool al-Fiqh",SC.usool,[
+    b("Al-Waraqat — al-Juwayni",false,
+      "https://www.sifatusafwa.com/en/fiqh-ahkaam/matn-al-waraqat-tashil-at-turuqat-fi-nidham-al-waraqat-harakat.html",
+      "https://a-alqasim.com/books/0500mutoon/?vol=2#pdf-reader",
+      "https://www.youtube.com/watch?v=2cP-qygQFe8"),
+  ]),
+  s("Usool al-Tafsir",SC.tafsir,[
+    b("Muqaddima fi Usool al-Tafsir — Ibn Taymiyya",false,
+      "https://www.sifatusafwa.com/en/sciences-of-tafsir/muqaddimah-fi-usul-at-tafsir-ibn-taymiyyah.html",
+      "https://a-alqasim.com/books/081201muqaddimahtafseer/",
+      "https://www.youtube.com/watch?v=uASWPOco8iE"),
+  ]),
+  s("Fara'id — Inheritance",SC.faraid,[
+    b("Al-Rahabiyya",true,
+      "https://www.sifatusafwa.com/en/funeral-rules-and-inheritance/matn-ar-rahabiyyah-in-the-sciences-of-inheritance-harakat.html",
+      "https://a-alqasim.com/books/0500mutoon/",
+      "https://www.youtube.com/watch?v=Ccq585RGdXA"),
+  ]),
+  s("Adab",SC.adab,[
+    b("Hilyat Talib al-Ilm — Bakr Abu Zayd",false,
+      "https://www.sifatusafwa.com/en/al-ilm-wa-talab-al-ilm/hiliyatu-taalib-al-ilm-by-shaykh-bakr-abu-zayd.html",
+      "https://d1.islamhouse.com/data/ar/ih_books/single_01/ar_7aleat_taleb_al3lm.pdf",
+      "https://www.youtube.com/watch?v=i0vKIEHxBhM"),
+  ]),
 ]},
 
 /* ── LEVEL II — Elementary ────────────────────────── */
@@ -765,41 +1069,122 @@ const TREE={name:"Talib al-Ilm",type:"root",children:[
     b("Juz 25",true),
   ]),
   s("Aqeedah",SC.aqeedah,[
-    b("Luma al-I'tiqad — Ibn Qudama"),
-    b("Kitab al-Tawhid — Ibn Abd al-Wahhab"),
-    b("Kashf al-Shubuhat"),
+    b("Luma al-I'tiqad — Ibn Qudama",false,
+      "https://www.sifatusafwa.com/en/matn-of-aqeedah/matn-lum-at-al-i-tiqad-of-imam-ibn-qudama-al-maqdissi.html",
+      "https://www.salafidemontreal.com/wp-content/plugins/wonderplugin-pdf-embed/pdfjslight/web/viewer.html?v=2&file=https://www.salafidemontreal.com/wp-content/uploads/2022/04/متن-لمعة-الاعتقاد.pdf",
+      "https://www.youtube.com/watch?v=FOqu0hvAj2c"),
+    b("Kitab al-Tawhid — Ibn Abd al-Wahhab",false,
+      "https://www.sifatusafwa.com/en/matn-of-aqeedah/kitab-tawheed-100-harakat-and-full-authentication.html",
+      "https://a-alqasim.com/books/03mutoon/",
+      "https://www.youtube.com/watch?v=avU9S1QxX-0&list=PLjmCBC6YwAF9gFzuIA1IVofxDAnvnFExu"),
+    b("Kashf al-Shubuhat",false,
+      "https://www.sifatusafwa.com/en/aqeeda-creed/matn-kashf-ash-shubuhaat-muhammad-ibn-abd-al-wahhab.html",
+      "https://a-alqasim.com/books/080401kashf/",
+      "https://www.youtube.com/watch?v=UPgC3slB9zE&list=PLlDH1PXiY8k-iB2QGkpUngURAPcRKiZ-J"),
   ]),
   s("Nahw — Arabic Grammar",SC.nahw,[
-    b("Mutammima al-Ajurrumiyya"),
-    b("Nuzhat al-Huloom fi Nadhm al-Ajurrumiyya"),
+    b("Mutammima al-Ajurrumiyya",false,
+      "https://www.sifatusafwa.com/en/grammar-an-nahw/mutammimah-al-ajroomiyyah-100-harakat.html",
+      "https://binthabt.al3ilm.net/up/sites/7/muttmmamat.pdf",
+      "#",
+      null,null,{noVideo:true}),
+    b("Nuzhat al-Huloom fi Nadhm al-Ajurrumiyya",false,
+      "#",
+      "https://prmoussaismail.com/vendor/pdfjs/web/viewer.html?file=https%3A%2F%2Fprmoussaismail.com%2Fmedia%2Fpdf%2Falnaho%2Faldr-albhy-nthm-alagromy-copie-Dxwt%2Fstream",
+      "#",
+      null,null,{noVideo:true,noInfo:true}),
   ]),
-  s("Hadith",SC.hadith,[b("Umdat al-Ahkam — al-Maqdisi",true)]),
-  s("Mustalah al-Hadith",SC.mustalah,[b("Al-Mandhuma al-Bayquniyya")]),
+  s("Hadith",SC.hadith,[
+    b("Umdat al-Ahkam — al-Maqdisi",true,
+      "https://www.sifatusafwa.com/en/classical-collections-of-hadeeth/kitab-umdah-al-ahkam-al-kubra-abdelghani-al-maqdissi-harakat.html",
+      "https://a-alqasim.com/books/080201alumdatufilahkaam/",
+      "https://www.youtube.com/watch?v=jvR6OXJDfWI"),
+  ]),
+  s("Mustalah al-Hadith",SC.mustalah,[
+    b("Al-Mandhuma al-Bayquniyya",false,
+      "https://www.sifatusafwa.com/en/matn-of-hadeeth/matn-al-bayqoonia-fi-ilm-mustalah-al-hadeeth.html",
+      "https://a-alqasim.com/books/0400mutoon/",
+      "https://www.youtube.com/watch?v=I1wJE4MJkfE"),
+  ]),
   s("Fiqh — Hanbali",SC.fiqh,[
-    b("Akhsar al-Mukhtasarat — Ibn Balban"),
+    b("Akhsar al-Mukhtasarat — Ibn Balban",false,
+      "https://www.sifatusafwa.com/en/fiqh-hanbali/akhsar-al-mukhtasarat-fi-fiqh-alal-madhhab-imam-ahmad.html",
+      "https://d1.islamhouse.com/data/ar/ih_books/single_010/ar_akhsar_almokhtasrat.pdf",
+      "https://www.youtube.com/watch?v=hm3UVvlwqds&list=PL2KOHInv_fdQSjsqmX65vqX5Wnd835x5r"),
   ],"hanbali"),
   s("Fiqh — Shafi'i",SC.fiqh,[
-    b("Matn al-Ghaya wal-Taqrib — Abu Shuja'"),
+    b("Matn al-Ghaya wal-Taqrib — Abu Shuja'",false,
+      "https://www.sifatusafwa.com/en/fiqh-shafii/mukhtasar-abi-shuja-fiqh-shafi-i-100-harakat.html",
+      "https://archive.org/details/Mhtasr-Abi.Sojaa/page/68/mode/2up",
+      "https://www.youtube.com/watch?v=S9pm6d44Ze4"),
   ],"shafi"),
   s("Fiqh — Maliki",SC.fiqh,[
-    b("Al-Qayrawaniyya — Ibn Abi Zayd al-Qayrawani"),
+    b("Al-Qayrawaniyya — Ibn Abi Zayd al-Qayrawani",false,
+      "https://www.sifatusafwa.com/en/fiqh-maliki/matn-risalah-al-qayrawani-ibn-abi-zayd-fiqh-maliki.html",
+      "https://dn760103.eu.archive.org/0/items/Rissala_Idah/Rissala_Idah.pdf",
+      "https://www.youtube.com/watch?v=7OAtDPVIQa8"),
   ],"maliki"),
   s("Fiqh — Hanafi",SC.fiqh,[
-    b("Mukhtasar al-Quduri — al-Quduri"),
+    b("Mukhtasar al-Quduri — al-Quduri",false,
+      "https://www.sifatusafwa.com/en/fiqh-hanafi/mukhtasar-al-quduri-fil-fiqh-al-hanafi.html",
+      "https://archive.org/details/hanafi_1_201512/1",
+      "https://www.youtube.com/watch?v=FAeBGuhms8U&list=PLk44dUp36v3XOhqz-TKFy7397IbrQ0iei"),
   ],"hanafi"),
   s("Tajweed / Qira'at",SC.tajweed,[
-    b("Al-Muqaddima al-Jazariyya"),
-    b("Na't al-Darajat fi Hukm al-Qira'at"),
-    b("Al-Khaqaniyya"),
+    b("Al-Muqaddima al-Jazariyya",false,
+      "https://www.sifatusafwa.com/en/matn-of-tajweed/al-muqaddimat-ul-jazariyyah-fi-tajweed-verified-by-shaykh-ayman-suwayd.html",
+      "https://a-alqasim.com/books/070301jazariyyah/",
+      "https://www.youtube.com/watch?v=PmXOAtqFSs4"),
+    b("Na't al-Darajat fi Hukm al-Qira'at",false,
+      "#",
+      "https://d1.islamhouse.com/data/ar/ih_books/single_02/ar-naeat-aldarajat.pdf",
+      "https://www.youtube.com/watch?v=gZDRtDVBqfg",
+      null,null,{noInfo:true}),
+    b("Al-Khaqaniyya",false,
+      "#",
+      "https://archive.org/details/0487Pdf/mode/2up",
+      "https://www.youtube.com/watch?v=b_wjK2Yx0U0",
+      null,null,{noInfo:true}),
   ]),
-  s("Usool al-Tafsir",SC.tafsir,[b("Mandhuma al-Zamzami fi Usool al-Tafsir",true)]),
-  s("Usool al-Fiqh",SC.usool,[b("Al-Qawa'id wal-Usool al-Jami'a")]),
-  s("Qawa'id Fiqhiyya",SC.qawaid,[b("Zubdat al-Qawa'id al-Fiqhiyya")]),
+  s("Usool al-Tafsir",SC.tafsir,[
+    b("Mandhuma al-Zamzami fi Usool al-Tafsir",true,
+      "#",
+      "https://d1.islamhouse.com/data/ar/ih_books/single9/ar_manzomat_eltafseer.pdf",
+      "https://www.youtube.com/watch?v=B8hhtuhPKoA",
+      null,null,{noInfo:true}),
+  ]),
+  s("Usool al-Fiqh",SC.usool,[
+    b("Al-Qawa'id wal-Usool al-Jami'a",false,
+      "https://www.sifatusafwa.com/en/usool-al-fiqh/al-qawaa-id-wal-usool-al-jaami-ah-as-sa-di.html",
+      "https://d1.islamhouse.com/data/ar/ih_books/single2/ar_university_rules_and_assets.pdf",
+      "https://www.youtube.com/watch?v=x476SIaRaWo"),
+  ]),
+  s("Qawa'id Fiqhiyya",SC.qawaid,[
+    b("Zubdat al-Qawa'id al-Fiqhiyya",false,
+      "#",
+      "https://archive.org/details/zubdah-al-qowaid-al-fiqhiyyah-talif-muhammad-nuruddin-marbu-al-banjariyy-al-makkiyy_202212/page/n13/mode/2up",
+      "#",
+      null,null,{noInfo:true,noVideo:true}),
+  ]),
   s("Adab",SC.adab,[
-    b("Mandhuma Abi Ishaq al-Ilbiri"),
-    b("Mandhuma al-Adab al-Shar'iyya al-Sughra",true),
+    b("Mandhuma Abi Ishaq al-Ilbiri",false,
+      "#",
+      "https://a-alqasim.com/books/0400mutoon/",
+      "https://www.youtube.com/watch?v=fpNgaxw9GxE",
+      null,null,{noInfo:true}),
+    b("Mandhuma al-Adab al-Shar'iyya al-Sughra",true,
+      "#",
+      "https://ketabonline.com/ar/books/102569/read?part=1&page=17&index=5352059",
+      "https://www.youtube.com/watch?v=MuKDRqm5ffU",
+      null,null,{noInfo:true}),
   ]),
-  s("Seerah",SC.seerah,[b("Al-Urjuza al-Mi'iyya")]),
+  s("Seerah",SC.seerah,[
+    b("Al-Urjuza al-Mi'iyya",false,
+      "#",
+      "https://a-alqasim.com/books/071101almeiyyahseerah/",
+      "https://www.youtube.com/watch?v=QHFmykuaKxA",
+      null,null,{noInfo:true}),
+  ]),
 ]},
 
 /* ── LEVEL III — Intermediate ─────────────────────── */
@@ -812,25 +1197,70 @@ const TREE={name:"Talib al-Ilm",type:"root",children:[
     b("Juz 5",true),
   ]),
   s("Aqeedah",SC.aqeedah,[
-    b("Al-Aqida al-Wasitiyya — Ibn Taymiyya"),
-    b("Al-Qawl al-Mufid Sharh Kitab al-Tawhid — Ibn Uthaymin"),
-    b("Fath al-Majid Sharh Kitab al-Tawhid"),
+    b("Al-Aqida al-Wasitiyya — Ibn Taymiyya",false,
+      "https://www.sifatusafwa.com/en/matn-of-aqeedah/matn-al-aqidah-al-wasitiyyah-of-ibn-taymiyyah.html",
+      "https://a-alqasim.com/books/0400mutoon/",
+      "https://www.youtube.com/watch?v=PBrVEwmhzfE&list=PLlDH1PXiY8k-HF-krVb3r7ECzwtTbPmul"),
+    b("Al-Qawl al-Mufid Sharh Kitab al-Tawhid — Ibn Uthaymin",false,
+      "https://www.sifatusafwa.com/en/explanations-of-the-books-of-muhammad-ibn-abdil-wahhab/al-qawl-al-mufeed-sharh-kitab-at-tawhid-ibn-uthaymeen.html",
+      "https://archive.org/details/20231016_20231016_0702/page/159/mode/2up",
+      "https://www.youtube.com/watch?v=s9XSx5-O5GY&list=PLXS0usquloW9pmTubrM_Dy7N338Lq05CU"),
+    b("Fath al-Majid Sharh Kitab al-Tawhid",false,
+      "https://www.sifatusafwa.com/en/explanations-of-the-books-of-muhammad-ibn-abdil-wahhab/sharh-fath-al-majid-li-sharh-kitab-at-tawhid-salih-aal-sheikh-3-vol.html",
+      "https://ia801808.us.archive.org/14/items/WAQ83323/83323.pdf",
+      "https://www.youtube.com/watch?v=Nmwh0zCudYM&list=PLWzzF688g_nhOgqIloXJQLGw2khqQWU-_"),
   ]),
   s("Nahw — Arabic Grammar",SC.nahw,[
-    b("Shudhur al-Dhahab — Ibn Hisham"),
-    b("Qatr al-Nada wa Ball al-Sada — Ibn Hisham"),
-    b("Mulhat al-I'rab — al-Hariri"),
+    b("Shudhur al-Dhahab — Ibn Hisham",false,
+      "https://www.sifatusafwa.com/en/matn-of-arabic/shudhur-adh-dhahab-fi-ma-rifati-kalam-al-arab-matn.html",
+      "https://archive.org/details/a547n/page/n45/mode/2up",
+      "#",
+      null,null,{noVideo:true}),
+    b("Qatr al-Nada wa Ball al-Sada — Ibn Hisham",false,
+      "https://www.sifatusafwa.com/en/matn-of-arabic/matn-qatr-an-nadaa-ibn-hisham.html",
+      "https://archive.org/details/a546n/page/n17/mode/2up",
+      "https://www.youtube.com/watch?v=QBp3ccqgGdk"),
+    b("Mulhat al-I'rab — al-Hariri",false,
+      "https://www.sifatusafwa.com/en/matn-of-arabic/matn-mulhatul-i-rab-al-hariri-al-basri-516h-harakat.html",
+      "https://a-alqasim.com/books/081602milhataleraabhawaashee/",
+      "https://www.youtube.com/watch?v=Sz4vtiTO4EI"),
   ]),
-  s("Sarf — Morphology",SC.sarf,[b("Lamiyyat al-Af'al — Ibn Malik")]),
-  s("Hadith",SC.hadith,[b("Bulugh al-Maram — Ibn Hajar al-Asqalani",true)]),
+  s("Sarf — Morphology",SC.sarf,[
+    b("Lamiyyat al-Af'al — Ibn Malik",false,
+      "https://www.sifatusafwa.com/en/matn-of-arabic/lamiat-ul-af-aal-by-ibn-malik-matn-fi-sarf-harakat.html",
+      "https://a-alqasim.com/books/081001laamiyyahalafaal/",
+      "https://www.youtube.com/watch?v=pC3OhhxUOfw"),
+  ]),
+  s("Hadith",SC.hadith,[
+    b("Bulugh al-Maram — Ibn Hajar al-Asqalani",true,
+      "https://www.sifatusafwa.com/en/thematic-and-misc-collections/buloogh-al-maram-tahqiq-takhrij-tashkil.html",
+      "https://a-alqasim.com/books/0601buloogh/",
+      "https://www.youtube.com/watch?v=QTAFBvwwF9c&list=PLGeu80ApFDrk_fN8CWFlIPF1xeEPNDkWo"),
+  ]),
   s("Mustalah al-Hadith",SC.mustalah,[
-    b("Nukhbat al-Fikar — Ibn Hajar al-Asqalani"),
-    b("Ikhtisar Ulum al-Hadith — Ibn Kathir"),
+    b("Nukhbat al-Fikar — Ibn Hajar al-Asqalani",false,
+      "https://www.sifatusafwa.com/en/matn-of-hadeeth/matn-nukhbah-al-fikar-fi-mustalah-ahl-al-athar-ibn-hajar-al-asqalani.html",
+      "https://a-alqasim.com/books/080101nukhbah/",
+      "https://www.youtube.com/watch?v=K8wslW11tJU"),
+    b("Ikhtisar Ulum al-Hadith — Ibn Kathir",false,
+      "https://www.sifatusafwa.com/en/mustalah-uloom-al-hadith/mukhtasar-ulum-al-hadith-ibn-kathir-with-al-ba-ith-al-hathith.html",
+      "https://archive.org/details/ansalfahd2014_gmail_20160423_1754/page/180/mode/2up",
+      "#",
+      null,null,{noVideo:true}),
   ]),
   s("Fiqh — Hanbali",SC.fiqh,[
-    b("Al-Umdah fi al-Fiqh — Ibn Qudama"),
-    b("Bidayat al-Abid wa Kifayat al-Zahid"),
-    b("Dalil al-Talib li-Nayl al-Matalib"),
+    b("Al-Umdah fi al-Fiqh — Ibn Qudama",false,
+      "https://www.sifatusafwa.com/en/fiqh-hanbali/-umdat-ul-fiqh-by-ibn-qudaama-al-maqdissi-harakat.html",
+      "https://archive.org/details/OumdatulFiqh/page/n55/mode/2up",
+      "https://www.youtube.com/watch?v=HS657Hu-zhY"),
+    b("Bidayat al-Abid wa Kifayat al-Zahid",false,
+      "https://www.sifatusafwa.com/en/fiqh-hanbali/bidaayat-ul-aabid-wa-kifaayat-ul-zaahid-al-ba-li.html",
+      "https://shamela.org/pdf/546310fc56fa0339a78024fa4a91ec42",
+      "https://www.youtube.com/watch?v=4g5scAtNPVw&list=PLLWBPlEPTl0cQBQd8RmHKxtwGvoeXvyaf"),
+    b("Dalil al-Talib li-Nayl al-Matalib",false,
+      "https://www.sifatusafwa.com/en/fiqh-hanbali/dalil-at-talib-li-nayl-al-matalib-al-allamah-mar-i-al-karmi.html",
+      "https://archive.org/details/sarayassaf_gmail_20170323_0111/page/n89/mode/2up",
+      "https://www.youtube.com/watch?v=6ML-oxXGht8&list=PLizd7g53B_MhLBTG6JrUcxMzc3Bu_MSF6"),
   ],"hanbali"),
   s("Fiqh — Shafi'i",SC.fiqh,[
     b("Al-Tanbih fi al-Fiqh al-Shafi'i — Abu Ishaq al-Shirazi"),
@@ -1038,28 +1468,185 @@ const regBook=(bk,ln,sn)=>{const i=BREG.length;BREG.push({...bk,ln,sn});return i
 
 /* ═══ STATE ═══════════════════════════════════════════ */
 let focusedIds=null, activeFilters=new Set(), listBuilt=false;
-let chosenMadhab=localStorage.getItem('talib_madhab')||null;
-let progressData=JSON.parse(localStorage.getItem('talib_progress')||'{}');
+let chosenMadhab=(function(){try{return localStorage.getItem('talib_madhab')||null;}catch(e){return null;}})();
+let progressData=(function(){
+  try{const d=JSON.parse(localStorage.getItem('talib_progress')||'{}');return (d&&typeof d==='object')?d:{};}
+  catch(e){return {};}
+})();
 let _currentPanelBook=null; // tracks which book is open in panel
 
 /* ── Progress helpers ──────────────────────────────── */
-function saveProgress(){localStorage.setItem('talib_progress',JSON.stringify(progressData));}
+let _savedTimer;
+function saveProgress(){
+  try{localStorage.setItem('talib_progress',JSON.stringify(progressData));}catch(e){/* private mode / quota */}
+  // #1 saved indicator pulse
+  const ind=document.getElementById('saved-indicator');
+  if(ind){
+    ind.classList.remove('show');
+    void ind.offsetWidth; // restart animation
+    ind.classList.add('show');
+    clearTimeout(_savedTimer);
+    _savedTimer=setTimeout(()=>ind.classList.remove('show'),1400);
+  }
+}
+
+let statusFilter='all'; // #4: all | none | started | finished
+
+/* ═══ SPACED REPETITION SYSTEM ════════════════════════
+   When a text is marked Finished, it enters a review schedule.
+   Intervals (days): 1 → 3 → 7 → 16 → 35 → 90 → 180.
+   Each successful review advances to the next interval.
+   "Need work" resets to the first interval.
+════════════════════════════════════════════════════════ */
+const SRS_INTERVALS=[1,3,7,16,35,90,180]; // days
+let reviewData=(function(){
+  try{const d=JSON.parse(localStorage.getItem('talib_reviews')||'{}');return (d&&typeof d==='object'&&!Array.isArray(d))?d:{};}
+  catch(e){return {};}
+})();
+// Drop any review entries that are not valid memorize texts (data hygiene)
+(function sanitizeReviews(){
+  let changed=false;
+  Object.keys(reviewData).forEach(n=>{
+    const r=reviewData[n];
+    const valid=r&&typeof r==='object'&&typeof r.stage==='number'&&typeof r.due==='string'
+      &&SI.some(b=>b.name===n&&b.mem);
+    if(!valid){delete reviewData[n];changed=true;}
+  });
+  if(changed){try{localStorage.setItem('talib_reviews',JSON.stringify(reviewData));}catch(e){}}
+})();
+function saveReviews(){try{localStorage.setItem('talib_reviews',JSON.stringify(reviewData));}catch(e){}}
+
+const DAY_MS=86400000;
+function todayStr(){return new Date().toISOString().slice(0,10);}
+function daysFromNow(n){return new Date(Date.now()+n*DAY_MS).toISOString().slice(0,10);}
+
+// Begin review schedule when a text is first finished (memorize texts only)
+function startReview(name){
+  if(reviewData[name])return; // already scheduled
+  if(!SI.some(b=>b.name===name&&b.mem))return; // only memorize texts
+  reviewData[name]={stage:0,due:daysFromNow(SRS_INTERVALS[0]),last:todayStr()};
+  saveReviews();
+}
+function stopReview(name){
+  if(reviewData[name]){delete reviewData[name];saveReviews();}
+}
+// Mark a review done — advance or reset
+function reviewDone(name,success){
+  const r=reviewData[name];if(!r)return;
+  if(success){r.stage=Math.min(r.stage+1,SRS_INTERVALS.length-1);}
+  else{r.stage=0;}
+  r.due=daysFromNow(SRS_INTERVALS[r.stage]);
+  r.last=todayStr();
+  saveReviews();
+  updateReviewBadge();
+}
+// Which texts are due today or overdue?
+function getDueReviews(){
+  const t=todayStr();
+  return Object.keys(reviewData)
+    .filter(n=>reviewData[n].due<=t)
+    .filter(n=>SI.some(b=>b.name===n&&b.mem)); // only valid memorize texts
+}
+function updateReviewBadge(){
+  const due=getDueReviews();
+  const badge=document.getElementById('review-badge');
+  if(!badge)return;
+  if(due.length){
+    badge.style.display='flex';
+    badge.querySelector('.rv-count').textContent=due.length;
+  } else {
+    badge.style.display='none';
+  }
+}
+
+/* ── Review session controller ── */
+let _reviewQueue=[],_reviewIdx=0;
+function openReviewSession(){
+  _reviewQueue=getDueReviews();
+  if(!_reviewQueue.length)return;
+  _reviewIdx=0;
+  document.getElementById('rv-done').classList.remove('show');
+  document.querySelector('#review-modal .rv-body').style.display='block';
+  document.querySelector('#review-modal .rv-actions').style.display='grid';
+  document.querySelector('#review-modal .rv-progress-text').style.display='block';
+  document.querySelector('#review-modal .rv-track').style.display='block';
+  document.getElementById('review-modal').classList.add('show');
+  showReviewCard();
+}
+function showReviewCard(){
+  const name=_reviewQueue[_reviewIdx];
+  const meta=SI.find(b=>b.name===name);
+  document.getElementById('rv-text-name').textContent=name;
+  document.getElementById('rv-text-path').textContent=meta?`${meta.ln} › ${meta.sn}`:'';
+  document.getElementById('rv-progress-text').textContent=`${_reviewIdx+1} of ${_reviewQueue.length}`;
+  document.getElementById('rv-track-fill').style.width=((_reviewIdx)/_reviewQueue.length*100)+'%';
+  // show next interval if they pass
+  const r=reviewData[name];
+  const nextStage=r?Math.min(r.stage+1,SRS_INTERVALS.length-1):0;
+  const days=SRS_INTERVALS[nextStage];
+  document.getElementById('rv-next-interval').textContent=`Next: ${days} day${days>1?'s':''}`;
+}
+function answerReview(success){
+  const name=_reviewQueue[_reviewIdx];
+  reviewDone(name,success);
+  _reviewIdx++;
+  document.getElementById('rv-track-fill').style.width=(_reviewIdx/_reviewQueue.length*100)+'%';
+  if(_reviewIdx>=_reviewQueue.length){
+    // session complete
+    document.querySelector('#review-modal .rv-body').style.display='none';
+    document.querySelector('#review-modal .rv-actions').style.display='none';
+    document.querySelector('#review-modal .rv-progress-text').style.display='none';
+    document.querySelector('#review-modal .rv-track').style.display='none';
+    document.getElementById('rv-done').classList.add('show');
+    updateReviewBadge();
+  } else {
+    showReviewCard();
+  }
+}
+function closeReviewSession(){
+  document.getElementById('review-modal').classList.remove('show');
+  updateReviewBadge();
+}
 
 function setBookProgress(name,state){
+  const prev=progressData[name];
   if(progressData[name]===state){delete progressData[name];}
   else{progressData[name]=state;}
+  const now=progressData[name];
+  // SRS: only memorize-marked texts enter the review schedule
+  const isMem=SI.some(b=>b.name===name&&b.mem);
+  if(isMem&&now==='finished'){startReview(name);}
+  else if(prev==='finished'&&now!=='finished'){stopReview(name);}
   saveProgress();
   updateProgressBars();
   updateNodeRing(name);
+  updateNodeText(name);
+  updateLevelRings();
   refreshPanelProgress(name);
+  updateReviewBadge();
+}
+
+function updateNodeText(name){
+  ndG.selectAll('.nd').each(function(d){
+    if(d.data.name===name&&d.data.type==='book'){
+      const p=progressData[name];
+      d3.select(this).select('text')
+        .transition().duration(250)
+        .attr('text-decoration',null)
+        .attr('fill',p==='finished'?'#69f0ae':p==='started'?'#e8c97a':(d.data.mem?'#e8c97a':nColor(d)+'99'));
+    }
+  });
 }
 
 function getBookProgress(name){return progressData[name]||null;}
 
 function updateProgressBars(){
   const total=SI.length||1;
-  const started=SI.filter(b=>progressData[b.name]==='started').length;
-  const finished=SI.filter(b=>progressData[b.name]==='finished').length;
+  let started=0,finished=0;
+  for(let i=0;i<SI.length;i++){
+    const p=progressData[SI[i].name];
+    if(p==="started")started++;else if(p==="finished")finished++;
+  }
   const sPct=Math.round(started/total*100);
   const fPct=Math.round(finished/total*100);
   const sf=document.getElementById('s-fill'),ff=document.getElementById('f-fill');
@@ -1094,6 +1681,36 @@ function refreshPanelProgress(name){
   const bf=document.getElementById('pb-finished');
   if(bs)bs.classList.toggle('is-active',p==='started');
   if(bf)bf.classList.toggle('is-active',p==='finished');
+  renderPanelReview(name);
+}
+
+// Show the spaced-repetition status for the current text in the panel
+function renderPanelReview(name){
+  const el=document.getElementById('panel-review');
+  if(!el)return;
+  const isMem=SI.some(b=>b.name===name&&b.mem);
+  const r=reviewData[name];
+  if(isMem && r){
+    const today=todayStr();
+    const due=r.due<=today;
+    const stageLabel=`${r.stage+1} of ${SRS_INTERVALS.length}`;
+    if(due){
+      el.style.display='flex';
+      el.innerHTML=`<span class="pr-icon">&#10227;</span><span>Due for review now &middot; stage ${stageLabel}. Open the review badge in the header.</span>`;
+    } else {
+      // days until due
+      const diff=Math.max(1,Math.round((new Date(r.due)-new Date(today))/86400000));
+      el.style.display='flex';
+      el.innerHTML=`<span class="pr-icon">&#10227;</span><span>In review schedule &middot; next revision in ${diff} day${diff>1?'s':''} (stage ${stageLabel}).</span>`;
+    }
+  } else if(isMem && progressData[name]==='finished'){
+    // just finished, scheduled but data not yet shown
+    el.style.display='flex';
+    el.innerHTML=`<span class="pr-icon">&#10227;</span><span>Added to your review schedule &mdash; first revision tomorrow, in shaa Allah.</span>`;
+  } else {
+    el.style.display='none';
+    el.innerHTML='';
+  }
 }
 
 function handleProgressBtn(state,event){
@@ -1176,7 +1793,7 @@ async function fetchIbnSirinStatement(){
   box.remove();
 }
 function exportProgress(){
-  const payload={version:1,date:new Date().toISOString(),progress:progressData};
+  const payload={version:2,date:new Date().toISOString(),progress:progressData,reviews:reviewData};
   const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
   const a=document.createElement('a');
   a.href=URL.createObjectURL(blob);
@@ -1189,12 +1806,90 @@ function importProgress(e){
   reader.onload=ev=>{
     try{
       const parsed=JSON.parse(ev.target.result);
-      progressData=parsed.progress||parsed; // support both formats
+      const raw=(parsed&&parsed.progress)?parsed.progress:parsed;
+      if(!raw||typeof raw!=="object"||Array.isArray(raw))throw new Error("bad shape");
+      // sanitize: keep only string keys with valid status values
+      const clean={};
+      Object.keys(raw).forEach(k=>{
+        const v=raw[k];
+        if(v==="started"||v==="finished")clean[k]=v;
+      });
+      progressData=clean;
+      // import review schedule if present
+      if(parsed&&parsed.reviews&&typeof parsed.reviews==="object"&&!Array.isArray(parsed.reviews)){
+        const cr={};
+        Object.keys(parsed.reviews).forEach(k=>{
+          const r=parsed.reviews[k];
+          if(r&&typeof r==="object"&&typeof r.due==="string"&&typeof r.stage==="number")cr[k]=r;
+        });
+        reviewData=cr;saveReviews();
+      }
       saveProgress();updateProgressBars();update(root);
+      setTimeout(()=>{updateLevelRings();updateReviewBadge();},350);
     }catch{alert('Invalid progress file.');}
     e.target.value='';
   };
+  reader.onerror=()=>{alert('Could not read file.');e.target.value='';};
   reader.readAsText(file);
+}
+
+/* ── #8 Reset all progress (guarded) ── */
+function resetProgress(){
+  if(!Object.keys(progressData).length&&!Object.keys(reviewData).length){return;}
+  if(!confirm("Reset ALL progress? This permanently clears every Started and Finished mark, and all review schedules. This cannot be undone.\n\nTip: Export first if you want a backup."))return;
+  progressData={};
+  reviewData={};
+  saveProgress();saveReviews();
+  updateProgressBars();
+  update(root);
+  updateLevelRings();
+  updateReviewBadge();
+}
+
+/* ── #4 Filter tree by progress status ── */
+function setStatusFilter(status,btn){
+  statusFilter=status;
+  document.querySelectorAll('.pf-btn').forEach(b=>b.classList.remove('active'));
+  if(btn)btn.classList.add('active');
+  clearFocus();
+  update(root);
+}
+function matchesStatusFilter(d){
+  if(statusFilter==='all')return true;
+  if(d.data.type!=='book')return true; // structural nodes always shown
+  const p=progressData[d.data.name]||'none';
+  return p===statusFilter;
+}
+
+/* ── #2 Jump to next unstarted book ── */
+function jumpToNextUnstarted(){
+  // Walk levels top-to-bottom, find first book with no progress
+  let target=null;
+  const walk=node=>{
+    if(target)return;
+    if(node.data.type==='book'){
+      if(!progressData[node.data.name]){target=node;return;}
+    }
+    (node.children||node._children||[]).forEach(walk);
+  };
+  walk(root);
+  if(!target){
+    // everything started/finished
+    const ind=document.getElementById('saved-indicator');
+    if(ind){ind.textContent='✓ All texts begun — MashaAllah';ind.classList.add('show');
+      setTimeout(()=>{ind.classList.remove('show');ind.textContent='✓ Saved';},2200);}
+    return;
+  }
+  // expand ancestors
+  target.ancestors().forEach(a=>{if(a._children){a.children=a._children;a._children=null;}});
+  update(root);
+  setTimeout(()=>{
+    treeFn(root);
+    const k=Math.max(d3.zoomTransform(svg.node()).k,0.85);
+    svg.transition().duration(500).ease(d3.easeCubicInOut)
+      .call(zoom.transform,d3.zoomIdentity.translate(W/2-target.y*k,H/2-target.x*k).scale(k));
+    focusNode(target);openPanel(target.data,target);
+  },330);
 }
 
 /* ═══ D3 SETUP ════════════════════════════════════════ */
@@ -1224,7 +1919,11 @@ svg.on("click",()=>closePanel());
 document.getElementById("zi").onclick=()=>zoom.scaleBy(svg,1.3);
 document.getElementById("zo").onclick=()=>zoom.scaleBy(svg,.77);
 
-const treeFn=d3.tree().nodeSize([20,264]);
+const treeFn=d3.tree().nodeSize([22,264]).separation((a,b)=>{
+  // Extra vertical gap between top-level (level) nodes so their progress rings don't touch
+  if(a.depth===1&&b.depth===1)return 2.4;
+  return a.parent===b.parent?1:1.3;
+});
 let root=d3.hierarchy(TREE);
 let _nid=0;
 (function preId(d){d.id=++_nid;(d.children||d._children||[]).forEach(preId);})(root);
@@ -1260,31 +1959,46 @@ function isMadhabGrayed(d){
   return false;
 }
 
+function bookFilterColor(d){
+  // a book matches the chip filter via its own cat override, else its parent subject color
+  return (d.data.cat)||(d.parent&&d.parent.data.color);
+}
+function subjectHasFilterMatch(d){
+  // a subject is "matched" if its own color matches, OR any child book's cat matches
+  if(activeFilters.has(d.data.color))return true;
+  const kids=d.children||d._children||[];
+  return kids.some(c=>c.data.type==="book"&&c.data.cat&&activeFilters.has(c.data.cat));
+}
 function nOpacity(d){
   if(focusedIds)return focusedIds.has(d.id)?1:0.05;
   if(activeFilters.size){
     if(d.data.type==="root"||d.data.type==="level")return 1;
-    if(d.data.type==="subject")return activeFilters.has(d.data.color)?1:0.06;
-    return(d.parent&&activeFilters.has(d.parent.data.color))?1:0.06;
+    if(d.data.type==="subject")return subjectHasFilterMatch(d)?1:0.06;
+    return activeFilters.has(bookFilterColor(d))?1:0.06;
   }
+  if(statusFilter!=='all'&&d.data.type==='book'&&!matchesStatusFilter(d))return 0.08;
   if(isMadhabGrayed(d))return 0.13;
   return 1;
 }
 function lOpacity(d){
   if(focusedIds)return(focusedIds.has(d.source.id)&&focusedIds.has(d.target.id))?0.7:0.04;
   if(activeFilters.size){
-    const t=d.target,tc=t.data.type==="subject"?t.data.color:t.data.type==="book"?(t.parent&&t.parent.data.color):null;
-    return tc&&activeFilters.has(tc)?0.3:0.04;
+    const t=d.target;
+    if(t.data.type==="subject")return subjectHasFilterMatch(t)?0.3:0.04;
+    if(t.data.type==="book")return activeFilters.has(bookFilterColor(t))?0.3:0.04;
+    return 0.04;
   }
+  if(statusFilter!=='all'&&d.target.data.type==='book'&&!matchesStatusFilter(d.target))return 0.05;
   if(isMadhabGrayed(d.target))return 0.05;
   return 0.22;
 }
 
 /* ── Update ──────────────────────────────────────────── */
 let fillTimer;
-function update(src){
+function update(src,instant){
   const td=treeFn(root);
   const nodes=td.descendants(),links=td.links();
+  const DUR=instant?0:440, NDUR=instant?0:440;
 
   const lkSel=lkG.selectAll(".lk").data(links,d=>d.source.id+"-"+d.target.id);
   const lkE=lkSel.enter().append("path").attr("class","lk")
@@ -1292,11 +2006,7 @@ function update(src){
     .attr("d",()=>{const o={x:src.x0||0,y:src.y0||0};return diag({source:o,target:o});})
     .attr("stroke",d=>{const t=d.target;return t.data.type==="level"?LC[t.data.level]:t.data.type==="book"?(t.parent&&t.parent.data.color)||"#444":t.data.color||"#444";})
     .attr("opacity",0);
-  lkSel.merge(lkE).transition().duration(440)
-    .delay(d=>{
-      // links fan with their target node's vertical order
-      return 0;
-    })
+  lkSel.merge(lkE).transition().duration(DUR)
     .ease(d3.easeCubicOut)
     .attr("d",diag)
     .attr("stroke",d=>{const t=d.target;return t.data.type==="level"?LC[t.data.level]:t.data.type==="book"?(t.parent&&t.parent.data.color)||"#444":t.data.color||"#444";})
@@ -1343,21 +2053,32 @@ function update(src){
 
   const mg=ndSel.merge(ndE);
   // Existing nodes glide; entering nodes fan out from parent with back-ease
-  mg.transition().duration(440)
-    .delay(d=>fanDelay(d))
-    .ease(d3.easeBackOut.overshoot(1.3))
+  mg.transition().duration(NDUR)
+    .delay(d=>instant?0:fanDelay(d))
+    .ease(instant?d3.easeLinear:d3.easeBackOut.overshoot(1.3))
     .attr("transform",d=>`translate(${d.y},${d.x})`)
     .attr("opacity",nOpacity);
   // Circle scale-pop synced to the fan
-  ndE.select("circle:first-child").transition().duration(400).delay(fanDelay).ease(d3.easeBackOut.overshoot(2.2))
+  ndE.select("circle:first-child").transition().duration(instant?0:400).delay(d=>instant?0:fanDelay(d)).ease(instant?d3.easeLinear:d3.easeBackOut.overshoot(2.2))
     .attr("r",nR);
   // Text fades in just after its node lands
-  ndE.select("text").transition().duration(320).delay(d=>fanDelay(d)+120).ease(d3.easeCubicOut)
+  ndE.select("text").transition().duration(instant?0:320).delay(d=>instant?0:fanDelay(d)+120).ease(d3.easeCubicOut)
     .attr("opacity",1);
 
   mg.select("text")
     .attr("x",d=>{const r=nR(d);return(d.children||d._children)?-(r+5):(r+5);})
-    .attr("text-anchor",d=>(d.children||d._children)?"end":"start");
+    .attr("text-anchor",d=>(d.children||d._children)?"end":"start")
+    .attr("text-decoration",null)
+    .attr("fill",d=>{
+      if(d.data.type==="book"){
+        const p=progressData[d.data.name];
+        if(p==="finished")return"#69f0ae";
+        if(p==="started")return"#e8c97a";
+      }
+      if(d.data.mem&&d.data.type==="book")return"#e8c97a";
+      const c=nColor(d);
+      return d.data.type==="root"||d.data.type==="level"?c:d.data.type==="subject"?c+"cc":c+"99";
+    });
   mg.select(".cd").attr("opacity",d=>d._children&&d.data.type!=="book"?.75:0);
   // Refresh progress rings for all book nodes
   mg.select(".prog-ring")
@@ -1371,7 +2092,64 @@ function update(src){
   ndSel.exit().transition().duration(240).attr("transform",`translate(${src.y},${src.x})`).attr("opacity",0).remove();
   nodes.forEach(d=>{d.x0=d.x;d.y0=d.y;});
   clearTimeout(fillTimer);
-  fillTimer=setTimeout(drawFills,300);
+  fillTimer=setTimeout(()=>{drawFills();updateLevelRings();},instant?20:300);
+}
+
+/* ── #3 Per-level progress ring (arc shows % finished) ── */
+// Precompute each level's book-name list ONCE (tree structure is static)
+const _levelBooks={};
+TREE.children.forEach(lvl=>{
+  const names=[];
+  (function collect(n){
+    if(n.type==="book"){names.push(n.name);return;}
+    (n.children||[]).forEach(collect);
+  })(lvl);
+  _levelBooks[lvl.name]=names;
+});
+function levelStats(levelData){
+  const names=_levelBooks[levelData.name]||[];
+  let finished=0,started=0;
+  for(let i=0;i<names.length;i++){
+    const p=progressData[names[i]];
+    if(p==="finished")finished++;else if(p==="started")started++;
+  }
+  return {total:names.length,finished,started};
+}
+function updateLevelRings(){
+  ndG.selectAll(".nd").each(function(d){
+    if(d.data.type!=="level")return;
+    const g=d3.select(this);
+    g.selectAll(".level-ring").remove();
+    const st=levelStats(d.data);
+    if(!st.total)return;
+    const r=nR(d)+4;
+    const fFrac=st.finished/st.total;
+    const sFrac=(st.finished+st.started)/st.total;
+    const circ=2*Math.PI*r;
+    // Background ring
+    g.append("circle").attr("class","level-ring")
+      .attr("r",r).attr("fill","none")
+      .attr("stroke","rgba(255,255,255,.07)").attr("stroke-width",1.5);
+    // Started portion (gold)
+    if(sFrac>0){
+      g.append("circle").attr("class","level-ring")
+        .attr("r",r).attr("fill","none")
+        .attr("stroke","#e8c97a").attr("stroke-width",1.5)
+        .attr("stroke-dasharray",`${circ*sFrac} ${circ}`)
+        .attr("stroke-linecap","round")
+        .attr("transform","rotate(-90)").attr("opacity",.5);
+    }
+    // Finished portion (emerald, on top)
+    if(fFrac>0){
+      g.append("circle").attr("class","level-ring")
+        .attr("r",r).attr("fill","none")
+        .attr("stroke","#69f0ae").attr("stroke-width",2)
+        .attr("stroke-dasharray",`${circ*fFrac} ${circ}`)
+        .attr("stroke-linecap","round")
+        .attr("transform","rotate(-90)")
+        .style("filter","drop-shadow(0 0 3px rgba(105,240,174,.5))");
+    }
+  });
 }
 
 /* ── Level fills ─────────────────────────────────────── */
@@ -1461,6 +2239,7 @@ function openPanel(data,treeNode){
   const p=getBookProgress(data.name);
   document.getElementById("pb-started").classList.toggle("is-active",p==="started");
   document.getElementById("pb-finished").classList.toggle("is-active",p==="finished");
+  renderPanelReview(data.name);
 
   // Description mode: hide Info button, show description text
   const hasDesc=!!data.desc;
@@ -1473,14 +2252,18 @@ function openPanel(data,treeNode){
     btnInfo.style.display="none";
   } else {
     descEl.style.display="none";
-    btnInfo.style.display="flex";
+    btnInfo.style.display=data.noInfo?"none":"flex";
     btnInfo.href=data.info||"#";
   }
 
-  // Action buttons: hidden for Quran Hifz (Juz nodes keep only progress buttons)
+  // Hide all action buttons for Quran Hifz
   document.getElementById("panel-btns").style.display=isQuran?"none":"flex";
-  document.getElementById("btn-pdf").href=data.pdf||"#";
-  document.getElementById("btn-video").href=data.video||"#";
+  const btnPdf=document.getElementById("btn-pdf");
+  const btnVid=document.getElementById("btn-video");
+  btnPdf.href=data.pdf||"#";
+  btnVid.href=data.video||"#";
+  btnPdf.style.display=data.noPdf?"none":"flex";
+  btnVid.style.display=data.noVideo?"none":"flex";
 
   // Verse counter
   const versesEl=document.getElementById("panel-verses");
@@ -1495,30 +2278,117 @@ function openPanel(data,treeNode){
 
   document.getElementById("panel").classList.add("open");
   document.getElementById("hint").style.opacity="0";
+  if(typeof setDeepLink==="function")setDeepLink(data.name);
 }
 
 function animateCount(el,target,duration=900){
+  if(el._raf)cancelAnimationFrame(el._raf);
   let start=null;
   const step=ts=>{
     if(!start)start=ts;
     const prog=Math.min((ts-start)/duration,1);
     const ease=1-Math.pow(1-prog,3); // ease-out cubic
     el.textContent=Math.round(ease*target);
-    if(prog<1)requestAnimationFrame(step);
+    if(prog<1)el._raf=requestAnimationFrame(step);
+    else el._raf=null;
   };
   el.textContent="0";
-  requestAnimationFrame(step);
+  el._raf=requestAnimationFrame(step);
 }
 function closePanel(){
   _currentPanelBook=null;
+  if(typeof setDeepLink==="function")setDeepLink(null);
   document.getElementById("panel").classList.remove("open");
   document.getElementById("hint").style.opacity="1";
   clearFocus();
 }
+let _kbNode=null; // currently keyboard-focused node OBJECT (not id)
+
 document.addEventListener("keydown",e=>{
-  if(e.key==="Escape"){closePanel();closeSearch();}
-  if((e.ctrlKey||e.metaKey)&&e.key==="f"){e.preventDefault();toggleSearch();}
+  if(e.key==="Escape"){closePanel();closeSearch();return;}
+  if((e.ctrlKey||e.metaKey)&&(e.key==="f"||e.key==="F")){e.preventDefault();toggleSearch();return;}
+  // ignore if typing in an input/textarea
+  const ae=document.activeElement;
+  if(ae&&(ae.tagName==="INPUT"||ae.tagName==="TEXTAREA"))return;
+  // tree view only (canvas visible)
+  if(document.getElementById("canvas").style.display==="none")return;
+  // ignore while splash/track screen is up
+  if(document.getElementById("splash"))return;
+  if(document.getElementById("track-screen").classList.contains("show"))return;
+  const navKeys=["ArrowUp","ArrowDown","ArrowLeft","ArrowRight","Enter"," ","Spacebar"];
+  if(!navKeys.includes(e.key))return;
+  e.preventDefault();
+  kbNavigate(e.key);
 });
+
+// Returns the current focus node, validating it still exists & is visible
+function kbCurrent(){
+  const visible=root.descendants();
+  if(_kbNode && visible.indexOf(_kbNode)!==-1)return _kbNode;
+  // fallback: first level node if present, else root
+  _kbNode = visible.find(n=>n.depth===1) || root;
+  return _kbNode;
+}
+
+function kbExpand(node){
+  if(node._children){node.children=node._children;node._children=null;update(node);return true;}
+  return false;
+}
+function kbCollapse(node){
+  if(node.children){node._children=node.children;node.children=null;update(node);return true;}
+  return false;
+}
+
+function kbNavigate(key){
+  let cur=kbCurrent();
+
+  // Open panel (Space / Enter on a book)
+  if(key===" "||key==="Spacebar"){
+    if(cur.data.type==="book"){focusNode(cur);openPanel(cur.data,cur);}
+    else{ if(!kbExpand(cur)){ /* already expanded: dive to first child */ if(cur.children&&cur.children[0]){_kbNode=cur.children[0];highlightKbNode(_kbNode);} } }
+    return;
+  }
+  if(key==="Enter"){
+    if(cur.data.type==="book"){focusNode(cur);openPanel(cur.data,cur);}
+    else{ if(cur.children)kbCollapse(cur); else kbExpand(cur); highlightKbNode(cur); }
+    return;
+  }
+
+  let next=null;
+  if(key==="ArrowRight"){
+    if(focusedIds){clearFocus();}             // clear any dimming first
+    if(cur._children){kbExpand(cur);}            // expand collapsed
+    next=(cur.children&&cur.children[0])||cur;   // move to first child
+  } else if(key==="ArrowLeft"){
+    if(focusedIds){clearFocus();}
+    next=cur.parent||cur;                         // move to parent
+  } else if(key==="ArrowDown"||key==="ArrowUp"){
+    if(focusedIds){clearFocus();}
+    const sibs=cur.parent?cur.parent.children:[cur];
+    if(sibs&&sibs.length){
+      const i=sibs.indexOf(cur);
+      next=key==="ArrowDown"?(sibs[(i+1)%sibs.length]):(sibs[(i-1+sibs.length)%sibs.length]);
+    } else next=cur;
+  }
+  if(next){_kbNode=next;highlightKbNode(next);}
+}
+
+function highlightKbNode(n){
+  if(!n)return;
+  // Ensure layout positions are current
+  treeFn(root);
+  // Guard against undefined coordinates
+  if(typeof n.x!=="number"||typeof n.y!=="number")return;
+  const k=Math.max(d3.zoomTransform(svg.node()).k,0.7);
+  svg.transition().duration(360).ease(d3.easeCubicInOut)
+    .call(zoom.transform,d3.zoomIdentity.translate(W/2-n.y*k,H/2-n.x*k).scale(k));
+  // pulse the node circle once it exists in the DOM
+  setTimeout(()=>{
+    ndG.selectAll(".nd").filter(d=>d===n).select("circle:first-child")
+      .transition().duration(170).attr("r",nR(n)*1.5).attr("stroke-width",2.5)
+      .transition().duration(210).attr("r",nR(n)).attr("stroke-width",n.data.type==="root"?2:1.5);
+  },60);
+}
 
 /* ═══ TRACK / MADHAB ════════════════════════════════ */
 function showTrackScreen(){
@@ -1532,11 +2402,157 @@ function showTrackScreen(){
 function hideTrackScreen(){document.getElementById("track-screen").classList.remove("show");}
 function chooseTrack(m){
   chosenMadhab=m;
-  localStorage.setItem("talib_madhab",m);
+  try{localStorage.setItem("talib_madhab",m);}catch(e){}
   hideTrackScreen();
   updateMadhabBadge();
   update(root);
   if(listBuilt){listBuilt=false;buildList();}
+  // #17 smooth zoom-to-fit on the visible (non-grayed) tree
+  setTimeout(fitToView,360);
+  // Launch the guided tutorial the first time only
+  let seen=false;
+  try{seen=localStorage.getItem("talib_tutorial_done")==="1";}catch(e){}
+  if(!seen){setTimeout(startTutorial,900);}
+}
+
+/* ═══ GUIDED TUTORIAL ═══════════════════════════════════ */
+const TUT_STEPS=[
+  {el:null, title:"Welcome to your roadmap",
+   text:"This is your complete path of Islamic study, from the first steps to mastery — and to becoming a Ḥāfiẓ. Let me show you around in a few seconds."},
+  {el:()=>document.querySelector('.nd'), title:"The knowledge tree",
+   text:"Each level branches into the sciences. Click a level, then a subject, to reveal its texts. Click any text to open its details, links, and progress options.",fit:true},
+  {el:"#chips", title:"Filter by science",
+   text:"Tap any category to highlight only those texts across the whole roadmap — Aqeedah, Fiqh, Hadith, Quran, and more. Swipe to see them all."},
+  {el:"#btn-search", title:"Search instantly",
+   text:"Find any of the 190+ texts by name. Selecting a result flies you straight to it in the tree. (Shortcut: Ctrl/Cmd + F.)"},
+  {el:"#madhab-badge", title:"Your madhab",
+   text:"This shows your chosen fiqh school. Tap it anytime to switch — the roadmap dims the other schools while keeping every shared science fully visible."},
+  {el:"#progress-panel", title:"Track your progress",
+   text:"Mark each text Started or Finished from its panel. These bars show your overall progress, and each level node carries its own completion ring."},
+  {el:"#review-badge", title:"Spaced repetition",
+   text:"When you finish a text, it enters a review schedule (1 → 3 → 7 → 16 days, and beyond). When texts are due, this green review badge appears — tap it to revise and lock knowledge into long-term memory.",forceShow:"#review-badge"},
+  {el:"#btn-notes", title:"Take notes",
+   text:"Open the companion note-taking tool to record benefits and explanations from your Shaykh as you study."},
+  {el:".prog-reset", title:"A fresh start, anytime",
+   text:"If you ever need to begin again, you can reset all progress here — export a backup first. May Allah make this knowledge a proof for you, not against you. Āmīn.",last:true},
+];
+let _tutWasList=false;
+let _tutIdx=0;
+function startTutorial(){
+  _tutWasList=document.getElementById("listview").classList.contains("show");
+  setView('tree'); // tutorial highlights tree-view elements
+  _tutIdx=0;
+  document.getElementById("tutorial").classList.add("show");
+  showTutStep();
+}
+function showTutStep(){
+  const step=TUT_STEPS[_tutIdx];
+  const tip=document.getElementById("tut-tip");
+  const spot=document.getElementById("tut-spotlight");
+  document.getElementById("tut-step-count").textContent=`${_tutIdx+1} / ${TUT_STEPS.length}`;
+  document.getElementById("tut-title").textContent=step.title;
+  document.getElementById("tut-text").textContent=step.text;
+  document.getElementById("tut-prev").classList.toggle("hidden",_tutIdx===0);
+  document.getElementById("tut-next").textContent=step.last?"Finish":"Next";
+
+  // Reset any previously forced element (e.g. review badge) unless this step forces it
+  if(!step.forceShow){updateReviewBadge();}
+  // Temporarily force-show an element that may be hidden (e.g. review badge)
+  if(step.forceShow){const fe=document.querySelector(step.forceShow);if(fe){fe.style.display='flex';}}
+  // Optionally expand the tree a touch for step 2
+  if(step.fit){setTimeout(fitToView,50);}
+
+  // Resolve target element
+  let target=null;
+  if(step.el){
+    target=typeof step.el==="function"?step.el():document.querySelector(step.el);
+  }
+
+  const place=()=>{
+    let t=null;
+    if(step.el)t=typeof step.el==="function"?step.el():document.querySelector(step.el);
+    const r=t?t.getBoundingClientRect():null;
+    // Treat invisible/zero-size targets as "no target" → centered tip
+    if(r&&r.width>2&&r.height>2&&r.bottom>0&&r.top<window.innerHeight){
+      const pad=8;
+      spot.classList.add("show");
+      spot.style.left=(r.left-pad)+"px";
+      spot.style.top=(r.top-pad)+"px";
+      spot.style.width=(r.width+pad*2)+"px";
+      spot.style.height=(r.height+pad*2)+"px";
+      positionTip(r);
+    } else {
+      spot.classList.remove("show");
+      spot.style.width="0px";spot.style.height="0px";
+      spot.style.left="50%";spot.style.top="50%";
+      tip.style.left="50%";tip.style.top="50%";
+      tip.style.transform="translate(-50%,-50%)";
+    }
+  };
+  // For fit steps, let the zoom settle before positioning
+  if(step.fit){setTimeout(()=>{place();},520);}
+  else{place();}
+}
+function positionTip(r){
+  const tip=document.getElementById("tut-tip");
+  tip.style.transform="none";
+  const tw=Math.min(300,window.innerWidth*0.86), th=tip.offsetHeight||180;
+  const gap=16;
+  let left,top;
+  // Prefer below the target; if no room, above; clamp horizontally
+  if(r.bottom+gap+th<window.innerHeight){
+    top=r.bottom+gap;
+  } else if(r.top-gap-th>0){
+    top=r.top-gap-th;
+  } else {
+    top=Math.max(56,(window.innerHeight-th)/2);
+  }
+  left=r.left+r.width/2-tw/2;
+  left=Math.max(12,Math.min(left,window.innerWidth-tw-12));
+  if(window.innerWidth<=700){left=window.innerWidth*0.06;}
+  tip.style.left=left+"px";
+  tip.style.top=top+"px";
+}
+function tutNext(){
+  if(_tutIdx>=TUT_STEPS.length-1){endTutorial();return;}
+  _tutIdx++;showTutStep();
+}
+function tutPrev(){
+  if(_tutIdx===0)return;
+  _tutIdx--;showTutStep();
+}
+function endTutorial(){
+  document.getElementById("tutorial").classList.remove("show");
+  try{localStorage.setItem("talib_tutorial_done","1");}catch(e){}
+  // restore any force-shown elements to their natural state
+  updateReviewBadge();
+  // restore list view if mobile started there
+  if(_tutWasList)setView('list');
+}
+// Reposition spotlight/tip on resize during tutorial
+let _resizeTimer;
+window.addEventListener("resize",()=>{
+  // immediate canvas resize (cheap), debounced heavy work
+  svg.attr("width",window.innerWidth).attr("height",window.innerHeight);
+  clearTimeout(_resizeTimer);
+  _resizeTimer=setTimeout(()=>{
+    if(document.getElementById("tutorial").classList.contains("show"))showTutStep();
+  },150);
+});
+
+/* ── #17 Fit visible tree into the viewport ── */
+function fitToView(){
+  treeFn(root);
+  const visible=root.descendants();
+  if(!visible.length)return;
+  const xs=visible.map(d=>d.y),ys=visible.map(d=>d.x);
+  const minX=Math.min(...xs),maxX=Math.max(...xs);
+  const minY=Math.min(...ys),maxY=Math.max(...ys);
+  const w=(maxX-minX)+360,h=(maxY-minY)+120;
+  const scale=Math.min(W/w,H/h,1.1);
+  const cx=(minX+maxX)/2,cy=(minY+maxY)/2;
+  svg.transition().duration(620).ease(d3.easeCubicInOut)
+    .call(zoom.transform,d3.zoomIdentity.translate(W/2-cx*scale,H/2-cy*scale).scale(scale));
 }
 function updateMadhabBadge(){
   const badge=document.getElementById("madhab-badge");
@@ -1617,7 +2633,7 @@ const CATS=[
 /* ═══ TREE CONTROLS ══════════════════════════════════ */
 function resetZoom(){svg.transition().duration(400).ease(d3.easeCubicInOut).call(zoom.transform,d3.zoomIdentity.translate(W*.07,H/2).scale(.92));}
 function expandAll(){root.descendants().forEach(d=>{if(d._children){d.children=d._children;d._children=null;}});clearFocus();update(root);}
-function collapseToLevels(){root.descendants().forEach(d=>{if(d.depth>=2&&d.children){d._children=d.children;d.children=null;}});clearFocus();update(root);}
+function collapseToLevels(){root.descendants().forEach(d=>{if(d.depth>=1&&d.children){d._children=d.children;d.children=null;}});clearFocus();update(root);}
 
 /* ═══ VIEW TOGGLE ════════════════════════════════════ */
 function setView(v){
@@ -1648,8 +2664,10 @@ function buildList(){
         const idx=regBook(book,level.name,subj.name);
         const isQuran=subj.color===SC.quran;
         const mc=book.mem?" is-mem":"",st=book.mem?"":`style="color:${sc}bb"`;
-        const infoBtn=book.desc?"":`<a class="lv-btn" href="${book.info||"#"}" target="_blank" rel="noopener" onclick="event.stopPropagation()" title="Information">&#9432;</a>`;
-        const actionsHtml=isQuran?"":`<div class="lv-book-actions">${infoBtn}<a class="lv-btn" href="${book.pdf||"#"}" target="_blank" rel="noopener" onclick="event.stopPropagation()" title="PDF">&#8659;</a><a class="lv-btn" href="${book.video||"#"}" target="_blank" rel="noopener" onclick="event.stopPropagation()" title="Recording">&#9654;</a></div>`;
+        const infoBtn=(book.desc||book.noInfo)?"":`<a class="lv-btn" href="${book.info||"#"}" target="_blank" rel="noopener" onclick="event.stopPropagation()" title="Information">&#9432;</a>`;
+        const pdfBtn=book.noPdf?"":`<a class="lv-btn" href="${book.pdf||"#"}" target="_blank" rel="noopener" onclick="event.stopPropagation()" title="PDF">&#8659;</a>`;
+        const vidBtn=book.noVideo?"":`<a class="lv-btn" href="${book.video||"#"}" target="_blank" rel="noopener" onclick="event.stopPropagation()" title="Recording">&#9654;</a>`;
+        const actionsHtml=isQuran?"":`<div class="lv-book-actions">${infoBtn}${pdfBtn}${vidBtn}</div>`;
         html+=`<div class="lv-book"><span class="lv-book-num" style="color:${sc}44">${bi+1}</span><span class="lv-book-name${mc}" ${st} onclick="openBI(${idx})">${book.name}</span>${actionsHtml}</div>`;
       });
       html+=`</div></div>`;
@@ -1748,12 +2766,88 @@ function dismissSplash(){
 setTimeout(showTrackScreen, 2800);   // appears as splash starts fading
 setTimeout(()=>{const s=document.getElementById("splash");if(s)s.remove();},3400);
 
-update(root);
+update(root,true);
 svg.call(zoom.transform,d3.zoomIdentity.translate(W*.07,H/2).scale(.92));
 updateMadhabBadge();
 updateProgressBars();
-window.addEventListener("resize",()=>svg.attr("width",window.innerWidth).attr("height",window.innerHeight));
+updateReviewBadge();
 if(window.innerWidth<=700)setView("list");
+
+/* ── #7 Deep-linkable URLs ── */
+function slugify(s){return encodeURIComponent(s.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,""));}
+function setDeepLink(bookName){
+  try{
+    if(!bookName){history.replaceState(null,"","#");return;}
+    history.replaceState(null,"","#book="+slugify(bookName));
+  }catch(e){/* sandboxed iframe (about:srcdoc) blocks History API — ignore */}
+}
+function openFromHash(){
+  const h=decodeURIComponent(location.hash||"");
+  const m=h.match(/book=(.+)/);
+  if(!m)return;
+  const slug=m[1];
+  let found=null;
+  (function find(d){
+    if(!found&&d.data.type==="book"&&slugify(d.data.name)===slug){found=d;return;}
+    (d.children||d._children||[]).forEach(find);
+  })(root);
+  if(!found)return;
+  found.ancestors().forEach(a=>{if(a._children){a.children=a._children;a._children=null;}});
+  update(root);
+  setTimeout(()=>{
+    treeFn(root);
+    const k=Math.max(d3.zoomTransform(svg.node()).k,0.85);
+    svg.transition().duration(500).ease(d3.easeCubicInOut)
+      .call(zoom.transform,d3.zoomIdentity.translate(W/2-found.y*k,H/2-found.x*k).scale(k));
+    focusNode(found);openPanel(found.data,found);
+  },340);
+}
+// open deep link after splash/welcome settle
+if(location.hash.indexOf("book=")>-1){setTimeout(openFromHash,3500);}
+
+/* ── #10 PWA: inline manifest + offline service worker ── */
+(function setupPWA(){
+  // Only attempt PWA features on a real, top-level http(s) origin.
+  // Skip in sandboxed iframes, file://, blob:, or preview environments.
+  try{
+    const okProto = location.protocol==="https:" || location.protocol==="http:";
+    let topLevel=true;
+    try{topLevel = (window.self===window.top);}catch(e){topLevel=false;} // cross-origin frame
+    if(!okProto||!topLevel)return;
+
+    // Inline manifest via blob
+    const manifest={
+      name:"Talib al-Ilm — Islamic Studies Roadmap",
+      short_name:"Talib al-Ilm",
+      start_url:".",display:"standalone",
+      background_color:"#0c0904",theme_color:"#0c0904",
+      icons:[{
+        src:"data:image/svg+xml,"+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512"><rect width="512" height="512" fill="%230c0904"/><text x="256" y="320" font-size="280" text-anchor="middle" fill="%23e8c97a" font-family="serif">&#1649;</text></svg>'),
+        sizes:"512x512",type:"image/svg+xml",purpose:"any"
+      }]
+    };
+    const mBlob=new Blob([JSON.stringify(manifest)],{type:"application/json"});
+    const mLink=document.createElement("link");
+    mLink.rel="manifest";mLink.href=URL.createObjectURL(mBlob);
+    document.head.appendChild(mLink);
+
+    // Service worker (only same-origin http(s); blob SW is invalid, so guard tightly)
+    if("serviceWorker" in navigator){
+      const swCode='const CACHE="talib-v1";'
+        +'self.addEventListener("install",e=>{self.skipWaiting();});'
+        +'self.addEventListener("activate",e=>{e.waitUntil(self.clients.claim());});'
+        +'self.addEventListener("fetch",e=>{'
+        +'if(e.request.method!=="GET")return;'
+        +'e.respondWith(caches.open(CACHE).then(c=>c.match(e.request).then(hit=>{'
+        +'const net=fetch(e.request).then(res=>{if(res&&res.status===200&&e.request.url.indexOf(self.location.origin)===0)c.put(e.request,res.clone());return res;}).catch(()=>hit);'
+        +'return hit||net;})));});';
+      const swBlob=new Blob([swCode],{type:"application/javascript"});
+      const swURL=URL.createObjectURL(swBlob);
+      // wrap in Promise.resolve so any synchronous throw is swallowed
+      Promise.resolve().then(()=>navigator.serviceWorker.register(swURL)).catch(()=>{});
+    }
+  }catch(e){/* PWA optional — never block the app */}
+})();
 </script>
 </body>
 </html>
