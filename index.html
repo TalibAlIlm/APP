@@ -360,6 +360,10 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;opac
 .pbtn .icon{font-size:13px;width:18px;text-align:center;flex-shrink:0;opacity:.8}
 #panel-note{padding:12px 14px 18px;font-size:9px;color:var(--muted);
   line-height:1.7;border-top:1px solid var(--border);margin-top:auto}
+#panel-sources{padding:12px 14px 6px;font-size:8.5px;color:var(--muted);opacity:.72;
+  line-height:1.7;font-style:italic;border-top:1px solid var(--border);margin-top:auto}
+/* when the disclaimer shows, it owns the bottom-pin and the note tucks under it */
+#panel-sources:not([style*="none"]) ~ #panel-note{border-top:none;margin-top:0;padding-top:4px}
 
 /* Description block (replaces Info button for poems) */
 #panel-desc{padding:12px 14px 10px;border-bottom:1px solid var(--border)}
@@ -784,6 +788,7 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;opac
       <span class="verses-num" id="verses-num">0</span>
     </div>
   </div>
+  <div id="panel-sources" style="display:none">Linked sources were selected only for this specific text. The wider content of those websites and channels has not been reviewed, and their inclusion is not a blanket endorsement.</div>
   <div id="panel-note">Press Esc or click background to close.</div>
 </div>
 
@@ -2274,6 +2279,7 @@ function clearAnimPath(){animG.selectAll("*").remove();}
 /* ── Click / Focus ───────────────────────────────────── */
 function handleClick(event,d){
   event.stopPropagation();
+  _kbNode=d; // keep keyboard navigation in sync with clicks
   if(d.data.type==="book"){
     focusNode(d);openPanel(d.data,d);return;
   }
@@ -2281,6 +2287,7 @@ function handleClick(event,d){
   clearFocus();update(d);
 }
 function focusNode(d){
+  _kbNode=d; // keyboard nav resumes from whatever was last focused/clicked
   const anc=d.ancestors();
   focusedIds=new Set(anc.map(a=>a.id));focusedIds.add(d.id);
   update(d);
@@ -2345,6 +2352,13 @@ function openPanel(data,treeNode){
   btnVid.href=data.video||"#";
   btnPdf.style.display=data.noPdf?"none":"flex";
   btnVid.style.display=data.noVideo?"none":"flex";
+
+  // Sources disclaimer — shown only when at least one external link is present
+  const hasInfoLink = !hasDesc && !data.noInfo && data.info && data.info!=="#";
+  const hasPdfLink  = !data.noPdf && data.pdf && data.pdf!=="#";
+  const hasVidLink  = !data.noVideo && data.video && data.video!=="#";
+  const srcEl=document.getElementById("panel-sources");
+  if(srcEl) srcEl.style.display=(!isQuran && (hasInfoLink||hasPdfLink||hasVidLink))?"block":"none";
 
   // Verse counter
   const versesEl=document.getElementById("panel-verses");
