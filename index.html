@@ -51,10 +51,10 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;opac
 /* ═══ TRACK SELECTION SCREEN ════════════════════════ */
 #track-screen{
   position:fixed;inset:0;z-index:8000;
-  background:rgba(12,9,4,.98);
+  background:rgba(12,9,4,.985);
   display:none;flex-direction:column;align-items:center;
-  overflow-y:auto;padding:40px 20px 60px;
-  backdrop-filter:blur(8px);
+  overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;
+  padding:40px 20px 60px;
 }
 #track-screen.show{display:flex}
 #track-screen::-webkit-scrollbar{width:3px}
@@ -130,6 +130,30 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;opac
 
 .track-change-note{font-size:9px;letter-spacing:.08em;color:var(--muted);text-align:center}
 
+/* ── Specialization chips ── */
+.spec-grid{width:100%;display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:2px}
+.spec-chip{display:flex;flex-direction:column;align-items:flex-start;gap:3px;
+  background:rgba(255,255,255,.015);border:1px solid var(--border);border-radius:9px;
+  padding:11px 13px;cursor:pointer;transition:border-color .2s,background .2s,box-shadow .2s;text-align:left;
+  font-family:inherit;color:inherit}
+.spec-chip:hover{border-color:color-mix(in srgb,var(--sc,#c9a84c) 50%,transparent);background:color-mix(in srgb,var(--sc,#c9a84c) 6%,transparent)}
+.spec-chip.on{border-color:var(--sc,var(--gold));background:color-mix(in srgb,var(--sc,#c9a84c) 7%,transparent)}
+.spec-chip .sp-top{display:flex;align-items:center;gap:7px;width:100%}
+.spec-chip .sp-en{font-family:'Cinzel',serif;font-size:12px;color:var(--sc,var(--gold2));flex:1}
+.spec-chip .sp-ar{font-family:'Noto Naskh Arabic',serif;font-size:13px;color:#c8b48a;direction:rtl}
+.spec-chip .sp-meta{font-size:8.5px;letter-spacing:.06em;color:var(--muted);text-transform:uppercase}
+.spec-grid .sp-full{grid-column:1/-1}
+/* Memorize glow — CSS text-shadow (GPU-cheap) instead of per-node SVG filter,
+   so panning/zooming the tree stays smooth even with many ❀ nodes visible. */
+#canvas text.mem-glow{text-shadow:0 0 6px rgba(232,201,122,.46)}
+/* Shurūḥ (commentary) orbs — long-press a work; they pop out to the right of its name */
+.shuruh-layer{pointer-events:none}
+.shuruh-layer .sh-node{pointer-events:all;cursor:pointer}
+.sh-circ{fill:url(#shGrad);stroke:#4aa56e;stroke-width:.9px;filter:drop-shadow(0 0 5px rgba(45,130,75,.5))}
+.sh-node:hover .sh-circ{stroke:#8fdca8;filter:drop-shadow(0 0 10px rgba(80,180,115,.8))}
+.sh-label{font-size:9.5px;fill:#bfe6c8;font-family:'IBM Plex Mono',monospace;letter-spacing:.03em;
+  paint-order:stroke;stroke:#06140c;stroke-width:2.6px;stroke-linejoin:round;pointer-events:none}
+
 /* ── API Hadith Box ── */
 .api-hadith-box{margin:10px 0 14px;display:flex;flex-direction:column;gap:12px}
 .api-loading{display:flex;gap:6px;align-items:center;padding:10px 0}
@@ -166,9 +190,8 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;opac
 
 /* ═══ HEADER ════════════════════════════════════════ */
 #header{position:fixed;top:0;left:0;right:0;height:46px;z-index:200;
-  background:rgba(12,9,4,.97);border-bottom:1px solid var(--border);
-  box-shadow:0 1px 18px rgba(0,0,0,.55);backdrop-filter:blur(12px);
-  display:flex;align-items:center;padding:0 10px;gap:8px;will-change:transform;
+  background:linear-gradient(180deg,#0c0904 0%,#0c0904 82%,rgba(12,9,4,0) 100%);
+  display:flex;align-items:center;padding:0 10px;gap:8px;
   overflow:hidden;}
 #header h1{font-family:'Cinzel',serif;font-size:11px;letter-spacing:.18em;
   color:var(--gold);white-space:nowrap;text-transform:uppercase;
@@ -187,31 +210,30 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;opac
 .chip:hover{border-color:rgba(255,255,255,.1);color:var(--text)}
 .chip.active{color:#0c0904}
 .chip .ld{width:5px;height:5px;border-radius:50%;flex-shrink:0}
-.hbtn{margin-left:0;display:flex;gap:3px;flex-shrink:0;align-items:center}
-.hbtn button{background:transparent;border:1px solid var(--border);color:var(--muted);
-  font-family:'IBM Plex Mono',monospace;font-size:8.5px;letter-spacing:.06em;
-  padding:4px 7px;cursor:pointer;text-transform:uppercase;transition:all .16s;white-space:nowrap}
-.hbtn button:hover{border-color:var(--gold);color:var(--gold);background:rgba(201,168,76,.07)}
-.hbtn button.active{border-color:var(--gold);color:var(--gold);background:rgba(201,168,76,.1)}
-#btn-search{font-size:13px;padding:3px 7px}
-#btn-notes{
-  display:flex;align-items:center;gap:5px;
-  padding:4px 9px;
-  background:linear-gradient(135deg,rgba(201,168,76,.18),rgba(232,201,122,.08));
-  border:1px solid rgba(201,168,76,.55);
-  color:var(--gold2);
-  font-family:'IBM Plex Mono',monospace;font-size:8.5px;letter-spacing:.08em;
-  text-decoration:none;text-transform:uppercase;white-space:nowrap;
-  cursor:pointer;transition:all .22s ease;
-  box-shadow:0 0 10px rgba(201,168,76,.1),inset 0 0 6px rgba(201,168,76,.04);
-}
-#btn-notes:hover{
-  background:linear-gradient(135deg,rgba(201,168,76,.28),rgba(232,201,122,.14));
-  border-color:var(--gold2);color:var(--gold3);
-  box-shadow:0 0 18px rgba(201,168,76,.22),inset 0 0 10px rgba(201,168,76,.07);
-  transform:translateY(-1px);
-}
-#btn-notes .note-icon{font-size:11px;line-height:1}
+.brand{display:flex;align-items:center;gap:7px;flex-shrink:0}
+.hbtn{display:flex;gap:4px;flex-shrink:0;align-items:center}
+.hbtn .ic{width:32px;height:32px;display:flex;align-items:center;justify-content:center;
+  background:transparent;border:1px solid transparent;border-radius:9px;color:var(--muted);
+  cursor:pointer;transition:color .16s,background .16s,border-color .16s,transform .1s;padding:0;flex-shrink:0}
+.hbtn .ic svg{width:17px;height:17px;stroke:currentColor;fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.hbtn .ic svg .dot{fill:currentColor;stroke:none}
+.hbtn .ic:hover{color:var(--gold2);background:rgba(201,168,76,.08);border-color:rgba(201,168,76,.28)}
+.hbtn .ic:active{transform:translateY(.5px)}
+.hbtn .ic:focus-visible{outline:2px solid var(--gold);outline-offset:1px}
+.seg{display:flex;background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:10px;padding:2px;gap:2px}
+.seg .ic{width:30px;height:28px;border-radius:7px}
+.seg .ic.active{color:var(--gold2);background:linear-gradient(180deg,rgba(201,168,76,.22),rgba(201,168,76,.1));
+  box-shadow:inset 0 0 0 1px rgba(201,168,76,.32),0 0 10px -3px rgba(201,168,76,.3)}
+.tb-sep{width:1px;height:20px;background:var(--border);flex-shrink:0;margin:0 3px}
+#madhab-badge{display:flex;align-items:center;gap:7px;padding:6px 10px;border-radius:9px;
+  font-size:8.5px;letter-spacing:.09em;text-transform:uppercase;border:1px solid;cursor:pointer;
+  font-family:'IBM Plex Mono',monospace;white-space:nowrap;flex-shrink:0;transition:filter .16s,box-shadow .16s}
+#madhab-badge .mh-dot{width:8px;height:8px;border-radius:50%;background:currentColor;flex-shrink:0;box-shadow:0 0 7px currentColor}
+#madhab-badge .mh-cv{font-size:7px;opacity:.65}
+#madhab-badge:hover{filter:brightness(1.12);box-shadow:0 0 14px -3px currentColor}
+.hdd-ic svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.hdd-ic svg .dot{fill:currentColor;stroke:none}
+/* (apps button now uses the .ic icon style) */
 #madhab-badge{
   padding:3px 7px;border-radius:2px;font-size:8px;
   letter-spacing:.08em;text-transform:uppercase;
@@ -230,7 +252,38 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;opac
   font-family:'IBM Plex Mono',monospace;
 }
 #review-badge:hover{background:rgba(105,240,174,.2);box-shadow:0 0 10px rgba(105,240,174,.25)}
-#review-badge .rv-icon{font-size:11px;animation:rvSpin 6s linear infinite}
+#review-badge .rv-icon{font-size:11px;animation:rvSpin 6s linear infinite;will-change:transform}
+body.overlay-open #review-badge .rv-icon{animation-play-state:paused}
+
+/* ── Header dropdowns (Apps + Madhab) — list-view feel ── */
+.hdd{position:relative;display:flex;align-items:center}
+.hdd-caret{font-size:7px;margin-left:4px;opacity:.7}
+.hdd-menu{position:fixed;z-index:260;min-width:214px;max-width:86vw;max-height:74vh;overflow-y:auto;
+  background:linear-gradient(180deg,rgba(24,18,9,.99),rgba(12,9,4,.995));
+  border:1px solid rgba(201,168,76,.4);border-radius:9px;padding:6px;
+  box-shadow:0 16px 44px rgba(0,0,0,.6),0 0 22px rgba(201,168,76,.07);
+  opacity:0;transform:translateY(-6px);pointer-events:none;
+  transition:opacity .2s ease,transform .24s cubic-bezier(.22,1,.36,1)}
+.hdd.open .hdd-menu{opacity:1;transform:translateY(0);pointer-events:auto}
+.hdd-menu::-webkit-scrollbar{width:3px}.hdd-menu::-webkit-scrollbar-thumb{background:var(--border)}
+.hdd-item{display:flex;align-items:center;gap:10px;width:100%;text-align:left;
+  padding:9px 11px;border:none;background:transparent;border-radius:6px;cursor:pointer;
+  color:var(--text);font-family:'IBM Plex Mono',monospace;text-decoration:none;transition:background .14s}
+.hdd.open .hdd-menu .hdd-item{animation:cascadeIn .34s cubic-bezier(.22,1,.36,1) both}
+.hdd-item:hover{background:rgba(201,168,76,.1)}
+.hdd-item .hdd-ic{display:flex;align-items:center;justify-content:center;width:18px;flex-shrink:0;color:var(--gold2)}
+.hdd-item .hdd-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;box-shadow:0 0 7px currentColor}
+.hdd-item .hdd-tx{display:flex;flex-direction:column;gap:2px;min-width:0;flex:1}
+.hdd-item .hdd-tx b{font-size:10px;letter-spacing:.07em;text-transform:uppercase;font-weight:500;white-space:nowrap;color:var(--gold2)}
+.hdd-item .hdd-tx small{font-size:8px;letter-spacing:.02em;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hdd-item.active{background:rgba(201,168,76,.08)}
+.hdd-item.active::after{content:"\2713";margin-left:auto;padding-left:8px;font-size:11px;color:var(--gold2)}
+.hdd-divider{height:1px;background:var(--border);margin:5px 7px}
+.hdd-head{font-size:7.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);padding:6px 11px 5px}
+.hdd-foot{display:flex;align-items:center;gap:8px;width:100%;padding:9px 11px;border:none;background:transparent;
+  border-radius:6px;cursor:pointer;color:var(--muted);font-family:'IBM Plex Mono',monospace;
+  font-size:8.5px;letter-spacing:.1em;text-transform:uppercase;transition:background .14s,color .14s}
+.hdd-foot:hover{background:rgba(201,168,76,.07);color:var(--gold2)}
 #review-badge .rv-count{font-weight:600;font-variant-numeric:tabular-nums}
 @keyframes rvSpin{to{transform:rotate(360deg)}}
 
@@ -325,7 +378,7 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;opac
   display:flex;flex-direction:column;
   transform:translateX(var(--pw));opacity:0;
   transition:transform .42s cubic-bezier(.22,.61,.36,1),opacity .34s ease;
-  will-change:transform,opacity;overflow-y:auto;backdrop-filter:blur(16px)}
+  will-change:transform,opacity;overflow-y:auto}
 #panel.open{transform:translateX(0);opacity:1}
 /* Staggered reveal of panel contents when opening */
 #panel.open #panel-path{animation:panelItem .5s ease .08s both}
@@ -537,7 +590,7 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;opac
 .level-ring{pointer-events:none}
 .cbtn{width:28px;height:28px;background:rgba(19,15,8,.9);border:1px solid var(--border);
   color:var(--muted);font-size:14px;cursor:pointer;display:flex;align-items:center;
-  justify-content:center;transition:all .16s;backdrop-filter:blur(8px)}
+  justify-content:center;transition:all .16s}
 .cbtn:hover{border-color:var(--gold);color:var(--gold)}
 #hint{position:fixed;bottom:14px;left:50%;transform:translateX(-50%);
   font-size:9px;letter-spacing:.08em;color:#251a0a;pointer-events:none;
@@ -583,10 +636,7 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;opac
 .lv-book-name{font-size:9.5px;opacity:.72;flex:1;line-height:1.35;cursor:pointer;transition:opacity .13s}
 .lv-book-name:hover{opacity:1}
 .lv-book-name.is-mem{color:var(--gold2);opacity:1;
-  text-shadow:0 0 8px rgba(232,201,122,.45),0 0 18px rgba(201,168,76,.22);
-  animation:mpulse 3.2s ease-in-out infinite}
-@keyframes mpulse{0%,100%{text-shadow:0 0 6px rgba(232,201,122,.4),0 0 14px rgba(201,168,76,.18)}
-  50%{text-shadow:0 0 11px rgba(232,201,122,.7),0 0 26px rgba(201,168,76,.38)}}
+  text-shadow:0 0 8px rgba(232,201,122,.42),0 0 16px rgba(201,168,76,.18)}
 .lv-book-actions{display:flex;gap:3px;flex-shrink:0}
 .lv-btn{width:20px;height:20px;background:transparent;border:1px solid var(--border);
   color:var(--muted);font-size:9px;cursor:pointer;display:flex;align-items:center;
@@ -595,12 +645,15 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;opac
 
 /* ═══ MOBILE ══════════════════════════════════════════ */
 @media(max-width:700px){
-  #header{padding:0 8px;gap:6px;height:50px}
-  #header h1{font-size:9.5px;letter-spacing:.12em}
+  #header{padding:0 8px;gap:5px;height:50px}
+  #header h1{font-size:9px;letter-spacing:.1em}
   .legend{display:none}.hsep{display:none}
-  .hbtn{gap:3px}.hbtn button{font-size:8px;padding:4px 6px}
-  #btn-notes{font-size:11px;padding:5px 8px}
-  #btn-notes .note-icon{font-size:14px}
+  .hbtn{gap:3px}
+  .hbtn .ic{width:33px;height:33px}
+  .hbtn .ic svg{width:18px;height:18px}
+  .seg .ic{width:31px;height:29px}
+  #madhab-badge{padding:6px 8px;font-size:8px;gap:6px}
+  .tb-sep{margin:0 1px}
   #canvas{touch-action:none}
   #panel{width:100vw;top:50px;border-left:none;border-top:1px solid var(--border);
     transform:translateY(100%);opacity:0;
@@ -634,12 +687,17 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;opac
   .ppbtn{padding:16px 8px;font-size:10px}
   .ppbtn .ppicon{font-size:20px}
   .madhab-grid{grid-template-columns:1fr}
+  .spec-grid{grid-template-columns:1fr}
   .track-title{font-size:18px}.track-bism{font-size:36px}
 }
 @supports(padding:max(0px)){
   #header{padding-left:max(12px,env(safe-area-inset-left));padding-right:max(12px,env(safe-area-inset-right))}
   #listview{padding-bottom:env(safe-area-inset-bottom)}
   #panel{padding-bottom:env(safe-area-inset-bottom)}
+}
+/* Accessibility: honour reduced-motion — neutralise continuous CSS animations */
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
 }
 </style>
 <meta name="theme-color" content="#0c0904">
@@ -691,6 +749,12 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;opac
       </p>
     </div>
 
+    <p class="track-choose-title">Choose Your Specializations</p>
+    <p class="track-choose-sub">This step is optional. The Qur'an and the core mutūn are memorized by every student; selecting a specialization (takhaṣṣuṣ) simply adds its advanced texts to your ❀ memorization plan. Pick as many as you wish — or none, to keep only the core ḥifẓ.</p>
+    <div class="spec-grid" id="spec-grid"></div>
+
+    <div class="track-divider" style="margin-top:6px"></div>
+
     <p class="track-choose-title">Choose Your Fiqh Specialization</p>
     <p class="track-choose-sub">All four madhabs follow the Salafi ʿaqīdah. Choose your fiqh track. All other sciences remain fully visible for everyone.</p>
 
@@ -727,23 +791,58 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;opac
 
 <!-- HEADER -->
 <div id="header">
-  <h1>Talib al-&#x02BF;Ilm</h1>
+  <div class="brand">
+    <h1>Talib al-&#x02BF;Ilm</h1>
+  </div>
   <div class="hsep"></div>
   <div class="legend" id="chips"></div>
   <div class="hbtn">
-    <a id="btn-notes" href="https://talibalilm.github.io/NOTES/" target="_blank" rel="noopener">
-      <span class="note-icon">&#x270E;</span>Notes
-    </a>
+    <button class="ic" id="btn-search" onclick="toggleSearch()" title="Search (Ctrl/&#8984;+F)" aria-label="Search">
+      <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><line x1="20" y1="20" x2="16.5" y2="16.5"/></svg>
+    </button>
+    <div class="seg" role="group" aria-label="View mode">
+      <button class="ic active" id="btn-tree" onclick="setView('tree')" title="Tree view" aria-label="Tree view">
+        <svg viewBox="0 0 24 24"><circle class="dot" cx="12" cy="5" r="2.2"/><circle class="dot" cx="5" cy="19" r="2.2"/><circle class="dot" cx="19" cy="19" r="2.2"/><path d="M12 7.2V12M12 12H5v4.8M12 12h7v4.8"/></svg>
+      </button>
+      <button class="ic" id="btn-list" onclick="setView('list')" title="List view" aria-label="List view">
+        <svg viewBox="0 0 24 24"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg>
+      </button>
+    </div>
+    <div class="hdd" id="more-dd">
+      <button class="ic hdd-trigger" id="btn-more" onclick="toggleHdd('more-dd',event)" title="View controls" aria-haspopup="true" aria-expanded="false" aria-label="View controls">
+        <svg viewBox="0 0 24 24"><circle class="dot" cx="5" cy="12" r="1.8"/><circle class="dot" cx="12" cy="12" r="1.8"/><circle class="dot" cx="19" cy="12" r="1.8"/></svg>
+      </button>
+      <div class="hdd-menu" role="menu">
+        <div class="hdd-head">View</div>
+        <button class="hdd-item" onclick="closeAllHdd();expandAll()"><span class="hdd-ic"><svg viewBox="0 0 24 24"><path d="M8 9l4-4 4 4M8 15l4 4 4-4"/></svg></span><span class="hdd-tx"><b>Expand all</b><small>Open every branch</small></span></button>
+        <button class="hdd-item" onclick="closeAllHdd();collapseToLevels()"><span class="hdd-ic"><svg viewBox="0 0 24 24"><path d="M8 5l4 4 4-4M8 19l4-4 4 4"/></svg></span><span class="hdd-tx"><b>Collapse</b><small>Back to levels</small></span></button>
+        <button class="hdd-item" onclick="closeAllHdd();resetZoom()"><span class="hdd-ic"><svg viewBox="0 0 24 24"><path d="M5 9V6a1 1 0 0 1 1-1h3M15 5h3a1 1 0 0 1 1 1v3M19 15v3a1 1 0 0 1-1 1h-3M9 19H6a1 1 0 0 1-1-1v-3"/><circle class="dot" cx="12" cy="12" r="2"/></svg></span><span class="hdd-tx"><b>Recenter</b><small>Reset zoom &amp; position</small></span></button>
+      </div>
+    </div>
+    <span class="tb-sep"></span>
+    <div class="hdd" id="apps-dd">
+      <button class="ic hdd-trigger" id="btn-notes" onclick="toggleHdd('apps-dd',event)" title="Companion apps" aria-haspopup="true" aria-expanded="false" aria-label="Companion apps">
+        <svg viewBox="0 0 24 24"><rect x="4" y="4" width="6.5" height="6.5" rx="1.4"/><rect x="13.5" y="4" width="6.5" height="6.5" rx="1.4"/><rect x="4" y="13.5" width="6.5" height="6.5" rx="1.4"/><rect x="13.5" y="13.5" width="6.5" height="6.5" rx="1.4"/></svg>
+      </button>
+      <div class="hdd-menu" role="menu">
+        <div class="hdd-head">Companion Apps</div>
+        <a class="hdd-item" href="https://talibalilm.github.io/NOTES/" target="_blank" rel="noopener" role="menuitem" onclick="closeAllHdd()">
+          <span class="hdd-ic"><svg viewBox="0 0 24 24"><path d="M14 4l6 6M4 20l1-5L16 4l4 4L9 19l-5 1z"/></svg></span>
+          <span class="hdd-tx"><b>Notes</b><small>Record benefits from your Shaykh</small></span>
+        </a>
+        <a class="hdd-item" href="https://talibalilm.github.io/PLANNER/" target="_blank" rel="noopener" role="menuitem" onclick="closeAllHdd()">
+          <span class="hdd-ic"><svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="16" rx="2"/><path d="M4 9h16M8 3v4M16 3v4"/></svg></span>
+          <span class="hdd-tx"><b>Planner</b><small>Order your day around the prayers</small></span>
+        </a>
+      </div>
+    </div>
+    <div class="hdd" id="madhab-dd">
+      <span id="madhab-badge" class="hdd-trigger" onclick="toggleHdd('madhab-dd',event)" title="Change madhhab" aria-haspopup="true" aria-expanded="false"></span>
+      <div class="hdd-menu" id="madhab-menu" role="menu"></div>
+    </div>
     <span id="review-badge" onclick="openReviewSession()" title="Texts due for review" style="display:none">
       <span class="rv-icon">&#10227;</span><span class="rv-count">0</span>
     </span>
-    <span id="madhab-badge" onclick="showTrackScreen()" title="Change Madhab Track"></span>
-    <button id="btn-search" onclick="toggleSearch()" title="Search (Ctrl+F)">&#x2315;</button>
-    <button id="btn-tree" class="active" onclick="setView('tree')">Tree</button>
-    <button id="btn-list" onclick="setView('list')">List</button>
-    <button onclick="expandAll()">Expand</button>
-    <button onclick="collapseToLevels()">Collapse</button>
-    <button onclick="resetZoom()">Reset</button>
   </div>
 </div>
 
@@ -982,22 +1081,26 @@ const TREE={name:"Talib al-Ilm",type:"root",children:[
     b("Juz 28",true),
   ]),
   s("Aqeedah",SC.aqeedah,[
-    b("Al-Usul al-Thalatha — The Three Fundamentals",false,
+    b("Al-Qasida al-Ha'iyyah — Ibn Abi Dawud",true,
+      "https://www.sifatusafwa.com/en/salaf-books-on-sunnah/al-qasidah-al-ha-iyyah-by-imam-ibn-abi-dawud-316h.html",
+      "https://files.a-alqasim.com/books/mutoon/081801AlHaiyyahFiAsSunnah.pdf",
+      "https://www.youtube.com/watch?v=dSNv2ZOJoVY"),
+    b("Al-Usul al-Thalatha — The Three Fundamentals",true,
       "https://www.sifatusafwa.com/en/matn-of-aqeedah/thalathat-ul-usul-shurut-us-salat-al-qawa-id-ul-arba-a-harakat.html",
       "https://a-alqasim.com/books/02mutoon/",
       "https://www.youtube.com/watch?v=z4HQ_Z82J5g"),
-    b("Al-Qawa'id al-Arba'a — The Four Principles",false,
+    b("Al-Qawa'id al-Arba'a — The Four Principles",true,
       "https://www.sifatusafwa.com/en/matn-of-aqeedah/thalathat-ul-usul-shurut-us-salat-al-qawa-id-ul-arba-a-harakat.html",
       "https://a-alqasim.com/books/02mutoon/",
       "https://www.youtube.com/watch?v=rkOyb-s1fLs"),
-    b("Nawaqid al-Islam — Nullifiers of Islam",false,
+    b("Nawaqid al-Islam — Nullifiers of Islam",true,
       "#",
       "https://a-alqasim.com/books/02mutoon/",
       "https://www.youtube.com/watch?v=9y-JmPnN2bI",
       "It consists of ten nullifiers of Islam compiled by Imam Muhammad bin Abdul Wahhab as a sincere advice to Muslims, so that they may know them and beware of them."),
   ]),
   s("Fiqh",SC.fiqh,[
-    b("Al-Nadhm al-Bayin fi al-Fiqh al-Muta'in",false,
+    b("Al-Nadhm al-Bayin fi al-Fiqh al-Muta'in",true,
       "#",
       "https://drive.google.com/file/d/12KfLPx4WsPHIN5iE_vO_NV4Q9LepoSzz/view",
       "https://www.youtube.com/watch?v=eYPhS4QKMUE",
@@ -1029,25 +1132,25 @@ const TREE={name:"Talib al-Ilm",type:"root",children:[
       "https://archive.org/details/1-1-3/النحو%20الواضح%20-%201%20%281-3%20small%29/",
       "#",
       null,null,{noVideo:true}),
-    b("Al-Ajurrumiyya",false,
+    b("Al-Ajurrumiyya",true,
       "https://www.sifatusafwa.com/en/matn-of-arabic/matn-al-ajrumiyyah-harakat.html",
       "https://darpdfs.org/product/matn-text-of-al-muqaddimah-al-ajroomyah/",
       "https://www.youtube.com/watch?v=oSbQm9QPJBM"),
   ]),
   s("Tajweed",SC.tajweed,[
-    b("Tuhfat al-Atfal",false,
+    b("Tuhfat al-Atfal",true,
       "https://www.sifatusafwa.com/en/matn-of-tajweed/mandhumah-tuhfat-al-atfal-matn-fi-tajwid-al-quran.html",
       "https://a-alqasim.com/books/03mutoon/",
       "https://www.youtube.com/watch?v=mhn1lxHQlGY"),
   ]),
   s("Usool al-Fiqh",SC.usool,[
-    b("Al-Waraqat — al-Juwayni",false,
+    b("Al-Waraqat — al-Juwayni",true,
       "https://www.sifatusafwa.com/en/fiqh-ahkaam/matn-al-waraqat-tashil-at-turuqat-fi-nidham-al-waraqat-harakat.html",
       "https://a-alqasim.com/books/0500mutoon/?vol=2#pdf-reader",
       "https://www.youtube.com/watch?v=2cP-qygQFe8"),
   ]),
   s("Usool al-Tafsir",SC.tafsir,[
-    b("Muqaddima fi Usool al-Tafsir — Ibn Taymiyya",false,
+    b("Muqaddima fi Usool al-Tafsir — Ibn Taymiyya",true,
       "https://www.sifatusafwa.com/en/sciences-of-tafsir/muqaddimah-fi-usul-at-tafsir-ibn-taymiyyah.html",
       "https://a-alqasim.com/books/081201muqaddimahtafseer/",
       "https://www.youtube.com/watch?v=uASWPOco8iE"),
@@ -1074,15 +1177,15 @@ const TREE={name:"Talib al-Ilm",type:"root",children:[
     b("Juz 25",true),
   ]),
   s("Aqeedah",SC.aqeedah,[
-    b("Luma al-I'tiqad — Ibn Qudama",false,
+    b("Luma al-I'tiqad — Ibn Qudama",true,
       "https://www.sifatusafwa.com/en/matn-of-aqeedah/matn-lum-at-al-i-tiqad-of-imam-ibn-qudama-al-maqdissi.html",
       "https://www.salafidemontreal.com/wp-content/plugins/wonderplugin-pdf-embed/pdfjslight/web/viewer.html?v=2&file=https://www.salafidemontreal.com/wp-content/uploads/2022/04/متن-لمعة-الاعتقاد.pdf",
       "https://www.youtube.com/watch?v=FOqu0hvAj2c"),
-    b("Kitab al-Tawhid — Ibn Abd al-Wahhab",false,
+    b("Kitab al-Tawhid — Ibn Abd al-Wahhab",true,
       "https://www.sifatusafwa.com/en/matn-of-aqeedah/kitab-tawheed-100-harakat-and-full-authentication.html",
       "https://a-alqasim.com/books/03mutoon/",
       "https://www.youtube.com/watch?v=avU9S1QxX-0&list=PLjmCBC6YwAF9gFzuIA1IVofxDAnvnFExu"),
-    b("Kashf al-Shubuhat",false,
+    b("Kashf al-Shubuhat",true,
       "https://www.sifatusafwa.com/en/aqeeda-creed/matn-kashf-ash-shubuhaat-muhammad-ibn-abd-al-wahhab.html",
       "https://a-alqasim.com/books/080401kashf/",
       "https://www.youtube.com/watch?v=UPgC3slB9zE&list=PLlDH1PXiY8k-iB2QGkpUngURAPcRKiZ-J"),
@@ -1093,7 +1196,7 @@ const TREE={name:"Talib al-Ilm",type:"root",children:[
       "https://binthabt.al3ilm.net/up/sites/7/muttmmamat.pdf",
       "#",
       null,null,{noVideo:true}),
-    b("Nuzhat al-Huloom fi Nadhm al-Ajurrumiyya",false,
+    b("Nuzhat al-Huloom fi Nadhm al-Ajurrumiyya",true,
       "#",
       "https://prmoussaismail.com/vendor/pdfjs/web/viewer.html?file=https%3A%2F%2Fprmoussaismail.com%2Fmedia%2Fpdf%2Falnaho%2Faldr-albhy-nthm-alagromy-copie-Dxwt%2Fstream",
       "#",
@@ -1106,7 +1209,7 @@ const TREE={name:"Talib al-Ilm",type:"root",children:[
       "https://www.youtube.com/watch?v=jvR6OXJDfWI"),
   ]),
   s("Mustalah al-Hadith",SC.mustalah,[
-    b("Al-Mandhuma al-Bayquniyya",false,
+    b("Al-Mandhuma al-Bayquniyya",true,
       "https://www.sifatusafwa.com/en/matn-of-hadeeth/matn-al-bayqoonia-fi-ilm-mustalah-al-hadeeth.html",
       "https://a-alqasim.com/books/0400mutoon/",
       "https://www.youtube.com/watch?v=I1wJE4MJkfE"),
@@ -1118,7 +1221,7 @@ const TREE={name:"Talib al-Ilm",type:"root",children:[
       "https://www.youtube.com/watch?v=hm3UVvlwqds&list=PL2KOHInv_fdQSjsqmX65vqX5Wnd835x5r"),
   ],"hanbali"),
   s("Fiqh — Shafi'i",SC.fiqh,[
-    b("Matn al-Ghaya wal-Taqrib — Abu Shuja'",false,
+    b("Matn al-Ghaya wal-Taqrib — Abu Shuja'",true,
       "https://www.sifatusafwa.com/en/fiqh-shafii/mukhtasar-abi-shuja-fiqh-shafi-i-100-harakat.html",
       "https://archive.org/details/Mhtasr-Abi.Sojaa/page/68/mode/2up",
       "https://www.youtube.com/watch?v=S9pm6d44Ze4"),
@@ -1136,7 +1239,7 @@ const TREE={name:"Talib al-Ilm",type:"root",children:[
       "https://www.youtube.com/watch?v=FAeBGuhms8U&list=PLk44dUp36v3XOhqz-TKFy7397IbrQ0iei"),
   ],"hanafi"),
   s("Tajweed / Qira'at",SC.tajweed,[
-    b("Al-Muqaddima al-Jazariyya",false,
+    b("Al-Muqaddima al-Jazariyya",true,
       "https://www.sifatusafwa.com/en/matn-of-tajweed/al-muqaddimat-ul-jazariyyah-fi-tajweed-verified-by-shaykh-ayman-suwayd.html",
       "https://a-alqasim.com/books/070301jazariyyah/",
       "https://www.youtube.com/watch?v=PmXOAtqFSs4"),
@@ -1172,7 +1275,7 @@ const TREE={name:"Talib al-Ilm",type:"root",children:[
       null,null,{noInfo:true,noVideo:true}),
   ]),
   s("Adab",SC.adab,[
-    b("Mandhuma Abi Ishaq al-Ilbiri",false,
+    b("Mandhuma Abi Ishaq al-Ilbiri",true,
       "#",
       "https://a-alqasim.com/books/0400mutoon/",
       "https://www.youtube.com/watch?v=fpNgaxw9GxE",
@@ -1184,7 +1287,7 @@ const TREE={name:"Talib al-Ilm",type:"root",children:[
       null,null,{noInfo:true}),
   ]),
   s("Seerah",SC.seerah,[
-    b("Al-Urjuza al-Mi'iyya",false,
+    b("Al-Urjuza al-Mi'iyya",true,
       "#",
       "https://a-alqasim.com/books/071101almeiyyahseerah/",
       "https://www.youtube.com/watch?v=QHFmykuaKxA",
@@ -1202,7 +1305,7 @@ const TREE={name:"Talib al-Ilm",type:"root",children:[
     b("Juz 5",true),
   ]),
   s("Aqeedah",SC.aqeedah,[
-    b("Al-Aqida al-Wasitiyya — Ibn Taymiyya",false,
+    b("Al-Aqida al-Wasitiyya — Ibn Taymiyya",true,
       "https://www.sifatusafwa.com/en/matn-of-aqeedah/matn-al-aqidah-al-wasitiyyah-of-ibn-taymiyyah.html",
       "https://a-alqasim.com/books/0400mutoon/",
       "https://www.youtube.com/watch?v=PBrVEwmhzfE&list=PLlDH1PXiY8k-HF-krVb3r7ECzwtTbPmul"),
@@ -1225,13 +1328,13 @@ const TREE={name:"Talib al-Ilm",type:"root",children:[
       "https://www.sifatusafwa.com/en/matn-of-arabic/matn-qatr-an-nadaa-ibn-hisham.html",
       "https://archive.org/details/a546n/page/n17/mode/2up",
       "https://www.youtube.com/watch?v=QBp3ccqgGdk"),
-    b("Mulhat al-I'rab — al-Hariri",false,
+    b("Mulhat al-I'rab — al-Hariri",true,
       "https://www.sifatusafwa.com/en/matn-of-arabic/matn-mulhatul-i-rab-al-hariri-al-basri-516h-harakat.html",
       "https://a-alqasim.com/books/081602milhataleraabhawaashee/",
       "https://www.youtube.com/watch?v=Sz4vtiTO4EI"),
   ]),
   s("Sarf — Morphology",SC.sarf,[
-    b("Lamiyyat al-Af'al — Ibn Malik",false,
+    b("Lamiyyat al-Af'al — Ibn Malik",true,
       "https://www.sifatusafwa.com/en/matn-of-arabic/lamiat-ul-af-aal-by-ibn-malik-matn-fi-sarf-harakat.html",
       "https://a-alqasim.com/books/081001laamiyyahalafaal/",
       "https://www.youtube.com/watch?v=pC3OhhxUOfw"),
@@ -1243,7 +1346,7 @@ const TREE={name:"Talib al-Ilm",type:"root",children:[
       "https://www.youtube.com/watch?v=QTAFBvwwF9c&list=PLGeu80ApFDrk_fN8CWFlIPF1xeEPNDkWo"),
   ]),
   s("Mustalah al-Hadith",SC.mustalah,[
-    b("Nukhbat al-Fikar — Ibn Hajar al-Asqalani",false,
+    b("Nukhbat al-Fikar — Ibn Hajar al-Asqalani",true,
       "https://www.sifatusafwa.com/en/matn-of-hadeeth/matn-nukhbah-al-fikar-fi-mustalah-ahl-al-athar-ibn-hajar-al-asqalani.html",
       "https://a-alqasim.com/books/080101nukhbah/",
       "https://www.youtube.com/watch?v=K8wslW11tJU"),
@@ -1325,7 +1428,7 @@ const TREE={name:"Talib al-Ilm",type:"root",children:[
       "https://archive.org/details/0643_20210109/mode/2up",
       "#",null,null,{noVideo:true})]),
   s("Usool al-Fiqh — Hanbali",SC.usool,[
-    b("Al-Nadhm al-Saghir fi Usool al-Fiqh",false,
+    b("Al-Nadhm al-Saghir fi Usool al-Fiqh",true,
       "#",
       "https://takw.in/files/النظم%20الصغير%20من%20مختصر%20التحرير%20في%20أصول%20الفقه%20-%20عامر%20بهجت.pdf",
       "https://www.youtube.com/watch?v=6Sd_Q_FY8JE&list=PLvWT3mo2nrcNJnhLLdOWL-DenIt9PK606",
@@ -1349,14 +1452,14 @@ const TREE={name:"Talib al-Ilm",type:"root",children:[
       "https://www.sifatusafwa.com/en/usool-al-fiqh/al-qawaaid-al-fiqhiyyah-by-shaykh-as-sa-dee-harakat.html",
       "https://archive.org/details/qwaed-fiqhiya/page/3/mode/2up",
       "https://www.youtube.com/watch?v=7jzHPEKImMA"),
-    b("Mandhuma al-Qawa'id al-Fiqhiyya — Ibn Uthaymin",false,
+    b("Mandhuma al-Qawa'id al-Fiqhiyya — Ibn Uthaymin",true,
       "https://www.sifatusafwa.com/en/matn-of-fiqh/2-risala-on-usool-fiqh-with-harakat-sa-dee-and-uthaymeen.html",
       "#",
       "https://www.youtube.com/watch?v=S2Dcc_7y20w",
       null,null,{noPdf:true}),
   ]),
   s("Adab / Tazkiyya",SC.adab,[
-    b("Mandhuma Asbab Hayat al-Qulub — Ibn Atiq",false,
+    b("Mandhuma Asbab Hayat al-Qulub — Ibn Atiq",true,
       "#",
       "https://www.zad.tv/wp-content/uploads/2021/06/أسباب-حياة-القلوب.pdf",
       "https://www.youtube.com/watch?v=GrscI63aMuY",
@@ -1402,61 +1505,172 @@ const TREE={name:"Talib al-Ilm",type:"root",children:[
     b("Juz 11",true),b("Juz 12",true),b("Juz 13",true),b("Juz 14",true),b("Juz 15",true),
   ]),
   s("Aqeedah",SC.aqeedah,[
-    b("Al-Aqida al-Tahawiyya + Sharh Ibn Abi al-Izz"),
-    b("Al-Fatawa al-Hamawiyya — Ibn Taymiyya"),
-    b("Al-Risala al-Tadmuriyya — Ibn Taymiyya"),
-    b("Sullam al-Wusool ila Ilm al-Usool",true),
+    b("Sharh al-Aqeeda at-Tahawiyyah li Ibn Abil-'Izz al-Hanafi",true,
+      "https://www.sifatusafwa.com/en/aqeeda-creed/sharh-al-aqeeda-at-tahawiyyah-li-ibn-abil-izz-al-hanafi.html",
+      "https://d1.islamhouse.com/data/ar/ih_books/single/ar_explaining_al-aqida_al-tahaweia.pdf",
+      "https://www.youtube.com/watch?v=Mh_mx6-uIR0&list=PLhyoo_Xb2E0hUKKiYm_16RmPckWjWeywD"),
+    b("Al-Fatawa al-Hamawiyya — Ibn Taymiyya",true,
+      "https://www.sifatusafwa.com/en/treatise-of-aqeedah/al-hamawiyyah-al-kubra-shaykh-al-islam-ibn-taymiyyah.html",
+      "https://a-alqasim.com/books/081501alhamawiyyah/",
+      "https://www.youtube.com/watch?v=B4i_mzdrc1U&list=PLGmJAooO_nSJjaPWnsjgUSj2-R51pDixy"),
+    b("Al-Risala al-Tadmuriyya — Ibn Taymiyya",true,
+      "https://www.sifatusafwa.com/en/salaf-books-on-sunnah/ar-risalah-at-tadmuriyyah-of-shaykh-al-islam-ibn-taymiyyah.html",
+      "https://a-alqasim.com/books/0821attadmuriyyah/",
+      "https://www.youtube.com/watch?v=1tZqJ4PStYk"),
+    b("Sullam al-Wusool ila Ilm al-Usool",true,
+      "https://www.sifatusafwa.com/en/matn-of-aqeedah/sullam-al-wusool-ila-ilm-al-usool-hafiz-hakimi.html",
+      "https://d1.islamhouse.com/data/ar/ih_books/single/ar_Salim_AlWosool.pdf",
+      "https://www.youtube.com/watch?v=4UFKnPZLlyM"),
   ]),
-  s("Nahw — Arabic Grammar",SC.nahw,[b("Alfiyyat Ibn Malik — 1002 verses",true)]),
+  s("Nahw — Arabic Grammar",SC.nahw,[b("Alfiyyat Ibn Malik — 1002 verses",true,
+      "https://www.sifatusafwa.com/en/grammar-an-nahw/matn-alfiat-ibn-maalik-with-harakat.html",
+      "https://a-alqasim.com/books/060301alfiyyah/",
+      "https://www.youtube.com/watch?v=0YXj22fYejc&list=PLridsOiBWh6DExlUxp8MgNGhA8O7ALPtw")]),
   s("Hadith",SC.hadith,[
-    b("Riyad al-Salihin — Imam al-Nawawi",true),
-    b("Al-Lu'lu' wal-Marjan",true),
-    b("Al-Muharrar fi al-Hadith — Ibn Abd al-Hadi"),
+    b("Riyad al-Salihin — Imam al-Nawawi",true,
+      "https://www.sifatusafwa.com/en/thematic-and-misc-collections/riyad-as-saaliheen-by-imam-an-nawawi.html",
+      "https://d1.islamhouse.com/data/ar/ih_books/single_01/ar_Riyad_usSaliheen.pdf",
+      "https://www.youtube.com/watch?v=HaKsWwm2GzU&list=PLR-wSuUv3U1z1If_ANqpdtcjyV70wmqVK&index=10"),
+    b("Al-Lu'lu' wal-Marjan",true,
+      "https://www.sifatusafwa.com/en/classical-collections-of-hadeeth/al-looloo-wal-marjaan-all-the-hadeeth-muttafaqun-alayhi.html",
+      "https://d1.islamhouse.com/data/ar/ih_books/single6/ar_loaloa_wa_margan.pdf",
+      "https://www.youtube.com/watch?v=jd65YMUcwsg&list=PLHbBws_W_5386z9EMXEigEPrR9zV97gYc"),
+    b("Al-Muharrar fi al-Hadith — Ibn Abd al-Hadi",true,
+      "https://www.sifatusafwa.com/en/thematic-and-misc-collections/al-muharrar-fil-hadith-imam-ibn-abdelhadi-al-hanbali-744h.html",
+      "https://a-alqasim.com/books/080601almuharrar/",
+      "https://www.youtube.com/watch?v=5xszGEu6AkE"),
   ]),
-  s("Mustalah al-Hadith",SC.mustalah,[b("Alfiyyat al-Hadith al-Iraqi",true)]),
+  s("Mustalah al-Hadith",SC.mustalah,[b("Alfiyyat al-Hadith al-Iraqi",true,
+      "https://www.sifatusafwa.com/en/matn-of-hadeeth/alfiat-al-hadith-by-al-hafidh-al-iraqi-100-harakat.html",
+      "https://a-alqasim.com/books/080502alfiyyahaliraaqihawaashee/",
+      "https://www.youtube.com/watch?v=HzBOm9HJUc0")]),
   s("Fiqh — Hanbali",SC.fiqh,[
-    b("Zad al-Mustaqni' — al-Hajjawi"),
-    b("Ar-Rawdul-Murbi' Matn Zad al-Mustaqni'",true),
-    b("Al-Nadhm al-Jali ma al-Ahmirar"),
-    b("Ma la Yasi' al-Hanbali Jahluhu"),
+    b("Zad al-Mustaqni' — al-Hajjawi",true,
+      "https://www.sifatusafwa.com/en/fiqh-hanbali/zaad-al-mustaqni-al-hajaawi-100-harakat-.html",
+      "https://a-alqasim.com/books/0602zaad/",
+      "https://www.youtube.com/watch?v=oq7fiUhFWos"),
+    b("Ar-Rawdul-Murbi' Matn Zad al-Mustaqni'",false,
+      "https://www.sifatusafwa.com/en/fiqh-hanbali/al-rawd-al-murbi-sharh-zad-al-mustaqni-fiqh-hanbali.html",
+      "https://a-alqasim.com/الكتب/كتب%20الجد/حاشية%20الروض%20المربع%20شرح%20زاد%20المستقنع/harumu1.pdf",
+      "https://www.youtube.com/watch?v=e9OVCeoPgZs&list=PLBOng7CIGmTrkoWhLa5HLjHxLokeSUzDv"),
+    b("Al-Nadhm al-Jali ma al-Ahmirar",true,
+      "#",
+      "https://t.me/hanbal_s/410",
+      "https://www.youtube.com/watch?v=d_erOw7qNis&list=PLPk56GrIFwT0qrakh6C0oKhivh1t6BE-V&index=1",
+      "A wonderful arjūza by Shaykh Anwar al-Fuḍaylī, may Allah protect him, in which he versified most of the contents of Zād al-Mustaqniʿ — yielding 889 verses. He then added eight verses in two places, and Shaykh ʿĀmir Bahjat added 74 verses, the additions known as al-Aḥmirār (the Red Additions). The poem was then reviewed and read many times with editing and verification, so it appears in its most beautiful form.",
+      971),
+    b("Ma la Yasi' al-Hanbali Jahluhu",false,
+      "#",
+      "https://t.me/c/1269314107/222025",
+      "https://www.youtube.com/watch?v=ZhwwWoK4sAs",
+      "A concise rajaz poem by Shaykh Ḥamza ibn Muṣṭafā Yaʿqūb versifying the names of the most prominent Ḥanbalī scholars, their dates of death, and their most important works. It begins with a brief biography of Imam Aḥmad ibn Ḥanbal, then the ṭabaqāt (layers) of his companions, then the methodology of determining the relied-upon (muʿtamad) opinions of the school in general, along with other important benefits and issues.",
+      95),
   ],"hanbali"),
   s("Fiqh — Shafi'i",SC.fiqh,[
-    b("Matn al-Zubad — Ibn Raslan"),
-    b("Umdat al-Salik wa Uddat al-Nasik"),
-    b("Minhaj al-Talibin — Imam al-Nawawi",true),
+    b("Matn al-Zubad — Ibn Raslan",false,
+      "https://www.sifatusafwa.com/en/fiqh-shafii/matn-az-zubad-safwatu-zubda-by-ibn-raslan.html",
+      "https://feqhup.com/uploads/144085387876351.pdf",
+      "https://www.youtube.com/watch?v=G-HzprJxXuw"),
+    b("Umdat al-Salik wa Uddat al-Nasik",false,
+      "https://www.sifatusafwa.com/en/fiqh-shafii/-umdat-us-saalik-wa-uddat-un-naasik-fiqh-shafii-harakat.html",
+      "https://archive.org/details/4320pdf/mode/2up",
+      "https://www.youtube.com/watch?v=z5WwBhTkuF4"),
+    b("Minhaj al-Talibin — Imam al-Nawawi",true,
+      "https://www.sifatusafwa.com/en/fiqh-shafii/minhaj-at-talibin-by-imam-an-nawawi-fiqh-shafi-i.html",
+      "https://archive.org/details/MinhajTalibinNawawi/mode/2up",
+      "https://www.youtube.com/watch?v=naCXWquBr5Q&list=PLFCSL6fix-ZrY4nrNEQRymLfCSFJ8biXv"),
   ],"shafi"),
   s("Fiqh — Maliki",SC.fiqh,[
-    b("Mukhtasar Khalil — Khalil ibn Ishaq al-Maliki",true),
+    b("Mukhtasar Khalil — Khalil ibn Ishaq al-Maliki",false,
+      "https://www.sifatusafwa.com/en/fiqh-maliki/mukhtasar-khalil-harakat-fiqh-maliki.html",
+      "https://feqhup.com/uploads/13594541351.pdf",
+      "https://www.youtube.com/watch?v=YitEEaxSWzU&list=PL7T65dx7pYZzoiN26JKr53aMxLoLzxr_L"),
   ],"maliki"),
   s("Fiqh — Hanafi",SC.fiqh,[
-    b("Matn al-Wiqaya — Sadr al-Shari'a"),
-    b("Al-Hidaya — al-Marghinani",true),
+    b("Matn al-Wiqaya — Sadr al-Shari'a",false,
+      "#",
+      "https://archive.org/details/20200518_20200518_0121/mode/2up",
+      "https://www.youtube.com/watch?v=RSedP1PwhXk&list=PLAJpmKKhLbKwGsQb8yDTij6EKEwGlE1CF",
+      null,null,{noInfo:true}),
+    b("Al-Hidaya — al-Marghinani",false,
+      "https://www.sifatusafwa.com/en/fiqh-hanafi/al-hidayah-sharh-bidayat-al-mubtadi-al-marghinani.html",
+      "https://archive.org/details/hidaya-bkdash/hshbm0/",
+      "#",null,null,{noVideo:true}),
   ],"hanafi"),
   s("Tajweed / Qira'at",SC.tajweed,[
-    b("Al-Durra al-Mudiyya — Ibn al-Jazari",true),
-    b("Tayyibat al-Nashr fi al-Qira'at al-Ashr — Ibn al-Jazari",true),
-    b("Hidayat al-Murtab fi Mutashabihat al-Kitab"),
+    b("Al-Durra al-Mudiyya — Ibn al-Jazari",true,
+      "https://www.sifatusafwa.com/en/matn-of-tajweed/matn-ad-durrah-by-imam-al-jazari-harakat.html",
+      "https://a-alqasim.com/books/082001addurrahalmudeeah/",
+      "https://www.youtube.com/watch?v=bLZotV8oj2E"),
+    b("Tayyibat al-Nashr fi al-Qira'at al-Ashr — Ibn al-Jazari",true,
+      "https://www.sifatusafwa.com/en/matn-of-tajweed/tayyiba-an-nashr-fi-qira-aati-al-ashr-ibn-al-jazary.html",
+      "https://archive.org/details/tajjibatuannashrfialqiraatialashribnaljazari/mode/2up",
+      "https://www.youtube.com/watch?v=yTsTDxnRqw0"),
+    b("Hidayat al-Murtab fi Mutashabihat al-Kitab",false,
+      "https://www.sifatusafwa.com/en/memorising-the-qur-an/hidayah-al-murtab-poem-on-ayaat-mutashabbih-as-sakhawi.html",
+      "https://d1.islamhouse.com/data/ar/ih_books/single3/ar_Hadayt_AlMortab.pdf",
+      "https://www.youtube.com/watch?v=l-0HGANJiPM"),
   ]),
-  s("Tafsir",SC.tafsir,[b("Ma'alim al-Tanzil — al-Baghawi")]),
-  s("Usool al-Tafsir",SC.tafsir,[b("Al-Itqan fi Ulum al-Quran — al-Suyuti")]),
+  s("Tafsir",SC.tafsir,[
+    b("Ma'alim al-Tanzil — al-Baghawi",false,
+      "https://www.sifatusafwa.com/en/entire-tafsir/tafsir-al-baghawy-ma-alim-at-tanzil.html",
+      "https://archive.org/details/1174Pdf..1/mode/2up",
+      "https://www.youtube.com/watch?v=NlZgfJ-gALY&list=PLBOng7CIGmTr9es867FqCC30x5Ge-o7GB"),
+  ]),
+  s("Usool al-Tafsir",SC.tafsir,[
+    b("Al-Itqan fi Ulum al-Quran — al-Suyuti",false,
+      "https://www.sifatusafwa.com/en/sciences-of-tafsir/al-itqaan-fi-uloom-al-qur-aan-as-suyuti.html",
+      "https://d1.islamhouse.com/data/ar/ih_books/single_01/ar_Alitkan_fi_Aloum_Alquran.pdf",
+      "#",null,null,{noVideo:true}),
+  ]),
   s("Usool al-Fiqh",SC.usool,[
-    b("Mukhtasar al-Tahrir — Ibn al-Najjar al-Hanbali"),
-    b("Maraqi al-Su'ud — al-Shinqiti",true),
+    b("Mukhtasar al-Tahrir — Ibn al-Najjar al-Hanbali",false,
+      "https://www.sifatusafwa.com/en/fiqh-hanbali/mukhtasar-at-tahrir-fi-usul-al-fiqh-ibn-an-najar.html",
+      "https://archive.org/details/20201012_20201012_1222/mode/2up",
+      "https://www.youtube.com/watch?v=ZMKh1uGV6uE"),
+    b("Maraqi al-Su'ud — al-Shinqiti",true,
+      "#",
+      "https://archive.org/details/MaraghiAssuoud/mode/2up",
+      "https://www.youtube.com/watch?v=ZptNcg0TaLc&list=PLIkVd_x0tRkXJmFJ6hrtRWC1pYPdfcTA8",
+      null,null,{noInfo:true}),
   ]),
   s("Balagha — Rhetoric",SC.balagha,[
-    b("Mi'at al-Ma'ani wal-Bayan"),
-    b("Uqud al-Juman — al-Suyuti",true),
+    b("Mi'at al-Ma'ani wal-Bayan",true,
+      "#",
+      "https://a-alqasim.com/books/081301miatalmaaniwaalbayaan/",
+      "https://www.youtube.com/watch?v=OK97bGRUSkA",
+      null,null,{noInfo:true}),
+    b("Uqud al-Juman — al-Suyuti",true,
+      "#",
+      "https://archive.org/details/pegion2015_gmail_20150204/mode/2up",
+      "https://www.youtube.com/watch?v=z3Hf924YIKk",
+      null,null,{noInfo:true}),
   ]),
-  s("Science of Poetry",SC.poetry,[b("Al-Kafi fi al-Arud wal-Qawafi")]),
   s("Qawa'id Fiqhiyya",SC.qawaid,[
-    b("Al-Musakka al-Kawthariyya"),
-    b("Al-Mandhuma al-Fadghariyya"),
-    b("Al-Fara'id al-Bahiyya — Abu Bakr al-Ahdal",true),
+    b("Al-Mandhuma al-Fadghariyya",true),
+    b("Al-Fara'id al-Bahiyya — Abu Bakr al-Ahdal",true,
+      "#",
+      "https://archive.org/details/20200714_20200714_1000/mode/2up",
+      "https://www.youtube.com/watch?v=ogY5EUGcMGA",
+      null,null,{noInfo:true}),
   ]),
-  s("Seerah",SC.seerah,[b("Alfiyyat al-Sirat al-Nabawiyya — al-Iraqi",true)]),
+  s("Seerah",SC.seerah,[
+    b("Alfiyyat al-Sirat al-Nabawiyya — al-Iraqi",true,
+      "#",
+      "https://a-alqasim.com/books/080701alfiyyahaliraaqiseerah/",
+      "https://www.youtube.com/watch?v=RznEaJu_n40",
+      null,null,{noInfo:true}),
+  ]),
   s("Arabic Literature",SC.lit,[
-    b("Al-Maqamat al-Hariri — al-Hariri",true),
-    b("Al-Mu'allaqat — Pre-Islamic Odes",true),
+    b("Al-Maqamat al-Hariri — al-Hariri",true,
+      "https://www.sifatusafwa.com/en/reading-books/maqamat-al-hariri-harakat.html",
+      "https://archive.org/details/20201206_20201206_1551/mode/2up",
+      "https://www.youtube.com/watch?v=lJv95W29nUI&list=PLYh0SJhKwDYWKkcRud82Ize7oT3H0WNgo"),
+    b("Al-Mu'allaqat — Pre-Islamic Odes",true,
+      "#",
+      "https://archive.org/details/20240516_20240516_0905/mode/2up",
+      "https://www.youtube.com/watch?v=c2MqNYwCeGA&list=PLVDPmH__e5s2xvVPmAxEnqGHP3ymD8Vd2",
+      null,null,{noInfo:true}),
   ]),
 ]},
 
@@ -1470,9 +1684,9 @@ const TREE={name:"Talib al-Ilm",type:"root",children:[
   s("Aqeedah — Encyclopedic",SC.aqeedah,[
     b("A'lam al-Sunna al-Mansura — al-Hakami"),
     b("Arwa al-Iman wa Dhura al-Jinan"),
-    b("Al-Qasida al-Nuniyya — al-Qahtani al-Andalusi"),
+    b("Al-Qasida al-Nuniyya — al-Qahtani al-Andalusi",true),
     b("Al-Kafiya al-Shafiya — Ibn al-Qayyim"),
-    b("Al-Safariniyya — al-Saffarini"),
+    b("Al-Safariniyya — al-Saffarini",false),
   ]),
   s("Nahw — Mastery",SC.nahw,[
     b("Sharh Ibn Aqil ala al-Alfiyya"),
@@ -1501,7 +1715,7 @@ const TREE={name:"Talib al-Ilm",type:"root",children:[
   s("Fiqh — Hanbali",SC.fiqh,[
     b("Umdat al-Talib li-Nayl al-Mathalib"),
     b("Balaght al-Wusool"),b("Rasm al-Mufti al-Hanbali"),
-    b("Malh al-Nad fi Nadhm Zad al-Mustaqni'"),
+    b("Malh al-Nad fi Nadhm Zad al-Mustaqni'",true),
     b("Al-Mughni — Ibn Qudama (10 volumes)"),
   ],"hanbali"),
   s("Fiqh — Shafi'i",SC.fiqh,[
@@ -1528,8 +1742,8 @@ const TREE={name:"Talib al-Ilm",type:"root",children:[
     b("Tafsir al-Tabari — Full (Jami' al-Bayan)"),
   ]),
   s("Qawa'id Fiqhiyya — Advanced",SC.qawaid,[
-    b("Nadhm al-Qawa'id wal-Usool al-Jami'a"),
-    b("Al-Mandhuma fi Usool al-Fiqh wa Qawa'iduhu"),
+    b("Nadhm al-Qawa'id wal-Usool al-Jami'a",true),
+    b("Al-Mandhuma fi Usool al-Fiqh wa Qawa'iduhu",true),
     b("Taqrib al-Mutaba'id"),
   ]),
   s("Islamic History",SC.history,[
@@ -1540,6 +1754,83 @@ const TREE={name:"Talib al-Ilm",type:"root",children:[
   s("Adab / Tazkiyya",SC.adab,[b("Al-Wabil al-Sayyib — Ibn al-Qayyim")]),
 ]}
 ]};
+
+/* ═══ SPECIALIZATION MAP ════════════════════════════ */
+const SPEC_MAP={
+  "Mandhuma al-Ruh wal-Rayhan — al-Qadi":"core",
+  "Mandhuma al-Tawhid wal-Iman":"core",
+  "Mandhuma Ahsan al-Akhlaq":"core",
+  "Al-Mandhuma al-Munira fi Muhimm Ilm al-Sira":"core",
+  "Khulasa Ta'dhim al-Ilm — al-Usaymi":"core",
+  "Adhkar wal-Adaab — Mutoon Series":"core",
+  "Al-Qasida al-Ha'iyyah — Ibn Abi Dawud":"core",
+  "Al-Usul al-Thalatha — The Three Fundamentals":"core",
+  "Al-Qawa'id al-Arba'a — The Four Principles":"core",
+  "Nawaqid al-Islam — Nullifiers of Islam":"core",
+  "Al-Arba'un al-Nawawiyya":"core",
+  "Al-Ziyadat — 8 Hadiths of Ibn Rajab":"core",
+  "Al-Ajurrumiyya":"core",
+  "Tuhfat al-Atfal":"core",
+  "Al-Waraqat — al-Juwayni":"core",
+  "Muqaddima fi Usool al-Tafsir — Ibn Taymiyya":"core",
+  "Al-Rahabiyya":"core",
+  "Luma al-I'tiqad — Ibn Qudama":"core",
+  "Kitab al-Tawhid — Ibn Abd al-Wahhab":"core",
+  "Kashf al-Shubuhat":"core",
+  "Umdat al-Ahkam — al-Maqdisi":"core",
+  "Al-Mandhuma al-Bayquniyya":"core",
+  "Al-Muqaddima al-Jazariyya":"core",
+  "Mandhuma al-Zamzami fi Usool al-Tafsir":"core",
+  "Mandhuma Abi Ishaq al-Ilbiri":"core",
+  "Mandhuma al-Adab al-Shar'iyya al-Sughra":"core",
+  "Mandhuma Asbab Hayat al-Qulub — Ibn Atiq":"core",
+  "Al-Aqida al-Wasitiyya — Ibn Taymiyya":"aqida",
+  "Sharh al-Aqeeda at-Tahawiyyah li Ibn Abil-'Izz al-Hanafi":"aqida",
+  "Al-Fatawa al-Hamawiyya — Ibn Taymiyya":"aqida",
+  "Al-Risala al-Tadmuriyya — Ibn Taymiyya":"aqida",
+  "Sullam al-Wusool ila Ilm al-Usool":"aqida",
+  "Al-Qasida al-Nuniyya — al-Qahtani al-Andalusi":"aqida",
+  "Bulugh al-Maram — Ibn Hajar al-Asqalani":"hadith",
+  "Nukhbat al-Fikar — Ibn Hajar al-Asqalani":"hadith",
+  "Riyad al-Salihin — Imam al-Nawawi":"hadith",
+  "Al-Lu'lu' wal-Marjan":"hadith",
+  "Al-Muharrar fi al-Hadith — Ibn Abd al-Hadi":"hadith",
+  "Alfiyyat al-Hadith al-Iraqi":"hadith",
+  "Al-Nadhm al-Bayin fi al-Fiqh al-Muta'in":"fiqh",
+  "Matn al-Ghaya wal-Taqrib — Abu Shuja'":"fiqh",
+  "Al-Durar al-Bahiyya — al-Shawkani":"fiqh",
+  "Al-Nadhm al-Saghir fi Usool al-Fiqh":"fiqh",
+  "Mandhuma al-Qawa'id al-Fiqhiyya — Ibn Uthaymin":"fiqh",
+  "Zad al-Mustaqni' — al-Hajjawi":"fiqh",
+  "Al-Nadhm al-Jali ma al-Ahmirar":"fiqh",
+  "Minhaj al-Talibin — Imam al-Nawawi":"fiqh",
+  "Maraqi al-Su'ud — al-Shinqiti":"fiqh",
+  "Al-Mandhuma al-Fadghariyya":"fiqh",
+  "Al-Fara'id al-Bahiyya — Abu Bakr al-Ahdal":"fiqh",
+  "Malh al-Nad fi Nadhm Zad al-Mustaqni'":"fiqh",
+  "Nadhm al-Qawa'id wal-Usool al-Jami'a":"fiqh",
+  "Al-Mandhuma fi Usool al-Fiqh wa Qawa'iduhu":"fiqh",
+  "Nuzhat al-Huloom fi Nadhm al-Ajurrumiyya":"arabic",
+  "Mulhat al-I'rab — al-Hariri":"arabic",
+  "Lamiyyat al-Af'al — Ibn Malik":"arabic",
+  "Banat Su'ad — Ka'b ibn Zuhayr":"arabic",
+  "Lamiyyat al-Arab — al-Shanfara":"arabic",
+  "Alfiyyat Ibn Malik — 1002 verses":"arabic",
+  "Mi'at al-Ma'ani wal-Bayan":"arabic",
+  "Uqud al-Juman — al-Suyuti":"arabic",
+  "Al-Maqamat al-Hariri — al-Hariri":"arabic",
+  "Al-Mu'allaqat — Pre-Islamic Odes":"arabic",
+  "Hirz al-Amani — Al-Shatibiyya (7 Qira'at)":"tafsir",
+  "Al-Durra al-Mudiyya — Ibn al-Jazari":"tafsir",
+  "Tayyibat al-Nashr fi al-Qira'at al-Ashr — Ibn al-Jazari":"tafsir",
+  "Al-Urjuza al-Mi'iyya":"sira",
+  "Alfiyyat al-Sirat al-Nabawiyya — al-Iraqi":"sira"
+};
+// Tag every memorize book node with its specialization track (core = always shown)
+(function tagSpec(node){
+  if(node.type==='book'){ if(node.mem){ node.spec=SPEC_MAP[node.name]||'core'; } return; }
+  (node.children||[]).forEach(tagSpec);
+})(TREE);
 
 /* ═══ SEARCH INDEX ═══════════════════════════════════ */
 const SI=[];
@@ -1555,6 +1846,51 @@ const regBook=(bk,ln,sn)=>{const i=BREG.length;BREG.push({...bk,ln,sn});return i
 /* ═══ STATE ═══════════════════════════════════════════ */
 let focusedIds=null, activeFilters=new Set(), listBuilt=false;
 let chosenMadhab=(function(){try{return localStorage.getItem('talib_madhab')||null;}catch(e){return null;}})();
+let chosenSpecs=(function(){try{const a=JSON.parse(localStorage.getItem('talib_specs')||'[]');return new Set(Array.isArray(a)?a:[]);}catch(e){return new Set();}})();
+// A text shows ❀ if it is memorize-flagged AND (core OR its track is selected)
+function effMem(b){ if(!b||!b.mem)return false; const sp=b.spec||'core'; return sp==='core'||chosenSpecs.has(sp); }
+const SPEC_TRACKS=[
+  {k:'aqida', en:'ʿAqīda',              ar:'العقيدة',c:SC.aqeedah},
+  {k:'fiqh',  en:'Fiqh &amp; Uṣūl',     ar:'الفقه والأصول',c:SC.fiqh},
+  {k:'hadith',en:'Ḥadīth &amp; Muṣṭalaḥ',ar:'الحديث والمصطلح',c:SC.hadith},
+  {k:'tafsir',en:'ʿUlūm al-Qurʾān',ar:'علوم القرآن',c:SC.tafsir},
+  {k:'sira',  en:'Sīra &amp; Tārīkh',   ar:'السيرة والتاريخ',c:SC.seerah},
+  {k:'arabic',en:'Arabic &amp; Balāgha',ar:'اللغة والبلاغة',c:SC.nahw}
+];
+function specCount(k){let n=0;for(const key in SPEC_MAP){if(SPEC_MAP[key]===k)n++;}return n;}
+function renderSpecChips(){
+  const g=document.getElementById('spec-grid');if(!g)return;
+  g.innerHTML=SPEC_TRACKS.map(t=>{
+    const on=chosenSpecs.has(t.k);
+    const c=specCount(t.k);
+    const meta=c>0?(c+' texts to memorize (❀)'):'reading track';
+    return `<button type="button" class="spec-chip${on?' on':''}" data-spec="${t.k}" style="--sc:${t.c}" onclick="toggleSpec('${t.k}')">`
+      +`<span class="sp-top"><span class="sp-en">${t.en}</span></span>`
+      +`<span class="sp-meta">${meta}</span></button>`;
+  }).join('');
+}
+function toggleSpec(k){
+  const on=!chosenSpecs.has(k);
+  if(on)chosenSpecs.add(k);else chosenSpecs.delete(k);
+  try{localStorage.setItem('talib_specs',JSON.stringify([...chosenSpecs]));}catch(e){}
+  // Update ONLY the tapped chip in place — no innerHTML rebuild, so labels never
+  // flicker/blank and it's far cheaper than re-rendering the whole grid.
+  const chip=document.querySelector('.spec-chip[data-spec="'+k+'"]');
+  if(chip)chip.classList.toggle('on',on);
+  applySpecsToTree();
+}
+function applySpecsToTree(){
+  if(typeof root!=='undefined'&&root)update(root,true); // instant re-render, no transition churn
+  if(listBuilt){listBuilt=false;buildList();}
+  updateReviewBadge();
+  // refresh an open panel so its ❀ label/review status reflect the new selection
+  if(_currentPanelBook){
+    const data=SI.find(b=>b.name===_currentPanelBook);
+    const me=document.getElementById("panel-mem");
+    if(data&&me)me.textContent=effMem(data)?"❀ Memorize this text":"";
+    renderPanelReview(_currentPanelBook);
+  }
+}
 let progressData=(function(){
   try{const d=JSON.parse(localStorage.getItem('talib_progress')||'{}');return (d&&typeof d==='object')?d:{};}
   catch(e){return {};}
@@ -1631,7 +1967,7 @@ function getDueReviews(){
   const t=todayStr();
   return Object.keys(reviewData)
     .filter(n=>reviewData[n].due<=t)
-    .filter(n=>SI.some(b=>b.name===n&&b.mem)); // only valid memorize texts
+    .filter(n=>SI.some(b=>b.name===n&&effMem(b))); // only currently-active memorize texts
 }
 function updateReviewBadge(){
   const due=getDueReviews();
@@ -1719,7 +2055,7 @@ function updateNodeText(name){
       d3.select(this).select('text')
         .transition().duration(250)
         .attr('text-decoration',null)
-        .attr('fill',p==='finished'?'#69f0ae':p==='started'?'#e8c97a':(d.data.mem?'#e8c97a':nColor(d)+'99'));
+        .attr('fill',p==='finished'?'#69f0ae':p==='started'?'#e8c97a':(effMem(d.data)?'#e8c97a':nColor(d)+'99'));
     }
   });
 }
@@ -1754,8 +2090,8 @@ function updateNodeRing(name){
         .attr('stroke-width',p==='finished'?2:1.5);
       d3.select(this).select('circle')
         .transition().duration(280)
-        .attr('stroke',p==='finished'?'#69f0ae':p==='started'?'#e8c97a':null)
-        .attr('fill',p==='finished'?'#69f0ae18':p==='started'?'#e8c97a18':null);
+        .attr('stroke',p==='finished'?'#69f0ae':p==='started'?'#e8c97a':nColor(d))
+        .attr('fill',p==='finished'?'#69f0ae18':p==='started'?'#e8c97a18':nColor(d)+(d.data.type==="book"?"18":d.data.type==="subject"?"2c":"3e"));
     }
   });
 }
@@ -1774,7 +2110,7 @@ function refreshPanelProgress(name){
 function renderPanelReview(name){
   const el=document.getElementById('panel-review');
   if(!el)return;
-  const isMem=SI.some(b=>b.name===name&&b.mem);
+  const isMem=SI.some(b=>b.name===name&&effMem(b));
   const r=reviewData[name];
   if(isMem && r){
     const today=todayStr();
@@ -1879,7 +2215,7 @@ async function fetchIbnSirinStatement(){
   box.remove();
 }
 function exportProgress(){
-  const payload={version:2,date:new Date().toISOString(),progress:progressData,reviews:reviewData};
+  const payload={version:2,date:new Date().toISOString(),progress:progressData,reviews:reviewData,specs:[...chosenSpecs],madhab:chosenMadhab};
   const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
   const a=document.createElement('a');
   a.href=URL.createObjectURL(blob);
@@ -1910,7 +2246,19 @@ function importProgress(e){
         });
         reviewData=cr;saveReviews();
       }
+      // import specializations + madhab track if present
+      if(parsed&&Array.isArray(parsed.specs)){
+        chosenSpecs=new Set(parsed.specs.filter(x=>typeof x==="string"));
+        try{localStorage.setItem('talib_specs',JSON.stringify([...chosenSpecs]));}catch(e){}
+        renderSpecChips();
+      }
+      if(parsed&&typeof parsed.madhab==="string"){
+        chosenMadhab=parsed.madhab;
+        try{localStorage.setItem('talib_madhab',parsed.madhab);}catch(e){}
+        updateMadhabBadge();
+      }
       saveProgress();updateProgressBars();update(root);
+      if(listBuilt){listBuilt=false;buildList();}
       setTimeout(()=>{updateLevelRings();updateReviewBadge();},350);
     }catch{alert('Invalid progress file.');}
     e.target.value='';
@@ -1997,15 +2345,21 @@ const g=svg.append("g");
 const bgG=g.append("g").attr("pointer-events","none");
 const lkG=g.append("g").attr("pointer-events","none");
 const ndG=g.append("g");
+const shG=g.append("g").attr("class","shuruh-layer"); // shurūḥ orbs (pans/zooms with tree)
+const _shGrad=svg.append("defs").append("radialGradient").attr("id","shGrad").attr("cx","36%").attr("cy","28%").attr("r","80%");
+_shGrad.append("stop").attr("offset","0%").attr("stop-color","#2d8350");
+_shGrad.append("stop").attr("offset","45%").attr("stop-color","#114a27");
+_shGrad.append("stop").attr("offset","100%").attr("stop-color","#061f0d");
 const animG=g.append("g").attr("pointer-events","none");
 
 const zoom=d3.zoom().scaleExtent([0.05,4]).on("zoom",e=>g.attr("transform",e.transform));
+zoom.on("start.shuruh",()=>{if(_shuruhOpen)dismissShuruh();});
 svg.call(zoom).on("dblclick.zoom",null);
 svg.on("click",()=>closePanel());
 document.getElementById("zi").onclick=()=>zoom.scaleBy(svg,1.3);
 document.getElementById("zo").onclick=()=>zoom.scaleBy(svg,.77);
 
-const treeFn=d3.tree().nodeSize([22,264]).separation((a,b)=>{
+const treeFn=d3.tree().nodeSize([27,292]).separation((a,b)=>{
   // Extra vertical gap between top-level (level) nodes so their progress rings don't touch
   if(a.depth===1&&b.depth===1)return 2.4;
   return a.parent===b.parent?1:1.3;
@@ -2023,7 +2377,7 @@ function nColor(d){
   if(d.data.type==="subject")return d.data.color||"#888";
   return(d.parent&&d.parent.data.color)||"#a0a0c0";
 }
-function nR(d){return d.data.type==="root"?13:d.data.type==="level"?9:d.data.type==="subject"?6:4;}
+function nR(d){return d.data.type==="root"?16:d.data.type==="level"?11:d.data.type==="subject"?8:5;}
 function nLabel(d){
   if(d.data.type==="root")return"Talib al-Ilm";
   if(d.data.type==="level")return d.data.name+" — "+(d.data.subtitle||"");
@@ -2082,6 +2436,7 @@ function lOpacity(d){
 /* ── Update ──────────────────────────────────────────── */
 let fillTimer;
 function update(src,instant){
+  if(_shuruhOpen)dismissShuruh(true); // never leave a stale bloom after a re-layout
   const td=treeFn(root);
   const nodes=td.descendants(),links=td.links();
   const DUR=instant?0:440, NDUR=instant?0:440;
@@ -2112,10 +2467,10 @@ function update(src,instant){
     .attr("stroke","none").attr("stroke-width",1.5)
     .attr("opacity",0);
   ndE.append("text").attr("dy","0.31em").attr("pointer-events","none").attr("opacity",0)
-    .attr("font-size",d=>d.data.type==="root"?"12px":d.data.type==="level"?"10px":d.data.type==="subject"?"9px":"8.5px")
-    .attr("font-weight",d=>d.data.mem?"500":"400")
-    .attr("fill",d=>{if(d.data.mem&&d.data.type==="book")return"#e8c97a";const c=nColor(d);return d.data.type==="root"||d.data.type==="level"?c:d.data.type==="subject"?c+"cc":c+"99";})
-    .attr("filter",d=>d.data.mem&&d.data.type==="book"?"url(#gm)":null)
+    .attr("font-size",d=>d.data.type==="root"?"15px":d.data.type==="level"?"12.5px":d.data.type==="subject"?"11px":"10.5px")
+    .attr("font-weight",d=>effMem(d.data)?"500":"400")
+    .attr("fill",d=>{if(effMem(d.data)&&d.data.type==="book")return"#e8c97a";const c=nColor(d);return d.data.type==="root"||d.data.type==="level"?c:d.data.type==="subject"?c+"cc":c+"99";})
+    .classed("mem-glow",d=>effMem(d.data)&&d.data.type==="book")
     .attr("letter-spacing",d=>d.data.type==="level"?"0.1em":"0.03em")
     .text(nLabel);
   ndE.on("mouseover",function(e,d){
@@ -2126,6 +2481,11 @@ function update(src,instant){
       d3.select(this).select("circle").transition().duration(170).attr("r",nR(d)).attr("stroke-width",d.data.type==="root"?2:1.5);
     })
     .on("click",handleClick)
+    .on("pointerdown",lpStart)
+    .on("pointermove",lpMove)
+    .on("pointerup",lpEnd)
+    .on("pointercancel",lpEnd)
+    .on("contextmenu",e=>e.preventDefault())
     .style("cursor","pointer");
 
   // ── Fan-out entrance ──
@@ -2155,13 +2515,15 @@ function update(src,instant){
     .attr("x",d=>{const r=nR(d);return(d.children||d._children)?-(r+5):(r+5);})
     .attr("text-anchor",d=>(d.children||d._children)?"end":"start")
     .attr("text-decoration",null)
+    .attr("font-weight",d=>effMem(d.data)?"500":"400")
+    .classed("mem-glow",d=>effMem(d.data)&&d.data.type==="book")
     .attr("fill",d=>{
       if(d.data.type==="book"){
         const p=progressData[d.data.name];
         if(p==="finished")return"#69f0ae";
         if(p==="started")return"#e8c97a";
       }
-      if(d.data.mem&&d.data.type==="book")return"#e8c97a";
+      if(effMem(d.data)&&d.data.type==="book")return"#e8c97a";
       const c=nColor(d);
       return d.data.type==="root"||d.data.type==="level"?c:d.data.type==="subject"?c+"cc":c+"99";
     });
@@ -2247,10 +2609,10 @@ function drawFills(){
     const xs=all.map(n=>n.y),ys=all.map(n=>n.x);
     const color=LC[lv.data.level]||"#c9a84c";
     bgG.append("rect")
-      .attr("x",Math.min(...xs)-18).attr("y",Math.min(...ys)-16)
-      .attr("width",Math.max(...xs)-Math.min(...xs)+240)
-      .attr("height",Math.max(...ys)-Math.min(...ys)+32)
-      .attr("rx",6).attr("fill",color+"08").attr("stroke",color+"1a").attr("stroke-width",.8);
+      .attr("x",Math.min(...xs)-22).attr("y",Math.min(...ys)-20)
+      .attr("width",Math.max(...xs)-Math.min(...xs)+300)
+      .attr("height",Math.max(...ys)-Math.min(...ys)+40)
+      .attr("rx",7).attr("fill",color+"08").attr("stroke",color+"1a").attr("stroke-width",.8);
   });
 }
 
@@ -2277,7 +2639,74 @@ function animatePath(d){
 function clearAnimPath(){animG.selectAll("*").remove();}
 
 /* ── Click / Focus ───────────────────────────────────── */
+/* ═══ SHURŪḤ (commentary) RADIAL BLOOM ═══════════════════
+   Long-press a work to bloom its shurūḥ as dark-green satellite nodes.
+   Architecture preview — placeholder entries on the first work; real
+   shurūḥ names + links will be filled in later, in shaa ALLAH. */
+const SHURUH_MAP={
+  "Mandhuma al-Ruh wal-Rayhan — al-Qadi":[
+    {n:"Sharḥ — placeholder I",l:""},
+    {n:"Sharḥ — placeholder II",l:""},
+    {n:"Sharḥ — placeholder III",l:""}
+  ]
+};
+let _lpTimer=null,_lpFired=false,_lpStart=null,_shuruhOpen=false;
+const LP_MS=550, LP_MOVE=9;
+function hasShuruh(d){return !!(d&&d.data&&d.data.type==="book"&&Array.isArray(SHURUH_MAP[d.data.name])&&SHURUH_MAP[d.data.name].length);}
+function lpStart(e,d){
+  _lpFired=false;            // fresh press — never let a stale long-press suppress this tap
+  if(!hasShuruh(d))return;
+  _lpStart={x:e.clientX,y:e.clientY};
+  clearTimeout(_lpTimer);
+  _lpTimer=setTimeout(()=>{_lpFired=true;_lpTimer=null;bloomShuruh(d);},LP_MS);
+}
+function lpMove(e){
+  if(!_lpTimer||!_lpStart)return;
+  if(Math.hypot(e.clientX-_lpStart.x,e.clientY-_lpStart.y)>LP_MOVE){clearTimeout(_lpTimer);_lpTimer=null;}
+}
+function lpEnd(){clearTimeout(_lpTimer);_lpTimer=null;}
+function bloomShuruh(d){
+  dismissShuruh(true);
+  const list=SHURUH_MAP[d.data.name];if(!list)return;
+  _shuruhOpen=true;
+  const cx=d.y, cy=d.x;                          // node centre in tree coordinates
+  // Measure the work's name so the orbs begin just after it
+  let nameW=130;
+  ndG.selectAll(".nd").each(function(nd){
+    if(nd===d){const t=d3.select(this).select("text").node();
+      if(t){try{nameW=t.getComputedTextLength();}catch(e){}}}
+  });
+  const gb=shG.append("g").attr("class","shuruh-bloom");
+  let cursor=cx+nR(d)+10+nameW+22;               // start just past the end of the name
+  list.forEach((s,i)=>{
+    const orbX=cursor+7;
+    const sg=gb.append("g").attr("class","sh-node")
+      .attr("transform",`translate(${cx},${cy})`).attr("opacity",0)
+      .style("cursor",s.l?"pointer":"default");
+    sg.append("circle").attr("class","sh-circ").attr("r",0);
+    const tEl=sg.append("text").attr("class","sh-label").attr("x",12).attr("dy","0.32em").text(s.n);
+    sg.append("title").text(s.n);
+    let lw=60;try{lw=tEl.node().getComputedTextLength();}catch(e){}
+    cursor=orbX+12+lw+18;                         // advance horizontally past this orb + label
+    sg.on("pointerdown",ev=>ev.stopPropagation())
+      .on("click",ev=>{ev.stopPropagation(); if(s.l){window.open(s.l,"_blank","noopener");dismissShuruh();}});
+    // pop in one after another, just like the tree's circle nodes
+    sg.transition().duration(380).delay(i*95).ease(d3.easeCubicOut)
+      .attr("transform",`translate(${orbX},${cy})`).attr("opacity",1);
+    sg.select(".sh-circ").transition().duration(360).delay(i*95).ease(d3.easeBackOut.overshoot(2)).attr("r",8.5);
+  });
+}
+function dismissShuruh(immediate){
+  const blooms=shG.selectAll(".shuruh-bloom");
+  if(!blooms.size()){_shuruhOpen=false;return;}
+  _shuruhOpen=false;
+  if(immediate){blooms.interrupt().remove();return;}
+  blooms.selectAll(".sh-node").transition().duration(190).ease(d3.easeCubicIn).attr("opacity",0);
+  blooms.transition().delay(150).remove();
+}
 function handleClick(event,d){
+  if(_lpFired){_lpFired=false;event.stopPropagation();return;} // long-press handled the bloom
+  if(_shuruhOpen)dismissShuruh();
   event.stopPropagation();
   _kbNode=d; // keep keyboard navigation in sync with clicks
   if(d.data.type==="book"){
@@ -2321,7 +2750,7 @@ function openPanel(data,treeNode){
     ph=`<span>${data.ln}</span>&nbsp;›&nbsp;<span>${data.sn}</span>`;
   }
   document.getElementById("panel-path").innerHTML=ph;
-  document.getElementById("panel-mem").textContent=data.mem?"❀ Memorize this text":"";
+  document.getElementById("panel-mem").textContent=effMem(data)?"❀ Memorize this text":"";
 
   // Progress buttons
   const p=getBookProgress(data.name);
@@ -2400,7 +2829,7 @@ function closePanel(){
 let _kbNode=null; // currently keyboard-focused node OBJECT (not id)
 
 document.addEventListener("keydown",e=>{
-  if(e.key==="Escape"){closePanel();closeSearch();return;}
+  if(e.key==="Escape"){if(_shuruhOpen)dismissShuruh();closePanel();closeSearch();return;}
   if((e.ctrlKey||e.metaKey)&&(e.key==="f"||e.key==="F")){e.preventDefault();toggleSearch();return;}
   // ignore if typing in an input/textarea
   const ae=document.activeElement;
@@ -2490,14 +2919,17 @@ function showTrackScreen(){
   const ts=document.getElementById("track-screen");
   if(!ts||ts.classList.contains("show"))return;
   ts.classList.add("show");
+  document.body.classList.add("overlay-open");
+  renderSpecChips();
   fetchNiyyahHadith();
   fetchShaykhHadith();
   fetchIbnSirinStatement();
 }
-function hideTrackScreen(){document.getElementById("track-screen").classList.remove("show");}
+function hideTrackScreen(){document.getElementById("track-screen").classList.remove("show");document.body.classList.remove("overlay-open");}
 function chooseTrack(m){
   chosenMadhab=m;
   try{localStorage.setItem("talib_madhab",m);}catch(e){}
+  renderSpecChips();
   hideTrackScreen();
   updateMadhabBadge();
   update(root);
@@ -2509,6 +2941,73 @@ function chooseTrack(m){
   try{seen=localStorage.getItem("talib_tutorial_done")==="1";}catch(e){}
   if(!seen){setTimeout(startTutorial,900);}
 }
+
+/* ═══ HEADER DROPDOWNS (Apps + Madhab) ══════════════════ */
+const MORDER=["hanbali","shafi","maliki","hanafi","all"];
+const MIMAM={hanbali:"Imam Ahmad ibn Hanbal · d. 241 AH",shafi:"Imam al-Shafiʿi · d. 204 AH",
+  maliki:"Imam Malik ibn Anas · d. 179 AH",hanafi:"Imam Abu Hanifa · d. 150 AH",all:"Comparative — all four schools"};
+function buildMadhabMenu(){
+  const menu=document.getElementById("madhab-menu");if(!menu)return;
+  let html='<div class="hdd-head">Fiqh Madhhab</div>';
+  MORDER.forEach(k=>{
+    const c=MCOL[k]||"#c9a84c",on=chosenMadhab===k?" active":"";
+    html+=`<button class="hdd-item${on}" onclick="pickMadhab('${k}')"><span class="hdd-dot" style="color:${c};background:${c}"></span><span class="hdd-tx"><b style="color:${c}">${MNAME[k]}</b><small>${MIMAM[k]}</small></span></button>`;
+  });
+  html+='<div class="hdd-divider"></div><button class="hdd-foot" onclick="openSpecsFromMenu()">&#10022; Specializations &amp; Welcome</button>';
+  menu.innerHTML=html;
+}
+function pickMadhab(k){closeAllHdd();if(k!==chosenMadhab)chooseTrack(k);}
+function openSpecsFromMenu(){closeAllHdd();showTrackScreen();}
+function positionHdd(dd){
+  const trig=dd.querySelector(".hdd-trigger"),menu=dd.querySelector(".hdd-menu");
+  if(!trig||!menu)return;
+  const r=trig.getBoundingClientRect();
+  menu.style.top=(r.bottom+6)+"px";
+  menu.style.right=Math.max(6,window.innerWidth-r.right)+"px";
+  menu.style.left="auto";
+}
+function cascadeHdd(dd){
+  dd.querySelectorAll(".hdd-menu .hdd-item").forEach((it,i)=>{
+    it.style.animation="none";void it.offsetWidth;it.style.animation="";it.style.animationDelay=(i*0.05)+"s";
+  });
+}
+function closeAllHdd(){
+  document.querySelectorAll(".hdd.open").forEach(dd=>{
+    dd.classList.remove("open");
+    const t=dd.querySelector(".hdd-trigger");if(t)t.setAttribute("aria-expanded","false");
+  });
+}
+function openHdd(dd){
+  if(!dd)return;
+  closeAllHdd();
+  positionHdd(dd);dd.classList.add("open");cascadeHdd(dd);
+  const t=dd.querySelector(".hdd-trigger");if(t)t.setAttribute("aria-expanded","true");
+}
+function toggleHdd(id,e){
+  if(e)e.stopPropagation();
+  const dd=document.getElementById(id);if(!dd)return;
+  if(dd.classList.contains("open"))closeAllHdd();else openHdd(dd);
+}
+document.addEventListener("click",e=>{if(!e.target.closest(".hdd"))closeAllHdd();});
+document.addEventListener("keydown",e=>{if(e.key==="Escape")closeAllHdd();});
+window.addEventListener("resize",closeAllHdd);
+/* Hover-to-open (mouse/pointer devices only — tap still works on touch) */
+(function(){
+  if(!window.matchMedia||!window.matchMedia("(hover:hover) and (pointer:fine)").matches)return;
+  let openT=null,closeT=null;
+  document.querySelectorAll(".hdd").forEach(dd=>{
+    dd.addEventListener("mouseenter",()=>{
+      clearTimeout(closeT);clearTimeout(openT);
+      if(dd.classList.contains("open"))return;                 // already open → keep it
+      if(document.querySelector(".hdd.open")){openHdd(dd);}     // switch instantly between menus
+      else{openT=setTimeout(()=>openHdd(dd),100);}              // hover-intent delay
+    });
+    dd.addEventListener("mouseleave",()=>{
+      clearTimeout(openT);
+      closeT=setTimeout(closeAllHdd,200);                       // grace period to glide into the menu
+    });
+  });
+})();
 
 /* ═══ GUIDED TUTORIAL ═══════════════════════════════════ */
 const TUT_STEPS=[
@@ -2526,8 +3025,8 @@ const TUT_STEPS=[
    text:"Mark each text Started or Finished from its panel. These bars show your overall progress, and each level node carries its own completion ring."},
   {el:"#review-badge", title:"Spaced repetition",
    text:"When you finish a text, it enters a review schedule (1 → 3 → 7 → 16 days, and beyond). When texts are due, this green review badge appears — tap it to revise and lock knowledge into long-term memory.",forceShow:"#review-badge"},
-  {el:"#btn-notes", title:"Take notes",
-   text:"Open the companion note-taking tool to record benefits and explanations from your Shaykh as you study."},
+  {el:"#btn-notes", title:"Companion apps",
+   text:"Open your companion tools from here — Notes, to record benefits and explanations from your Shaykh, and the Planner, to order your day around the prayers."},
   {el:".prog-reset", title:"A fresh start, anytime",
    text:"If you ever need to begin again, you can reset all progress here — export a backup first. May Allah make this knowledge a proof for you, not against you. Āmīn.",last:true},
 ];
@@ -2651,13 +3150,14 @@ function fitToView(){
 }
 function updateMadhabBadge(){
   const badge=document.getElementById("madhab-badge");
-  if(!chosenMadhab){badge.textContent="";badge.style.display="none";return;}
+  if(!chosenMadhab){badge.innerHTML="";badge.style.display="none";return;}
   const color=MCOL[chosenMadhab]||"#c9a84c";
-  badge.textContent=MNAME[chosenMadhab]||"";
+  badge.innerHTML=`<span class="mh-dot"></span>${MNAME[chosenMadhab]||""}<span class="mh-cv">&#9662;</span>`;
   badge.style.display="";
   badge.style.color=color;
   badge.style.borderColor=color+"66";
   badge.style.background=color+"14";
+  buildMadhabMenu();
 }
 
 /* ═══ SEARCH ══════════════════════════════════════════ */
@@ -2677,7 +3177,7 @@ function onSearch(q){
   _hits=SI.filter(bk=>bk.name.toLowerCase().includes(q.toLowerCase())).slice(0,14);
   if(!_hits.length){el.innerHTML=`<div class="sr-none">No results</div>`;return;}
   el.innerHTML=_hits.map((bk,i)=>`<div class="sr-item" onclick="jumpToBook(${i})">
-    <div class="sr-name${bk.mem?" mem":""}">${bk.name}</div>
+    <div class="sr-name${effMem(bk)?" mem":""}">${bk.name}</div>
     <div class="sr-path">${bk.ln}&nbsp;›&nbsp;${bk.sn}</div>
   </div>`).join("");
 }
@@ -2727,7 +3227,7 @@ const CATS=[
 
 /* ═══ TREE CONTROLS ══════════════════════════════════ */
 function resetZoom(){svg.transition().duration(400).ease(d3.easeCubicInOut).call(zoom.transform,d3.zoomIdentity.translate(W*.07,H/2).scale(.92));}
-function expandAll(){root.descendants().forEach(d=>{if(d._children){d.children=d._children;d._children=null;}});clearFocus();update(root);}
+function expandAll(){root.descendants().forEach(d=>{if(d._children){d.children=d._children;d._children=null;}});clearFocus();update(root,true);}
 function collapseToLevels(){root.descendants().forEach(d=>{if(d.depth>=1&&d.children){d._children=d.children;d.children=null;}});clearFocus();update(root);}
 
 /* ═══ VIEW TOGGLE ════════════════════════════════════ */
@@ -2758,7 +3258,7 @@ function buildList(){
       (subj.children||[]).forEach((book,bi)=>{
         const idx=regBook(book,level.name,subj.name);
         const isQuran=subj.color===SC.quran;
-        const mc=book.mem?" is-mem":"",st=book.mem?"":`style="color:${sc}bb"`;
+        const mc=effMem(book)?" is-mem":"",st=effMem(book)?"":`style="color:${sc}bb"`;
         const infoBtn=(book.desc||book.noInfo)?"":`<a class="lv-btn" href="${book.info||"#"}" target="_blank" rel="noopener" onclick="event.stopPropagation()" title="Information">&#9432;</a>`;
         const pdfBtn=book.noPdf?"":`<a class="lv-btn" href="${book.pdf||"#"}" target="_blank" rel="noopener" onclick="event.stopPropagation()" title="PDF">&#8659;</a>`;
         const vidBtn=book.noVideo?"":`<a class="lv-btn" href="${book.video||"#"}" target="_blank" rel="noopener" onclick="event.stopPropagation()" title="Recording">&#9654;</a>`;
@@ -2864,9 +3364,29 @@ setTimeout(()=>{const s=document.getElementById("splash");if(s)s.remove();},3400
 update(root,true);
 svg.call(zoom.transform,d3.zoomIdentity.translate(W*.07,H/2).scale(.92));
 updateMadhabBadge();
+renderSpecChips();
 updateProgressBars();
 updateReviewBadge();
 if(window.innerWidth<=700)setView("list");
+
+/* ── Robust external-link opening ──
+   In some embedded/sandboxed contexts a plain target="_blank" anchor is
+   silently blocked. This handler opens the link reliably with fallbacks. */
+["btn-info","btn-pdf","btn-video"].forEach(function(id){
+  var el=document.getElementById(id);
+  if(!el)return;
+  el.addEventListener("click",function(e){
+    var url=el.getAttribute("href");
+    if(!url||url==="#"){e.preventDefault();return;}
+    e.preventDefault();
+    var w=null;
+    try{ w=window.open(url,"_blank","noopener,noreferrer"); }catch(err){ w=null; }
+    if(!w){ // popup blocked / sandboxed → navigate top-level
+      try{ (window.top||window).location.href=url; }
+      catch(err2){ location.href=url; }
+    }
+  });
+});
 
 /* ── #7 Deep-linkable URLs ── */
 function slugify(s){return encodeURIComponent(s.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,""));}
