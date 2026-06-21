@@ -146,11 +146,6 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;opac
 /* Memorize glow — CSS text-shadow (GPU-cheap) instead of per-node SVG filter,
    so panning/zooming the tree stays smooth even with many ❀ nodes visible. */
 #canvas text.mem-glow{text-shadow:0 0 6px rgba(232,201,122,.46)}
-/* Shurūḥ (commentary) orbs — long-press a work; they pop out to the right of its name */
-.shuruh-layer{pointer-events:none}
-.shuruh-layer .sh-node{pointer-events:all;cursor:pointer}
-.sh-circ{fill:url(#shGrad);stroke:#4aa56e;stroke-width:.9px;filter:drop-shadow(0 0 5px rgba(45,130,75,.5))}
-.sh-node:hover .sh-circ{stroke:#8fdca8;filter:drop-shadow(0 0 10px rgba(80,180,115,.8))}
 .sh-label{font-size:9.5px;fill:#bfe6c8;font-family:'IBM Plex Mono',monospace;letter-spacing:.03em;
   paint-order:stroke;stroke:#06140c;stroke-width:2.6px;stroke-linejoin:round;pointer-events:none}
 
@@ -212,9 +207,13 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;opac
 .chip .ld{width:5px;height:5px;border-radius:50%;flex-shrink:0}
 .brand{display:flex;align-items:center;gap:7px;flex-shrink:0}
 .hbtn{display:flex;gap:4px;flex-shrink:0;align-items:center}
-.hbtn .ic{width:32px;height:32px;display:flex;align-items:center;justify-content:center;
+.hbtn .ic{width:32px;height:32px;display:flex;align-items:center;justify-content:center;position:relative;
   background:transparent;border:1px solid transparent;border-radius:9px;color:var(--muted);
   cursor:pointer;transition:color .16s,background .16s,border-color .16s,transform .1s;padding:0;flex-shrink:0}
+.ic-badge{position:absolute;top:-3px;right:-3px;min-width:13px;height:13px;padding:0 3px;border-radius:7px;
+  background:var(--gold2);color:#0c0904;font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:600;
+  display:flex;align-items:center;justify-content:center;line-height:1;box-shadow:0 0 0 1.5px var(--bg)}
+#btn-spec.on{color:var(--gold2)}
 .hbtn .ic svg{width:17px;height:17px;stroke:currentColor;fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
 .hbtn .ic svg .dot{fill:currentColor;stroke:none}
 .hbtn .ic:hover{color:var(--gold2);background:rgba(201,168,76,.08);border-color:rgba(201,168,76,.28)}
@@ -643,6 +642,44 @@ body.overlay-open #review-badge .rv-icon{animation-play-state:paused}
   justify-content:center;text-decoration:none;transition:all .14s;line-height:1}
 .lv-btn:hover{border-color:var(--gold);color:var(--gold);background:rgba(201,168,76,.08)}
 
+/* ═══ ḤIFẒ VIEW ════════════════════════════════════════ */
+#hifzview{position:fixed;top:46px;left:0;right:0;bottom:0;overflow-y:auto;background:var(--bg);display:none;z-index:50}
+#hifzview.show{display:block}
+#hifzview::-webkit-scrollbar{width:3px}
+#hifzview::-webkit-scrollbar-thumb{background:var(--border)}
+.hz-wrap{max-width:720px;margin:0 auto;padding:20px 18px calc(60px + env(safe-area-inset-bottom))}
+.hz-summary{display:flex;gap:10px;margin-bottom:14px}
+.hz-stat{flex:1;background:rgba(255,255,255,.02);border:1px solid var(--border);border-radius:11px;padding:14px 8px;text-align:center}
+.hz-stat .hz-num{display:block;font-family:'Cinzel',serif;font-size:clamp(20px,5vw,26px);color:var(--gold2);line-height:1}
+.hz-stat .hz-lbl{display:block;font-size:8px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-top:7px}
+.hz-stat.hz-gold{border-color:rgba(201,168,76,.4);background:rgba(201,168,76,.05)}
+.hz-stat.hz-gold .hz-num{color:var(--gold2)}
+.hz-stat.hz-green{border-color:rgba(105,240,174,.4);background:rgba(105,240,174,.05)}
+.hz-stat.hz-green .hz-num{color:#69f0ae}
+.hz-bar{height:3px;background:rgba(255,255,255,.05);border-radius:3px;overflow:hidden;margin-bottom:26px}
+.hz-bar-fill{height:100%;background:linear-gradient(90deg,var(--gold),var(--gold2));border-radius:3px;transition:width .5s var(--ease,cubic-bezier(.4,0,.2,1))}
+.hz-sec{margin-bottom:22px;border-left:2px solid color-mix(in srgb,var(--hzc,#c9a84c) 42%,transparent);padding-left:12px}
+.hz-sec-hdr{font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:var(--hzc,var(--gold));margin-bottom:10px;display:flex;align-items:center;gap:8px;padding-left:0}
+.hz-sec-hdr .hz-dot{width:8px;height:8px;border-radius:50%;background:var(--hzc,var(--gold));box-shadow:0 0 7px var(--hzc,var(--gold));flex-shrink:0}
+.hz-sec-hdr .hz-sec-t{font-weight:500}
+.hz-sec-hdr .hz-sec-sub{color:var(--muted);text-transform:none;letter-spacing:.03em;font-size:8px;opacity:.8}
+.hz-sec-hdr .hz-count{margin-left:auto;color:var(--muted);font-size:8px;border:1px solid var(--border);border-radius:20px;padding:1px 8px}
+.hz-sec .hz-flower{color:var(--hzc,var(--gold2))}
+.hz-item{display:flex;align-items:center;gap:11px;padding:11px 12px;border:1px solid var(--border);
+  border-radius:9px;margin-bottom:6px;cursor:pointer;background:rgba(255,255,255,.012);
+  transition:border-color .15s,background .15s;animation:cascadeIn .4s cubic-bezier(.22,1,.36,1) both}
+.hz-item:hover{border-color:rgba(201,168,76,.4);background:rgba(201,168,76,.05)}
+.hz-flower{color:var(--gold2);font-size:12px;flex-shrink:0;text-shadow:0 0 8px rgba(232,201,122,.5)}
+.hz-body{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px}
+.hz-name{font-size:12px;color:var(--text);line-height:1.35}
+.hz-ctx{font-size:8px;letter-spacing:.05em;color:var(--muted);text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hz-chip{flex-shrink:0;font-size:8px;letter-spacing:.05em;text-transform:uppercase;padding:4px 9px;border-radius:20px;white-space:nowrap}
+.hz-chip.due{background:rgba(105,240,174,.14);color:#69f0ae;border:1px solid rgba(105,240,174,.4)}
+.hz-chip.review{background:rgba(201,168,76,.1);color:var(--gold2);border:1px solid rgba(201,168,76,.3)}
+.hz-chip.learning{background:transparent;color:var(--gold2);border:1px solid rgba(201,168,76,.45)}
+.hz-chip.todo{background:transparent;color:var(--muted);border:1px solid var(--border)}
+.hz-empty{text-align:center;color:var(--muted);font-size:11px;line-height:1.85;padding:50px 24px}
+
 /* ═══ MOBILE ══════════════════════════════════════════ */
 @media(max-width:700px){
   #header{padding:0 8px;gap:5px;height:50px}
@@ -670,6 +707,8 @@ body.overlay-open #review-badge .rv-icon{animation-play-state:paused}
   .sr-item{padding:11px 14px}.sr-name{font-size:11px}.sr-path{font-size:9px}
   #breadcrumb{top:60px;font-size:8.5px;max-width:80vw}
   #listview{top:50px}
+  #hifzview{top:50px}
+  .hz-summary{gap:7px}.hz-stat{padding:12px 5px}.hz-name{font-size:11.5px}
   .lv-lhdr{padding:14px 14px;font-size:11px}
   .lv-shdr{padding:10px 20px;font-size:9.5px}
   .lv-sbody{padding:0 20px}.lv-sbody.open{padding-bottom:12px}
@@ -807,6 +846,9 @@ body.overlay-open #review-badge .rv-icon{animation-play-state:paused}
       <button class="ic" id="btn-list" onclick="setView('list')" title="List view" aria-label="List view">
         <svg viewBox="0 0 24 24"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg>
       </button>
+      <button class="ic" id="btn-hifz" onclick="setView('hifz')" title="Ḥifẓ mode" aria-label="Ḥifẓ memorization view">
+        <svg viewBox="0 0 24 24"><ellipse cx="12" cy="6.4" rx="2.2" ry="3.2"/><ellipse cx="12" cy="17.6" rx="2.2" ry="3.2"/><ellipse cx="6.4" cy="12" rx="3.2" ry="2.2"/><ellipse cx="17.6" cy="12" rx="3.2" ry="2.2"/><circle class="dot" cx="12" cy="12" r="2.1"/></svg>
+      </button>
     </div>
     <div class="hdd" id="more-dd">
       <button class="ic hdd-trigger" id="btn-more" onclick="toggleHdd('more-dd',event)" title="View controls" aria-haspopup="true" aria-expanded="false" aria-label="View controls">
@@ -835,6 +877,12 @@ body.overlay-open #review-badge .rv-icon{animation-play-state:paused}
           <span class="hdd-tx"><b>Planner</b><small>Order your day around the prayers</small></span>
         </a>
       </div>
+    </div>
+    <div class="hdd" id="spec-dd">
+      <button class="ic hdd-trigger" id="btn-spec" onclick="toggleHdd('spec-dd',event)" title="Specializations" aria-haspopup="true" aria-expanded="false" aria-label="Specializations">
+        <svg viewBox="0 0 24 24"><path d="M12 3l9 5-9 5-9-5 9-5z"/><path d="M3 12l9 5 9-5"/><path d="M3 16.5l9 5 9-5"/></svg>
+      </button>
+      <div class="hdd-menu" id="spec-menu" role="menu"></div>
     </div>
     <div class="hdd" id="madhab-dd">
       <span id="madhab-badge" class="hdd-trigger" onclick="toggleHdd('madhab-dd',event)" title="Change madhhab" aria-haspopup="true" aria-expanded="false"></span>
@@ -892,6 +940,7 @@ body.overlay-open #review-badge .rv-icon{animation-play-state:paused}
 </div>
 
 <div id="listview"></div>
+<div id="hifzview"></div>
 
 <!-- ═══ SPACED REPETITION REVIEW MODAL ═══ -->
 <div id="review-modal">
@@ -1890,6 +1939,7 @@ function applySpecsToTree(){
     if(data&&me)me.textContent=effMem(data)?"❀ Memorize this text":"";
     renderPanelReview(_currentPanelBook);
   }
+  if(typeof updateSpecBtn==="function"){updateSpecBtn();syncSpecMenu();}
 }
 let progressData=(function(){
   try{const d=JSON.parse(localStorage.getItem('talib_progress')||'{}');return (d&&typeof d==='object')?d:{};}
@@ -1979,6 +2029,7 @@ function updateReviewBadge(){
   } else {
     badge.style.display='none';
   }
+  refreshHifzIfActive();
 }
 
 /* ── Review session controller ── */
@@ -2331,29 +2382,13 @@ const W=window.innerWidth, H=window.innerHeight;
 const svg=d3.select("#canvas").attr("width",W).attr("height",H);
 
 // SVG filters
-const defs=svg.append("defs");
-const addF=(id,std,mat)=>{
-  const f=defs.append("filter").attr("id",id).attr("x","-30%").attr("y","-80%").attr("width","160%").attr("height","260%");
-  f.append("feGaussianBlur").attr("in","SourceGraphic").attr("stdDeviation",std).attr("result","b");
-  f.append("feColorMatrix").attr("in","b").attr("type","matrix").attr("values",mat).attr("result","c");
-  const m=f.append("feMerge");m.append("feMergeNode").attr("in","c");m.append("feMergeNode").attr("in","SourceGraphic");
-};
-addF("gm","1","1.3 0.5 0 0 0  0.7 0.4 0 0 0  0 0 0 0 0  0 0 0 1.1 0");
-addF("gp","2.8","2 1.1 0 0 0  1.3 0.8 0 0 0  0 0.1 0 0 0  0 0 0 2.2 0");
-
 const g=svg.append("g");
 const bgG=g.append("g").attr("pointer-events","none");
 const lkG=g.append("g").attr("pointer-events","none");
 const ndG=g.append("g");
-const shG=g.append("g").attr("class","shuruh-layer"); // shurūḥ orbs (pans/zooms with tree)
-const _shGrad=svg.append("defs").append("radialGradient").attr("id","shGrad").attr("cx","36%").attr("cy","28%").attr("r","80%");
-_shGrad.append("stop").attr("offset","0%").attr("stop-color","#2d8350");
-_shGrad.append("stop").attr("offset","45%").attr("stop-color","#114a27");
-_shGrad.append("stop").attr("offset","100%").attr("stop-color","#061f0d");
 const animG=g.append("g").attr("pointer-events","none");
 
 const zoom=d3.zoom().scaleExtent([0.05,4]).on("zoom",e=>g.attr("transform",e.transform));
-zoom.on("start.shuruh",()=>{if(_shuruhOpen)dismissShuruh();});
 svg.call(zoom).on("dblclick.zoom",null);
 svg.on("click",()=>closePanel());
 document.getElementById("zi").onclick=()=>zoom.scaleBy(svg,1.3);
@@ -2436,7 +2471,6 @@ function lOpacity(d){
 /* ── Update ──────────────────────────────────────────── */
 let fillTimer;
 function update(src,instant){
-  if(_shuruhOpen)dismissShuruh(true); // never leave a stale bloom after a re-layout
   const td=treeFn(root);
   const nodes=td.descendants(),links=td.links();
   const DUR=instant?0:440, NDUR=instant?0:440;
@@ -2481,11 +2515,6 @@ function update(src,instant){
       d3.select(this).select("circle").transition().duration(170).attr("r",nR(d)).attr("stroke-width",d.data.type==="root"?2:1.5);
     })
     .on("click",handleClick)
-    .on("pointerdown",lpStart)
-    .on("pointermove",lpMove)
-    .on("pointerup",lpEnd)
-    .on("pointercancel",lpEnd)
-    .on("contextmenu",e=>e.preventDefault())
     .style("cursor","pointer");
 
   // ── Fan-out entrance ──
@@ -2639,74 +2668,7 @@ function animatePath(d){
 function clearAnimPath(){animG.selectAll("*").remove();}
 
 /* ── Click / Focus ───────────────────────────────────── */
-/* ═══ SHURŪḤ (commentary) RADIAL BLOOM ═══════════════════
-   Long-press a work to bloom its shurūḥ as dark-green satellite nodes.
-   Architecture preview — placeholder entries on the first work; real
-   shurūḥ names + links will be filled in later, in shaa ALLAH. */
-const SHURUH_MAP={
-  "Mandhuma al-Ruh wal-Rayhan — al-Qadi":[
-    {n:"Sharḥ — placeholder I",l:""},
-    {n:"Sharḥ — placeholder II",l:""},
-    {n:"Sharḥ — placeholder III",l:""}
-  ]
-};
-let _lpTimer=null,_lpFired=false,_lpStart=null,_shuruhOpen=false;
-const LP_MS=550, LP_MOVE=9;
-function hasShuruh(d){return !!(d&&d.data&&d.data.type==="book"&&Array.isArray(SHURUH_MAP[d.data.name])&&SHURUH_MAP[d.data.name].length);}
-function lpStart(e,d){
-  _lpFired=false;            // fresh press — never let a stale long-press suppress this tap
-  if(!hasShuruh(d))return;
-  _lpStart={x:e.clientX,y:e.clientY};
-  clearTimeout(_lpTimer);
-  _lpTimer=setTimeout(()=>{_lpFired=true;_lpTimer=null;bloomShuruh(d);},LP_MS);
-}
-function lpMove(e){
-  if(!_lpTimer||!_lpStart)return;
-  if(Math.hypot(e.clientX-_lpStart.x,e.clientY-_lpStart.y)>LP_MOVE){clearTimeout(_lpTimer);_lpTimer=null;}
-}
-function lpEnd(){clearTimeout(_lpTimer);_lpTimer=null;}
-function bloomShuruh(d){
-  dismissShuruh(true);
-  const list=SHURUH_MAP[d.data.name];if(!list)return;
-  _shuruhOpen=true;
-  const cx=d.y, cy=d.x;                          // node centre in tree coordinates
-  // Measure the work's name so the orbs begin just after it
-  let nameW=130;
-  ndG.selectAll(".nd").each(function(nd){
-    if(nd===d){const t=d3.select(this).select("text").node();
-      if(t){try{nameW=t.getComputedTextLength();}catch(e){}}}
-  });
-  const gb=shG.append("g").attr("class","shuruh-bloom");
-  let cursor=cx+nR(d)+10+nameW+22;               // start just past the end of the name
-  list.forEach((s,i)=>{
-    const orbX=cursor+7;
-    const sg=gb.append("g").attr("class","sh-node")
-      .attr("transform",`translate(${cx},${cy})`).attr("opacity",0)
-      .style("cursor",s.l?"pointer":"default");
-    sg.append("circle").attr("class","sh-circ").attr("r",0);
-    const tEl=sg.append("text").attr("class","sh-label").attr("x",12).attr("dy","0.32em").text(s.n);
-    sg.append("title").text(s.n);
-    let lw=60;try{lw=tEl.node().getComputedTextLength();}catch(e){}
-    cursor=orbX+12+lw+18;                         // advance horizontally past this orb + label
-    sg.on("pointerdown",ev=>ev.stopPropagation())
-      .on("click",ev=>{ev.stopPropagation(); if(s.l){window.open(s.l,"_blank","noopener");dismissShuruh();}});
-    // pop in one after another, just like the tree's circle nodes
-    sg.transition().duration(380).delay(i*95).ease(d3.easeCubicOut)
-      .attr("transform",`translate(${orbX},${cy})`).attr("opacity",1);
-    sg.select(".sh-circ").transition().duration(360).delay(i*95).ease(d3.easeBackOut.overshoot(2)).attr("r",8.5);
-  });
-}
-function dismissShuruh(immediate){
-  const blooms=shG.selectAll(".shuruh-bloom");
-  if(!blooms.size()){_shuruhOpen=false;return;}
-  _shuruhOpen=false;
-  if(immediate){blooms.interrupt().remove();return;}
-  blooms.selectAll(".sh-node").transition().duration(190).ease(d3.easeCubicIn).attr("opacity",0);
-  blooms.transition().delay(150).remove();
-}
 function handleClick(event,d){
-  if(_lpFired){_lpFired=false;event.stopPropagation();return;} // long-press handled the bloom
-  if(_shuruhOpen)dismissShuruh();
   event.stopPropagation();
   _kbNode=d; // keep keyboard navigation in sync with clicks
   if(d.data.type==="book"){
@@ -2829,7 +2791,7 @@ function closePanel(){
 let _kbNode=null; // currently keyboard-focused node OBJECT (not id)
 
 document.addEventListener("keydown",e=>{
-  if(e.key==="Escape"){if(_shuruhOpen)dismissShuruh();closePanel();closeSearch();return;}
+  if(e.key==="Escape"){closePanel();closeSearch();return;}
   if((e.ctrlKey||e.metaKey)&&(e.key==="f"||e.key==="F")){e.preventDefault();toggleSearch();return;}
   // ignore if typing in an input/textarea
   const ae=document.activeElement;
@@ -2934,6 +2896,7 @@ function chooseTrack(m){
   updateMadhabBadge();
   update(root);
   if(listBuilt){listBuilt=false;buildList();}
+  refreshHifzIfActive();
   // #17 smooth zoom-to-fit on the visible (non-grayed) tree
   setTimeout(fitToView,360);
   // Launch the guided tutorial the first time only
@@ -2953,11 +2916,41 @@ function buildMadhabMenu(){
     const c=MCOL[k]||"#c9a84c",on=chosenMadhab===k?" active":"";
     html+=`<button class="hdd-item${on}" onclick="pickMadhab('${k}')"><span class="hdd-dot" style="color:${c};background:${c}"></span><span class="hdd-tx"><b style="color:${c}">${MNAME[k]}</b><small>${MIMAM[k]}</small></span></button>`;
   });
-  html+='<div class="hdd-divider"></div><button class="hdd-foot" onclick="openSpecsFromMenu()">&#10022; Specializations &amp; Welcome</button>';
   menu.innerHTML=html;
 }
 function pickMadhab(k){closeAllHdd();if(k!==chosenMadhab)chooseTrack(k);}
-function openSpecsFromMenu(){closeAllHdd();showTrackScreen();}
+
+/* ── Specialization (takhaṣṣuṣ) header menu ── */
+function buildSpecMenu(){
+  const menu=document.getElementById("spec-menu");if(!menu)return;
+  let html='<div class="hdd-head">Specializations</div>';
+  SPEC_TRACKS.forEach(t=>{
+    const cnt=specCount(t.k);
+    html+=`<button class="hdd-item${chosenSpecs.has(t.k)?' active':''}" data-spec="${t.k}" onclick="toggleSpec('${t.k}')"><span class="hdd-dot" style="color:${t.c};background:${t.c}"></span><span class="hdd-tx"><b style="color:${t.c}">${t.en}</b><small>${cnt>0?cnt+' texts &#10048;':'reading track'}</small></span></button>`;
+  });
+  html+='<div class="hdd-divider"></div><button class="hdd-foot" onclick="clearSpecs()">&#10005; Core only</button>';
+  menu.innerHTML=html;
+}
+function syncSpecMenu(){
+  document.querySelectorAll("#spec-menu .hdd-item").forEach(it=>{it.classList.toggle("active",chosenSpecs.has(it.dataset.spec));});
+}
+function updateSpecBtn(){
+  const b=document.getElementById("btn-spec");if(!b)return;
+  const n=chosenSpecs.size;
+  b.classList.toggle("on",n>0);
+  let badge=b.querySelector(".ic-badge");
+  if(n>0){if(!badge){badge=document.createElement("span");badge.className="ic-badge";b.appendChild(badge);}badge.textContent=n;}
+  else if(badge){badge.remove();}
+}
+function clearSpecs(){
+  if(!chosenSpecs.size){closeAllHdd();return;}
+  [...chosenSpecs].forEach(k=>chosenSpecs.delete(k));
+  try{localStorage.setItem('talib_specs',JSON.stringify([]));}catch(e){}
+  document.querySelectorAll('.spec-chip').forEach(c=>c.classList.remove('on'));
+  applySpecsToTree();
+  closeAllHdd();
+}
+buildSpecMenu();updateSpecBtn();
 function positionHdd(dd){
   const trig=dd.querySelector(".hdd-trigger"),menu=dd.querySelector(".hdd-menu");
   if(!trig||!menu)return;
@@ -3234,12 +3227,15 @@ function collapseToLevels(){root.descendants().forEach(d=>{if(d.depth>=1&&d.chil
 function setView(v){
   document.getElementById("btn-tree").classList.toggle("active",v==="tree");
   document.getElementById("btn-list").classList.toggle("active",v==="list");
+  document.getElementById("btn-hifz").classList.toggle("active",v==="hifz");
   document.getElementById("canvas").style.display=v==="tree"?"block":"none";
   document.getElementById("listview").classList.toggle("show",v==="list");
+  document.getElementById("hifzview").classList.toggle("show",v==="hifz");
   document.getElementById("hint").style.display=v==="tree"?"block":"none";
   document.getElementById("controls").style.display=v==="tree"?"flex":"none";
   document.getElementById("progress-panel").style.display=v==="tree"?"block":"none";
   if(v==="list"&&!listBuilt)buildList();
+  if(v==="hifz")buildHifz();   // always rebuild — reflects live review/progress
   if(v==="tree")closePanel();
 }
 
@@ -3291,6 +3287,68 @@ function acc(el){
 function openBI(idx){
   const d=BREG[idx];
   if(d)openPanel(d,null);
+}
+
+/* ═══ ḤIFẒ VIEW — grouped by level + Qur'an, driven by review (SRS) data ══ */
+function refreshHifzIfActive(){
+  const hv=document.getElementById("hifzview");
+  if(hv&&hv.classList.contains("show"))buildHifz();
+}
+function buildHifz(){
+  BREG=[];
+  const hv=document.getElementById("hifzview");
+  const dueSet=new Set(getDueReviews());
+  const ord={due:0,review:1,learning:2,todo:3};
+  const statusOf=n=>dueSet.has(n)?"due":reviewData[n]?"review":(progressData[n]==="started"?"learning":"todo");
+  const quran=[],levels=[];
+  TREE.children.forEach(level=>{
+    const bucket={name:level.name,sub:level.subtitle||"",color:LC[level.level]||"#c9a84c",items:[]};
+    (level.children||[]).forEach(subj=>{
+      // mirror the list view: a text belonging to another madhhab is not part of this plan
+      const otherMadhab=chosenMadhab&&chosenMadhab!=="all"&&subj.madhab&&subj.madhab!==chosenMadhab&&subj.madhab!=="general";
+      if(otherMadhab)return;
+      const isQuran=subj.color===SC.quran;
+      (subj.children||[]).forEach(book=>{
+        if(!effMem(book))return;
+        const e={book,sn:subj.name,st:statusOf(book.name)};
+        if(isQuran)quran.push(e);else bucket.items.push(e);
+      });
+    });
+    if(bucket.items.length)levels.push(bucket);
+  });
+  const all=[...quran,...levels.flatMap(l=>l.items)];
+  const total=all.length;
+  const inReview=all.filter(e=>reviewData[e.book.name]).length;
+  const due=all.filter(e=>dueSet.has(e.book.name)).length;
+
+  const chip=e=>{
+    const r=reviewData[e.book.name];
+    if(e.st==="due")return `<span class="hz-chip due">revise now${r?` · ${r.stage+1}/${SRS_INTERVALS.length}`:""}</span>`;
+    if(e.st==="review"){const d=Math.max(0,Math.round((new Date(r.due)-new Date(todayStr()))/DAY_MS));return `<span class="hz-chip review">in ${d} day${d===1?"":"s"} · ${r.stage+1}/${SRS_INTERVALS.length}</span>`;}
+    if(e.st==="learning")return `<span class="hz-chip learning">learning</span>`;
+    return `<span class="hz-chip todo">not started</span>`;
+  };
+  const sec=(title,sub,color,items)=>{
+    if(!items.length)return"";
+    items.sort((a,b)=>ord[a.st]-ord[b.st]);
+    let s=`<div class="hz-sec" style="--hzc:${color}"><div class="hz-sec-hdr"><span class="hz-dot"></span><span class="hz-sec-t">${title}</span>${sub?`<span class="hz-sec-sub">${sub}</span>`:""}<span class="hz-count">${items.length}</span></div>`;
+    items.forEach((e,i)=>{
+      const idx=regBook(e.book,title,e.sn);
+      s+=`<div class="hz-item" style="animation-delay:${Math.min(i,14)*0.03}s" onclick="openBI(${idx})"><span class="hz-flower">&#10048;</span><span class="hz-body"><span class="hz-name">${e.book.name}</span><span class="hz-ctx">${e.sn}</span></span>${chip(e)}</div>`;
+    });
+    return s+`</div>`;
+  };
+
+  let html=`<div class="hz-wrap"><div class="hz-summary">`
+    +`<div class="hz-stat hz-gold"><span class="hz-num">${inReview}</span><span class="hz-lbl">In review</span></div>`
+    +`<div class="hz-stat hz-green"><span class="hz-num">${due}</span><span class="hz-lbl">Due today</span></div>`
+    +`<div class="hz-stat"><span class="hz-num">${total}</span><span class="hz-lbl">Total &#10048;</span></div>`
+    +`</div><div class="hz-bar"><div class="hz-bar-fill" style="width:${total?Math.round(inReview/total*100):0}%"></div></div>`;
+  html+=sec("Qur'an","Ḥifẓ",SC.quran,quran);
+  levels.forEach(l=>{html+=sec(l.name,l.sub,l.color,l.items);});
+  if(!total)html+=`<div class="hz-empty">No memorization texts in your current selection.<br>Choose a madhhab or specialization to populate your &#10048; ḥifẓ plan.</div>`;
+  html+=`</div>`;
+  hv.innerHTML=html;
 }
 
 /* ═══ SUNNAH.COM API — Niyyah Hadith ════════════════
