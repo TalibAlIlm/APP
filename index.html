@@ -133,7 +133,7 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;opac
 /* ── Specialization chips ── */
 .spec-grid{width:100%;display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:2px}
 .spec-chip{display:flex;flex-direction:column;align-items:flex-start;gap:3px;
-  background:rgba(255,255,255,.015);border:1px solid var(--border);border-radius:9px;
+  background:rgba(255,255,255,.015);border:1px solid var(--border);border-radius:11px;
   padding:11px 13px;cursor:pointer;transition:border-color .2s,background .2s,box-shadow .2s;text-align:left;
   font-family:inherit;color:inherit}
 .spec-chip:hover{border-color:color-mix(in srgb,var(--sc,#c9a84c) 50%,transparent);background:color-mix(in srgb,var(--sc,#c9a84c) 6%,transparent)}
@@ -200,7 +200,7 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;opac
 }
 .legend::-webkit-scrollbar{display:none}
 .chip{display:flex;align-items:center;gap:2px;font-size:7px;letter-spacing:.03em;
-  color:var(--muted);white-space:nowrap;padding:2px 5px;border-radius:2px;
+  color:var(--muted);white-space:nowrap;padding:2px 5px;border-radius:8px;
   border:1px solid transparent;cursor:pointer;transition:all .16s;user-select:none;flex-shrink:0}
 .chip:hover{border-color:rgba(255,255,255,.1);color:var(--text)}
 .chip.active{color:#0c0904}
@@ -208,9 +208,9 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;opac
 .brand{display:flex;align-items:center;gap:7px;flex-shrink:0}
 .hbtn{display:flex;gap:4px;flex-shrink:0;align-items:center}
 .hbtn .ic{width:32px;height:32px;display:flex;align-items:center;justify-content:center;position:relative;
-  background:transparent;border:1px solid transparent;border-radius:9px;color:var(--muted);
+  background:transparent;border:1px solid transparent;border-radius:11px;color:var(--muted);
   cursor:pointer;transition:color .16s,background .16s,border-color .16s,transform .1s;padding:0;flex-shrink:0}
-.ic-badge{position:absolute;top:-3px;right:-3px;min-width:13px;height:13px;padding:0 3px;border-radius:7px;
+.ic-badge{position:absolute;top:-3px;right:-3px;min-width:13px;height:13px;padding:0 3px;border-radius:9px;
   background:var(--gold2);color:#0c0904;font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:600;
   display:flex;align-items:center;justify-content:center;line-height:1;box-shadow:0 0 0 1.5px var(--bg)}
 #btn-spec.on{color:var(--gold2)}
@@ -218,13 +218,47 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;opac
 .hbtn .ic svg .dot{fill:currentColor;stroke:none}
 .hbtn .ic:hover{color:var(--gold2);background:rgba(201,168,76,.08);border-color:rgba(201,168,76,.28)}
 .hbtn .ic:active{transform:translateY(.5px)}
+/* ── Dynamic icon motion: the internal SVG parts animate on hover ── */
+.hbtn .ic svg *{transition:transform .32s cubic-bezier(.34,1.56,.64,1)}
+.hbtn .ic svg circle,.hbtn .ic svg ellipse,.hbtn .ic svg rect{transform-box:fill-box;transform-origin:center}
+/* search — lens pulses, handle pushes outward */
+#btn-search:hover svg circle{transform:scale(1.12)}
+#btn-search:hover svg line{transform:translate(1.4px,1.4px)}
+/* tree — branches grow from the top node down and connect the two below */
+#btn-tree svg path{stroke-dasharray:100}
+#btn-tree:hover svg path{animation:treeGrow .62s cubic-bezier(.4,0,.2,1)}
+@keyframes treeGrow{from{stroke-dashoffset:100}to{stroke-dashoffset:0}}
+#btn-tree:hover svg .dot:nth-of-type(1){animation:treeTop .62s ease}
+#btn-tree:hover svg .dot:nth-of-type(2),#btn-tree:hover svg .dot:nth-of-type(3){animation:treeConnect .62s ease}
+@keyframes treeTop{0%{transform:scale(1)}18%{transform:scale(1.32)}40%{transform:scale(1)}}
+@keyframes treeConnect{0%,62%{transform:scale(1)}76%{transform:scale(1.34)}100%{transform:scale(1)}}
+/* list — the rows shuffle like sliding bars */
+#btn-list:hover svg line:nth-of-type(1){transform:translateX(2.6px)}
+#btn-list:hover svg line:nth-of-type(2){transform:translateX(-2.6px)}
+#btn-list:hover svg line:nth-of-type(3){transform:translateX(2.6px)}
+/* hifz — the flower blooms open */
+#btn-hifz svg{transition:transform .42s cubic-bezier(.34,1.56,.64,1);transform-origin:center}
+#btn-hifz:hover svg{transform:rotate(45deg)}
+#btn-hifz:hover svg .dot{transform:scale(1.3)}
+/* more — the three dots spread */
+#btn-more:hover svg .dot:nth-of-type(1){transform:translateX(-2.4px)}
+#btn-more:hover svg .dot:nth-of-type(3){transform:translateX(2.4px)}
+/* apps — the four tiles fan toward the corners */
+#btn-notes:hover svg rect:nth-of-type(1){transform:translate(-1.4px,-1.4px)}
+#btn-notes:hover svg rect:nth-of-type(2){transform:translate(1.4px,-1.4px)}
+#btn-notes:hover svg rect:nth-of-type(3){transform:translate(-1.4px,1.4px)}
+#btn-notes:hover svg rect:nth-of-type(4){transform:translate(1.4px,1.4px)}
+/* spec — the layers separate */
+#btn-spec:hover svg path:nth-of-type(1){transform:translateY(-1.9px)}
+#btn-spec:hover svg path:nth-of-type(3){transform:translateY(1.9px)}
+@media (prefers-reduced-motion:reduce){.hbtn .ic svg *,#btn-hifz svg{transition:none!important;transform:none!important}#btn-tree:hover svg path,#btn-tree:hover svg .dot{animation:none!important}}
 .hbtn .ic:focus-visible{outline:2px solid var(--gold);outline-offset:1px}
-.seg{display:flex;background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:10px;padding:2px;gap:2px}
-.seg .ic{width:30px;height:28px;border-radius:7px}
+.seg{display:flex;background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:12px;padding:2px;gap:2px}
+.seg .ic{width:30px;height:28px;border-radius:9px}
 .seg .ic.active{color:var(--gold2);background:linear-gradient(180deg,rgba(201,168,76,.22),rgba(201,168,76,.1));
   box-shadow:inset 0 0 0 1px rgba(201,168,76,.32),0 0 10px -3px rgba(201,168,76,.3)}
 .tb-sep{width:1px;height:20px;background:var(--border);flex-shrink:0;margin:0 3px}
-#madhab-badge{display:flex;align-items:center;gap:7px;padding:6px 10px;border-radius:9px;
+#madhab-badge{display:flex;align-items:center;gap:7px;padding:6px 10px;border-radius:11px;
   font-size:8.5px;letter-spacing:.09em;text-transform:uppercase;border:1px solid;cursor:pointer;
   font-family:'IBM Plex Mono',monospace;white-space:nowrap;flex-shrink:0;transition:filter .16s,box-shadow .16s}
 #madhab-badge .mh-dot{width:8px;height:8px;border-radius:50%;background:currentColor;flex-shrink:0;box-shadow:0 0 7px currentColor}
@@ -234,7 +268,7 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;opac
 .hdd-ic svg .dot{fill:currentColor;stroke:none}
 /* (apps button now uses the .ic icon style) */
 #madhab-badge{
-  padding:3px 7px;border-radius:2px;font-size:8px;
+  padding:3px 7px;border-radius:8px;font-size:8px;
   letter-spacing:.08em;text-transform:uppercase;
   border:1px solid;cursor:pointer;transition:all .16s;
   font-family:'IBM Plex Mono',monospace;white-space:nowrap;flex-shrink:0;
@@ -244,7 +278,7 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;opac
 /* ── Review badge ── */
 #review-badge{
   display:none;align-items:center;gap:4px;
-  padding:3px 8px;border-radius:2px;
+  padding:3px 8px;border-radius:8px;
   font-size:8px;letter-spacing:.06em;
   border:1px solid #69f0ae66;color:#69f0ae;background:rgba(105,240,174,.12);
   cursor:pointer;transition:all .16s;flex-shrink:0;
@@ -259,14 +293,14 @@ body.overlay-open #review-badge .rv-icon{animation-play-state:paused}
 .hdd-caret{font-size:7px;margin-left:4px;opacity:.7}
 .hdd-menu{position:fixed;z-index:260;min-width:214px;max-width:86vw;max-height:74vh;overflow-y:auto;
   background:linear-gradient(180deg,rgba(24,18,9,.99),rgba(12,9,4,.995));
-  border:1px solid rgba(201,168,76,.4);border-radius:9px;padding:6px;
+  border:1px solid rgba(201,168,76,.4);border-radius:11px;padding:6px;
   box-shadow:0 16px 44px rgba(0,0,0,.6),0 0 22px rgba(201,168,76,.07);
   opacity:0;transform:translateY(-6px);pointer-events:none;
   transition:opacity .2s ease,transform .24s cubic-bezier(.22,1,.36,1)}
 .hdd.open .hdd-menu{opacity:1;transform:translateY(0);pointer-events:auto}
 .hdd-menu::-webkit-scrollbar{width:3px}.hdd-menu::-webkit-scrollbar-thumb{background:var(--border)}
 .hdd-item{display:flex;align-items:center;gap:10px;width:100%;text-align:left;
-  padding:9px 11px;border:none;background:transparent;border-radius:6px;cursor:pointer;
+  padding:9px 11px;border:none;background:transparent;border-radius:8px;cursor:pointer;
   color:var(--text);font-family:'IBM Plex Mono',monospace;text-decoration:none;transition:background .14s}
 .hdd.open .hdd-menu .hdd-item{animation:cascadeIn .34s cubic-bezier(.22,1,.36,1) both}
 .hdd-item:hover{background:rgba(201,168,76,.1)}
@@ -280,7 +314,7 @@ body.overlay-open #review-badge .rv-icon{animation-play-state:paused}
 .hdd-divider{height:1px;background:var(--border);margin:5px 7px}
 .hdd-head{font-size:7.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);padding:6px 11px 5px}
 .hdd-foot{display:flex;align-items:center;gap:8px;width:100%;padding:9px 11px;border:none;background:transparent;
-  border-radius:6px;cursor:pointer;color:var(--muted);font-family:'IBM Plex Mono',monospace;
+  border-radius:8px;cursor:pointer;color:var(--muted);font-family:'IBM Plex Mono',monospace;
   font-size:8.5px;letter-spacing:.1em;text-transform:uppercase;transition:background .14s,color .14s}
 .hdd-foot:hover{background:rgba(201,168,76,.07);color:var(--gold2)}
 #review-badge .rv-count{font-weight:600;font-variant-numeric:tabular-nums}
@@ -439,7 +473,7 @@ body.overlay-open #review-badge .rv-icon{animation-play-state:paused}
 #tutorial{position:fixed;inset:0;z-index:7500;display:none}
 #tutorial.show{display:block}
 #tut-spotlight{
-  position:absolute;border-radius:8px;pointer-events:none;
+  position:absolute;border-radius:10px;pointer-events:none;
   box-shadow:0 0 0 9999px rgba(6,5,3,.82);
   transition:all .45s cubic-bezier(.22,1,.36,1);
   border:1px solid rgba(201,168,76,.5);opacity:0;
@@ -474,10 +508,12 @@ body.overlay-open #review-badge .rv-icon{animation-play-state:paused}
 #controls{position:fixed;bottom:14px;right:14px;display:flex;gap:4px;z-index:150}
 #progress-panel{
   position:fixed;bottom:14px;left:14px;z-index:150;
-  background:rgba(12,9,4,.95);border:1px solid var(--border);
-  padding:10px 12px;min-width:200px;
-  backdrop-filter:blur(10px);
-  box-shadow:0 2px 16px rgba(0,0,0,.5);
+  background:linear-gradient(158deg,rgba(26,20,10,.62),rgba(12,9,4,.54));
+  border:1px solid rgba(201,168,76,.18);
+  padding:10px 12px;min-width:200px;border-radius:16px;
+  backdrop-filter:blur(12px) saturate(1.25);
+  -webkit-backdrop-filter:blur(12px) saturate(1.25);
+  box-shadow:0 8px 30px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.07);
 }
 .prog-row{display:flex;align-items:center;gap:8px;margin-bottom:6px}
 .prog-row:last-of-type{margin-bottom:0}
@@ -491,16 +527,16 @@ body.overlay-open #review-badge .rv-icon{animation-play-state:paused}
   font-variant-numeric:tabular-nums}
 .prog-actions{display:flex;gap:5px;margin-top:8px;padding-top:8px;border-top:1px solid var(--border)}
 .prog-action-btn{
-  flex:1;padding:4px 0;
-  background:transparent;border:1px solid var(--border);
+  flex:1;padding:4px 0;border-radius:9px;
+  background:rgba(255,255,255,.025);border:1px solid var(--border);
   color:var(--muted);font-family:'IBM Plex Mono',monospace;
   font-size:8px;letter-spacing:.08em;text-transform:uppercase;
   cursor:pointer;transition:all .16s;text-align:center;
 }
 .prog-action-btn:hover{border-color:var(--gold);color:var(--gold)}
 .import-lbl{
-  flex:1;padding:4px 0;text-align:center;
-  background:transparent;border:1px solid var(--border);
+  flex:1;padding:4px 0;text-align:center;border-radius:9px;
+  background:rgba(255,255,255,.025);border:1px solid var(--border);
   color:var(--muted);font-family:'IBM Plex Mono',monospace;
   font-size:8px;letter-spacing:.08em;text-transform:uppercase;
   cursor:pointer;transition:all .16s;
@@ -529,7 +565,7 @@ body.overlay-open #review-badge .rv-icon{animation-play-state:paused}
 /* Status filter */
 .prog-filter{display:flex;gap:3px;margin-top:8px;padding-top:8px;border-top:1px solid var(--border)}
 .pf-btn{
-  flex:1;padding:3px 0;background:transparent;border:1px solid var(--border);
+  flex:1;padding:3px 0;background:rgba(255,255,255,.025);border:1px solid var(--border);border-radius:8px;
   color:var(--muted);font-family:'IBM Plex Mono',monospace;font-size:7.5px;
   letter-spacing:.05em;text-transform:uppercase;cursor:pointer;transition:all .15s;
 }
@@ -649,7 +685,7 @@ body.overlay-open #review-badge .rv-icon{animation-play-state:paused}
 #hifzview::-webkit-scrollbar-thumb{background:var(--border)}
 .hz-wrap{max-width:720px;margin:0 auto;padding:20px 18px calc(60px + env(safe-area-inset-bottom))}
 .hz-summary{display:flex;gap:10px;margin-bottom:14px}
-.hz-stat{flex:1;background:rgba(255,255,255,.02);border:1px solid var(--border);border-radius:11px;padding:14px 8px;text-align:center}
+.hz-stat{flex:1;background:rgba(255,255,255,.02);border:1px solid var(--border);border-radius:13px;padding:14px 8px;text-align:center}
 .hz-stat .hz-num{display:block;font-family:'Cinzel',serif;font-size:clamp(20px,5vw,26px);color:var(--gold2);line-height:1}
 .hz-stat .hz-lbl{display:block;font-size:8px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-top:7px}
 .hz-stat.hz-gold{border-color:rgba(201,168,76,.4);background:rgba(201,168,76,.05)}
@@ -666,7 +702,7 @@ body.overlay-open #review-badge .rv-icon{animation-play-state:paused}
 .hz-sec-hdr .hz-count{margin-left:auto;color:var(--muted);font-size:8px;border:1px solid var(--border);border-radius:20px;padding:1px 8px}
 .hz-sec .hz-flower{color:var(--hzc,var(--gold2))}
 .hz-item{display:flex;align-items:center;gap:11px;padding:11px 12px;border:1px solid var(--border);
-  border-radius:9px;margin-bottom:6px;cursor:pointer;background:rgba(255,255,255,.012);
+  border-radius:11px;margin-bottom:6px;cursor:pointer;background:rgba(255,255,255,.012);
   transition:border-color .15s,background .15s;animation:cascadeIn .4s cubic-bezier(.22,1,.36,1) both}
 .hz-item:hover{border-color:rgba(201,168,76,.4);background:rgba(201,168,76,.05)}
 .hz-flower{color:var(--gold2);font-size:12px;flex-shrink:0;text-shadow:0 0 8px rgba(232,201,122,.5)}
@@ -841,7 +877,7 @@ body.overlay-open #review-badge .rv-icon{animation-play-state:paused}
     </button>
     <div class="seg" role="group" aria-label="View mode">
       <button class="ic active" id="btn-tree" onclick="setView('tree')" title="Tree view" aria-label="Tree view">
-        <svg viewBox="0 0 24 24"><circle class="dot" cx="12" cy="5" r="2.2"/><circle class="dot" cx="5" cy="19" r="2.2"/><circle class="dot" cx="19" cy="19" r="2.2"/><path d="M12 7.2V12M12 12H5v4.8M12 12h7v4.8"/></svg>
+        <svg viewBox="0 0 24 24"><circle class="dot" cx="12" cy="5" r="2.2"/><circle class="dot" cx="5" cy="19" r="2.2"/><circle class="dot" cx="19" cy="19" r="2.2"/><path pathLength="100" d="M12 7.2V12M12 12H5v4.8M12 12h7v4.8"/></svg>
       </button>
       <button class="ic" id="btn-list" onclick="setView('list')" title="List view" aria-label="List view">
         <svg viewBox="0 0 24 24"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg>
@@ -1848,19 +1884,42 @@ const TREE={name:"Talib al-Ilm",type:"root",children:[
       "https://www.youtube.com/watch?v=mBrx8Qh4p7I&list=PLnhtgbfAX0xllWP-6R-MBmxjsSM70aadv"),
   ],"hanbali"),
   s("Fiqh — Shafi'i",SC.fiqh,[
-    b("Fath al-Qarib al-Mujib — Ibn Qasim al-Ghazzah"),
-    b("Rawdat al-Talibin — Imam al-Nawawi (12 volumes)"),
-    b("Al-Majmu' Sharh al-Muhadhdhab — Imam al-Nawawi"),
+    b("Fath al-Qarib al-Mujib — Ibn Qasim al-Ghazzah",false,
+      "https://www.sifatusafwa.com/en/fiqh-shafii/fath-al-qarib-al-mujib-fi-sharh-alfadh-at-taqrib-fiqh-shafii-harakat.html",
+      "https://archive.org/details/20191110/mode/2up",
+      "https://www.youtube.com/watch?v=VEbPdpw0noI"),
+    b("Rawdat al-Talibin — Imam al-Nawawi",false,
+      "https://www.sifatusafwa.com/en/fiqh-shafii/rawdatu-talibin-imam-an-nawawi-fiqh-shafii.html",
+      "https://archive.org/details/20230814_20230814_0741/روضة%20الطالبين%20وعمدة%20المفتين/",
+      "https://www.youtube.com/watch?v=naCXWquBr5Q&list=PLFCSL6fix-ZrY4nrNEQRymLfCSFJ8biXv"),
+    b("Al-Majmu' Sharh al-Muhadhdhab — Imam al-Nawawi",false,
+      "https://www.sifatusafwa.com/en/generalist-fiqh/al-majmu-sharh-al-muhaddhab-imam-an-nawawi-22-volumes.html",
+      "https://archive.org/details/waqmagm/magm00/",
+      "#",null,null,{noVideo:true}),
   ],"shafi"),
   s("Fiqh — Maliki",SC.fiqh,[
-    b("Bidayat al-Mujtahid wa Nihayat al-Muqtasid — Ibn Rushd"),
-    b("Al-Mudawwana — Imam Sahnun (compiled from Imam Malik)"),
-    b("Hashiyat al-Dusuqi ala al-Sharh al-Kabir"),
+    b("Bidayat al-Mujtahid wa Nihayat al-Muqtasid — Ibn Rushd",false,
+      "https://www.sifatusafwa.com/en/generalist-fiqh/bidayah-al-mujtahid-wa-nihayah-al-muqtasid-ibn-rushd.html",
+      "https://baitalzakat.com/files/zakat-book/baitalzakat.com-B100073.pdf",
+      "https://www.youtube.com/watch?v=00xNIcMGSYg&list=PLN8YvwxIUYcPNossjELmWqi8-De8W6Qwv"),
+    b("Al-Mudawwana — Imam Sahnun",false,
+      "https://www.sifatusafwa.com/en/fiqh-maliki/al-mudawanah-fi-furoo-al-malikiyah-sahnun.html",
+      "https://archive.org/details/feqhmaliki05/G1/",
+      "#",null,null,{noVideo:true}),
+    b("Hashiyat al-Dusuqi ala al-Sharh al-Kabir",false,
+      "https://www.sifatusafwa.com/en/fiqh-maliki/hashiyyah-ad-dusuqi-ala-ash-sharh-al-kabir-fiqh-maliki.html",
+      "https://archive.org/details/HashiyatDassughi/addassou9i-1/mode/2up",
+      "#",null,null,{noVideo:true}),
   ],"maliki"),
   s("Fiqh — Hanafi",SC.fiqh,[
-    b("Bada'i al-Sana'i fi Tartib al-Shara'i — al-Kasani"),
-    b("Al-Mabsut — al-Sarakhsi (30 volumes)"),
-    b("Tabyin al-Haqa'iq — al-Zayla'i"),
+    b("Bada'i al-Sana'i fi Tartib al-Shara'i — al-Kasani",false,
+      "https://www.sifatusafwa.com/en/fiqh-hanafi/bada-i-as-sana-i-fi-tartib-ash-shara-i-al-kasani-al-hanafi.html",
+      "https://archive.org/details/hanafi_01_20150718/00/",
+      "#",null,null,{noVideo:true}),
+    b("Al-Mabsut — al-Sarakhsi",false,
+      "https://www.sifatusafwa.com/en/fiqh-hanafi/al-mabsut-by-imam-abi-bakr-as-sarkhasi-al-hanafi.html",
+      "https://archive.org/details/hanafi_07/01/",
+      "#",null,null,{noVideo:true}),
   ],"hanafi"),
   s("Usool al-Fiqh — Advanced",SC.usool,[
     b("Bulghat al-Wusul ila Ilm al-Usul",false,
@@ -1873,6 +1932,10 @@ const TREE={name:"Talib al-Ilm",type:"root",children:[
   s("Tafsir — Complete",SC.tafsir,[
     b("Tafsir Ibn Kathir — Full (4 volumes)"),
     b("Tafsir al-Tabari — Full (Jami' al-Bayan)"),
+    b("At-Tafsir al-Muharrar — al-Durar al-Saniyya",false,
+      "https://www.sifatusafwa.com/en/entire-tafsir/at-tafsir-al-muharrar-by-ad-durar-as-sanniyah-44-volumes.html",
+      "https://archive.org/details/at-tafsir-al-muharrar-06-sura-al-araf/at-tafsir%20al-muharrar%2000/",
+      "#",null,null,{noVideo:true}),
   ]),
   s("Qawa'id Fiqhiyya — Advanced",SC.qawaid,[
     b("Nadhm al-Qawa'id wal-Usool al-Jami'a",true),
