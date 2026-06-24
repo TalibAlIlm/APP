@@ -807,7 +807,7 @@ body.overlay-open #review-badge .rv-icon{animation-play-state:paused}
   #panel-btns{padding:14px 16px 18px;gap:9px}
   .pbtn{padding:13px 16px;font-size:11px}.pbtn .icon{font-size:15px}
   #panel-close{font-size:18px;margin:12px 12px -4px auto}
-  #search-wrap{width:96vw;top:60px}
+  #search-wrap{left:2vw !important;right:2vw;width:auto;max-width:none;top:58px;transform:none !important}
   #search-input{font-size:12px;padding:12px 14px}
   .sr-item{padding:11px 14px}.sr-name{font-size:11px}.sr-path{font-size:9px}
   #breadcrumb{top:96px;font-size:8.5px;max-width:80vw}
@@ -853,16 +853,20 @@ body.overlay-open #review-badge .rv-icon{animation-play-state:paused}
   .bn:active{background:rgba(201,168,76,.1)}
   /* ── SPLASH basmala never clipped ── */
   #splash{padding:0 16px;gap:14px}
-  .sp-bism{font-size:clamp(19px,5.6vw,38px);max-width:90vw;line-height:1.2;overflow:hidden}
+  .sp-bism{font-size:clamp(16px,4.6vw,26px);max-width:96vw;line-height:1.3;white-space:nowrap}
   .sp-en{font-size:8.5px;letter-spacing:.12em;max-width:86vw;text-align:center;line-height:1.7;padding:0 12px}
   .track-bism{max-width:92vw;line-height:1.15}
   /* ── DROPDOWN MENUS → centered modal cards (never cut off) ── */
   #hdd-scrim.show{display:block;position:fixed;inset:0;z-index:255;
     background:rgba(6,5,3,.66);animation:dtFade .22s ease}
-  .hdd-menu{left:50% !important;right:auto !important;top:50% !important;bottom:auto !important;
-    width:90vw;min-width:0;max-width:360px;max-height:74vh;
-    transform:translate(-50%,calc(-50% + 10px))}
-  .hdd.open .hdd-menu{transform:translate(-50%,-50%)}
+  /* Centered card WITHOUT transform — a transform on a position:fixed element
+     breaks touch hit-testing in the iOS in-app browser, making the options
+     untappable. So we centre with left/right margins instead. */
+  .hdd-menu{left:4vw !important;right:4vw !important;top:92px !important;bottom:auto !important;
+    width:auto !important;min-width:0 !important;max-width:none !important;max-height:72vh;
+    transform:none !important;z-index:300 !important}
+  .hdd.open .hdd-menu{transform:none !important;opacity:1;pointer-events:auto}
+  .hdd.open .hdd-menu .hdd-item{animation:none !important}
 }
 @supports(padding:max(0px)){
   #header{padding-left:max(12px,env(safe-area-inset-left));padding-right:max(12px,env(safe-area-inset-right))}
@@ -1329,10 +1333,10 @@ const TREE={name:"Talib al-Ilm",type:"root",children:[
       "https://www.youtube.com/watch?v=eYPhS4QKMUE",
       "A very concise poetic text (Mandhuma), in which Dr. Amer Bahjat, may Allah preserve him, versified the rulings that are individually obligatory for most Muslims to know and act upon.",
       51),
-    b("Shurut al-Salah — Conditions, Pillars & Obligations",false,
+    b("Shurut al-Salah — Conditions, Pillars & Obligations",true,
       "https://www.sifatusafwa.com/en/matn-of-aqeedah/thalathat-ul-usul-shurut-us-salat-al-qawa-id-ul-arba-a-harakat.html",
       "https://a-alqasim.com/books/03mutoon/",
-      "https://www.youtube.com/watch?v=V-MboNltheM&list=PLKpkWh3ZAKTfd_ngT6Pb8dJjcHlnv7pd0"),
+      "https://www.youtube.com/watch?v=T7iGHPI9jeY"),
   ]),
   s("Hadith",SC.hadith,[
     b("Al-Arba'un al-Nawawiyya",true,
@@ -1340,7 +1344,7 @@ const TREE={name:"Talib al-Ilm",type:"root",children:[
       "https://a-alqasim.com/books/02mutoon/",
       "https://www.youtube.com/watch?v=8cAqVJN0Hnk"),
     b("Al-Ziyadat — 8 Hadiths of Ibn Rajab",true,
-      "https://www.sifatusafwa.com/ar/shrwh-ktb-alahadyth/jaami-al-uloom-wal-hikam-fi-sharh-50-hadeeth-ibn-rajab.html",
+      "https://www.sifatusafwa.com/en/hadith-collections-explanations/jaami-al-uloom-wal-hikam-fi-sharh-50-hadeeth-ibn-rajab.html",
       "https://a-alqasim.com/books/02mutoon/",
       "https://www.youtube.com/watch?v=EGsL8LrCGBw&list=PLGeu80ApFDrl8uOXwpuiHW07_6BUPESVR&index=45"),
   ]),
@@ -1787,7 +1791,7 @@ const TREE={name:"Talib al-Ilm",type:"root",children:[
     b("Al-Nadhm al-Jali ma al-Ahmirar",true,
       "#",
       "https://t.me/hanbal_s/410",
-      "https://www.youtube.com/watch?v=d_erOw7qNis&list=PLPk56GrIFwT0qrakh6C0oKhivh1t6BE-V&index=1",
+      "https://www.youtube.com/watch?v=XsOs0HwirS8&list=PL6KwaPRSP2CLURSbExxXHukpc0yJwyNyt&index=1",
       "A wonderful arjūza by Shaykh Anwar al-Fuḍaylī, may Allah protect him, in which he versified most of the contents of Zād al-Mustaqniʿ — yielding 889 verses. He then added eight verses in two places, and Shaykh ʿĀmir Bahjat added 74 verses, the additions known as al-Aḥmirār (the Red Additions). The poem was then reviewed and read many times with editing and verification, so it appears in its most beautiful form.",
       971),
     b("Ma la Yasi' al-Hanbali Jahluhu",false,
@@ -2173,7 +2177,8 @@ const SPEC_MAP={
   "Al-Lu'lu' wal-Marjan":"hadith",
   "Al-Muharrar fi al-Hadith — Ibn Abd al-Hadi":"hadith",
   "Alfiyyat al-Hadith al-Iraqi":"hadith",
-  "Al-Nadhm al-Bayin fi al-Fiqh al-Muta'in":"fiqh",
+  "Al-Nadhm al-Bayin fi al-Fiqh al-Muta'in":"core",
+  "Shurut al-Salah — Conditions, Pillars & Obligations":"core",
   "Matn al-Ghaya wal-Taqrib — Abu Shuja'":"fiqh",
   "Al-Durar al-Bahiyya — al-Shawkani":"fiqh",
   "Al-Nadhm al-Saghir fi Usool al-Fiqh":"fiqh",
@@ -2540,12 +2545,12 @@ function fetchShaykhHadith(){
     <div class="hadith-ref">&#128216; <a href="https://sunnah.com/abudawud:3641" target="_blank" rel="noopener">Sunan Abi Dawud 3641 · Jami al-Tirmidhi 2682</a></div>`;
 }
 
-/* ── Ibn Sirin statement (Sahih Muslim, Introduction) — static text (no API) ── */
+/* ── Ibn Sirin statement (Mishkat al-Masabih 273) — static text (no API) ── */
 function fetchIbnSirinStatement(){
   const box=document.getElementById("ibnsirin-hadith-box");
   if(!box)return;
   box.innerHTML=`<div class="hadith-english"><em>"Indeed this knowledge is religion, so look carefully at the one from whom you take your religion."</em></div>
-    <div class="hadith-ref">&#128216; Sahih Muslim — Introduction (Muqaddimah) · statement of Muhammad ibn Sirin (d. 110 AH)</div>`;
+    <div class="hadith-ref">&#128216; <a href="https://sunnah.com/mishkat:273" target="_blank" rel="noopener">Mishkat al-Masabih 273 · statement of Muhammad ibn Sirin (d. 110 AH)</a></div>`;
   box.style.display="flex";box.style.flexDirection="column";
 }
 function exportProgress(){
@@ -3467,8 +3472,16 @@ function showTutStep(){
       spot.classList.remove("show");
       spot.style.width="0px";spot.style.height="0px";
       spot.style.left="50%";spot.style.top="50%";
-      tip.style.left="50%";tip.style.top="50%";
-      tip.style.transform="translate(-50%,-50%)";
+      if(isMobileTut()){
+        tip.style.transform="none";tip.style.right="auto";
+        const tw=tip.offsetWidth||Math.min(360,window.innerWidth*0.9);
+        const th=tip.offsetHeight||220;
+        tip.style.left=Math.max(8,Math.round((window.innerWidth-tw)/2))+"px";
+        tip.style.top=Math.max(12,Math.round((window.innerHeight-th)/2))+"px";
+      } else {
+        tip.style.left="50%";tip.style.top="50%";
+        tip.style.transform="translate(-50%,-50%)";
+      }
     }
   };
   // For fit steps, let the zoom settle before positioning
@@ -3481,7 +3494,8 @@ function isMobileTut(){return window.matchMedia("(max-width:700px)").matches;}
 function positionTipMobile(r){
   const tip=document.getElementById("tut-tip");
   tip.style.right="auto";
-  tip.style.left="50%";
+  tip.style.transform="none";
+  const tw=tip.offsetWidth||Math.min(360,window.innerWidth*0.9);
   const th=tip.offsetHeight||220;
   const topSafe=104, bottomSafe=80;
   const avail=window.innerHeight-topSafe-bottomSafe;
@@ -3496,7 +3510,7 @@ function positionTipMobile(r){
   top=Math.max(topSafe,Math.min(top,window.innerHeight-th-bottomSafe));
   if(th>avail) top=topSafe;
   tip.style.top=top+"px";
-  tip.style.transform="translateX(-50%)";
+  tip.style.left=Math.max(8,Math.round((window.innerWidth-tw)/2))+"px";
 }
 function positionTip(r){
   const tip=document.getElementById("tut-tip");
@@ -3643,6 +3657,7 @@ function collapseToLevels(){root.descendants().forEach(d=>{if(d.depth>=1&&d.chil
 
 /* ═══ VIEW TOGGLE ════════════════════════════════════ */
 function setView(v){
+  if(typeof closeAllHdd==="function")closeAllHdd();
   document.getElementById("btn-tree").classList.toggle("active",v==="tree");
   document.getElementById("btn-list").classList.toggle("active",v==="list");
   document.getElementById("btn-hifz").classList.toggle("active",v==="hifz");
