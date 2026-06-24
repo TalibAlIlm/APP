@@ -2,10 +2,16 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#0c0904">
+<meta name="color-scheme" content="dark">
+<meta name="description" content="An interactive roadmap of the classical Islamic sciences — six levels of mutun across the disciplines, with memorization tracking and spaced repetition.">
 <title>Talib al-ʿIlm — Islamic Studies Roadmap</title>
+<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=IBM+Plex+Mono:wght@300;400;500&family=Noto+Naskh+Arabic:wght@400&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=IBM+Plex+Mono:wght@300;400;500&family=Noto+Naskh+Arabic:wght@400;700&display=swap" rel="stylesheet">
 <style>
 /* ═══ BASE / SEPIA THEME ══════════════════════════════ */
 *{margin:0;padding:0;box-sizing:border-box}
@@ -233,12 +239,12 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;opac
 @keyframes treeTop{0%{transform:scale(1)}18%{transform:scale(1.32)}40%{transform:scale(1)}}
 @keyframes treeConnect{0%,62%{transform:scale(1)}76%{transform:scale(1.34)}100%{transform:scale(1)}}
 /* list — the rows shuffle like sliding bars */
-#btn-list:hover svg line:nth-of-type(1){transform:translateX(2.6px)}
-#btn-list:hover svg line:nth-of-type(2){transform:translateX(-2.6px)}
-#btn-list:hover svg line:nth-of-type(3){transform:translateX(2.6px)}
+#btn-list:hover svg line:nth-of-type(1){transform:translateX(-2.6px)}
+#btn-list:hover svg line:nth-of-type(2){transform:translateX(2.6px)}
+#btn-list:hover svg line:nth-of-type(3){transform:translateX(-2.6px)}
 /* hifz — the flower blooms open */
 #btn-hifz svg{transition:transform .42s cubic-bezier(.34,1.56,.64,1);transform-origin:center}
-#btn-hifz:hover svg{transform:rotate(45deg)}
+#btn-hifz:hover svg{transform:rotate(-45deg)}
 #btn-hifz:hover svg .dot{transform:scale(1.3)}
 /* more — the three dots spread */
 #btn-more:hover svg .dot:nth-of-type(1){transform:translateX(-2.4px)}
@@ -285,7 +291,7 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;opac
   font-family:'IBM Plex Mono',monospace;
 }
 #review-badge:hover{background:rgba(105,240,174,.2);box-shadow:0 0 10px rgba(105,240,174,.25)}
-#review-badge .rv-icon{font-size:11px;animation:rvSpin 6s linear infinite;will-change:transform}
+#review-badge .rv-icon{font-size:11px;animation:rvSpin 6s linear infinite}
 body.overlay-open #review-badge .rv-icon{animation-play-state:paused}
 
 /* ── Header dropdowns (Apps + Madhab) — list-view feel ── */
@@ -473,36 +479,59 @@ body.overlay-open #review-badge .rv-icon{animation-play-state:paused}
 #tutorial{position:fixed;inset:0;z-index:7500;display:none}
 #tutorial.show{display:block}
 #tut-spotlight{
-  position:absolute;border-radius:10px;pointer-events:none;
-  box-shadow:0 0 0 9999px rgba(6,5,3,.82);
-  transition:all .45s cubic-bezier(.22,1,.36,1);
-  border:1px solid rgba(201,168,76,.5);opacity:0;
+  position:absolute;border-radius:12px;pointer-events:none;
+  box-shadow:0 0 0 9999px rgba(6,5,3,.86),0 0 28px 4px rgba(201,168,76,.34),inset 0 0 18px rgba(201,168,76,.18);
+  transition:all .5s cubic-bezier(.22,1,.36,1);
+  border:1px solid rgba(201,168,76,.6);opacity:0;
 }
 #tut-spotlight.show{opacity:1}
-#tut-tip{
-  position:absolute;width:300px;max-width:86vw;
-  background:rgba(19,15,8,.99);border:1px solid var(--border);
-  border-left:3px solid var(--gold);
-  box-shadow:0 12px 48px rgba(0,0,0,.6);
-  padding:18px 20px;z-index:7600;
-  transition:all .45s cubic-bezier(.22,1,.36,1);
+#tut-spotlight::after{
+  content:"";position:absolute;inset:-3px;border-radius:14px;
+  border:1.5px solid rgba(201,168,76,.5);
+  animation:tutRing 2.6s ease-in-out infinite;
 }
-.tut-step-count{font-size:8px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);margin-bottom:8px}
-.tut-title{font-family:'Cinzel',serif;font-size:14px;color:var(--gold2);letter-spacing:.06em;margin-bottom:10px;line-height:1.3}
-.tut-text{font-size:11px;color:#c8b48a;line-height:1.75;margin-bottom:16px}
-.tut-controls{display:flex;align-items:center;justify-content:space-between;gap:10px}
+@keyframes tutRing{0%,100%{opacity:.55;transform:scale(1)}50%{opacity:.1;transform:scale(1.05)}}
+#tut-tip{
+  position:absolute;width:312px;max-width:86vw;
+  background:linear-gradient(168deg,rgba(27,21,11,.99),rgba(15,11,6,.99));
+  border:1px solid rgba(201,168,76,.28);border-radius:14px;overflow:hidden;
+  box-shadow:0 18px 60px rgba(0,0,0,.65),0 0 0 1px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.06);
+  padding:0 0 14px;z-index:7600;
+  transition:left .5s cubic-bezier(.22,1,.36,1),top .5s cubic-bezier(.22,1,.36,1),transform .5s cubic-bezier(.22,1,.36,1);
+}
+.tut-pbar{height:2px;width:100%;background:rgba(201,168,76,.12)}
+.tut-pbar i{display:block;height:100%;width:0%;background:linear-gradient(90deg,#c9a84c,#e8c97a);
+  box-shadow:0 0 8px rgba(201,168,76,.6);transition:width .5s cubic-bezier(.22,1,.36,1)}
+.tut-pad{padding:16px 20px 0}
+.tut-top{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.tut-step-count{font-family:'IBM Plex Mono',monospace;font-size:8px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);white-space:nowrap}
+.tut-dots{display:flex;gap:5px;align-items:center;flex-wrap:wrap}
+.tut-dot{width:6px;height:6px;border-radius:50%;background:rgba(201,168,76,.2);border:none;padding:0;cursor:pointer;
+  transition:width .4s cubic-bezier(.22,1,.36,1),background .3s,box-shadow .3s}
+.tut-dot.done{background:rgba(201,168,76,.5)}
+.tut-dot.active{width:16px;border-radius:3px;background:linear-gradient(90deg,#c9a84c,#e8c97a);box-shadow:0 0 8px rgba(201,168,76,.55)}
+.tut-dot:hover{background:rgba(232,201,122,.85)}
+.tut-body.in{animation:tutRise .5s cubic-bezier(.22,1,.36,1) both}
+@keyframes tutRise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.tut-title{font-family:'Cinzel',serif;font-size:14.5px;color:var(--gold2);letter-spacing:.05em;margin-bottom:10px;line-height:1.32}
+.tut-title::before{content:"❀ ";color:var(--gold);opacity:.75;font-size:11px}
+.tut-text{font-size:11px;color:#c8b48a;line-height:1.75;margin-bottom:14px}
+.tut-controls{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:0 20px}
 .tut-skip{background:none;border:none;color:var(--muted);font-family:'IBM Plex Mono',monospace;
-  font-size:8.5px;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;transition:color .16s}
+  font-size:8.5px;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;transition:color .16s;padding:0}
 .tut-skip:hover{color:var(--text)}
 .tut-nav{display:flex;gap:6px}
-.tut-prev,.tut-next{padding:6px 14px;border:1px solid var(--border);background:transparent;
+.tut-prev,.tut-next{padding:7px 15px;border:1px solid var(--border);background:transparent;border-radius:8px;
   font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.08em;text-transform:uppercase;
-  cursor:pointer;transition:all .16s;color:var(--muted)}
+  cursor:pointer;transition:all .18s;color:var(--muted)}
 .tut-prev:hover{border-color:var(--gold);color:var(--gold)}
 .tut-next{border-color:var(--gold);color:var(--gold);background:rgba(201,168,76,.1)}
-.tut-next:hover{background:rgba(201,168,76,.2);box-shadow:0 0 12px rgba(201,168,76,.2)}
+.tut-next:hover{background:rgba(201,168,76,.2);box-shadow:0 0 14px rgba(201,168,76,.28)}
+.tut-next .ar{display:inline-block;transition:transform .2s;margin-left:4px}
+.tut-next:hover .ar{transform:translateX(3px)}
 .tut-prev.hidden{visibility:hidden}
-@media(max-width:700px){#tut-tip{width:88vw;left:6vw !important;right:auto}}
+.tut-hint{font-size:7px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);opacity:.45;text-align:center;margin-top:12px;padding:0 20px}
+@media(max-width:700px){#tut-tip{width:88vw;left:6vw !important;right:auto}.tut-hint{display:none}}
 
 /* ═══ CONTROLS ════════════════════════════════════════ */
 #controls{position:fixed;bottom:14px;right:14px;display:flex;gap:4px;z-index:150}
@@ -630,6 +659,9 @@ body.overlay-open #review-badge .rv-icon{animation-play-state:paused}
 #hint{position:fixed;bottom:14px;left:50%;transform:translateX(-50%);
   font-size:9px;letter-spacing:.08em;color:#251a0a;pointer-events:none;
   text-transform:uppercase;white-space:nowrap;transition:opacity .3s}
+/* mobile-only chrome — hidden on desktop */
+#botnav{display:none}
+#panel-grip{display:none}
 
 /* ═══ LIST VIEW ═══════════════════════════════════════ */
 #listview{position:fixed;top:46px;left:0;right:0;bottom:0;overflow-y:auto;background:var(--bg);display:none;z-index:50}
@@ -720,18 +752,32 @@ body.overlay-open #review-badge .rv-icon{animation-play-state:paused}
 @media(max-width:700px){
   #header{padding:0 8px;gap:5px;height:50px}
   #header h1{font-size:9px;letter-spacing:.1em}
-  .legend{display:none}.hsep{display:none}
+  .hsep{display:none}
+  .seg{display:none}
+  /* category filter → swipeable pill strip beneath the header */
+  .legend{display:flex !important;position:fixed;top:50px;left:0;right:0;
+    margin:0;padding:7px 10px;gap:6px;align-items:center;
+    background:linear-gradient(180deg,#0c0904,rgba(12,9,4,.97));
+    border-bottom:1px solid rgba(201,168,76,.14);z-index:190;
+    overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+  .legend::-webkit-scrollbar{display:none}
+  .chip{flex-shrink:0;font-size:9px;padding:6px 11px;border-radius:20px;gap:5px}
+  .chip .ld{width:6px;height:6px}
   .hbtn{gap:3px}
-  .hbtn .ic{width:33px;height:33px}
+  .hbtn .ic{width:36px;height:36px}
   .hbtn .ic svg{width:18px;height:18px}
   .seg .ic{width:31px;height:29px}
   #madhab-badge{padding:6px 8px;font-size:8px;gap:6px}
   .tb-sep{margin:0 1px}
   #canvas{touch-action:none}
-  #panel{width:100vw;top:50px;border-left:none;border-top:1px solid var(--border);
+  #panel{width:100vw;top:46px;border-left:none;border-top:1px solid rgba(201,168,76,.22);
+    border-radius:20px 20px 0 0;box-shadow:0 -12px 44px rgba(0,0,0,.62);
     transform:translateY(100%);opacity:0;
     transition:transform .42s cubic-bezier(.22,.61,.36,1),opacity .34s ease}
   #panel.open{transform:translateY(0);opacity:1}
+  #panel-grip{display:block;width:42px;height:4px;border-radius:2px;
+    background:rgba(201,168,76,.4);margin:9px auto 2px;flex-shrink:0;touch-action:none}
+  #panel-close{margin-top:-16px}
   #panel-title{font-size:13px;padding:12px 16px}
   #panel-path{padding:14px 16px 0;font-size:10px}
   #panel-mem{padding:10px 16px 0;font-size:10px}
@@ -741,9 +787,9 @@ body.overlay-open #review-badge .rv-icon{animation-play-state:paused}
   #search-wrap{width:96vw;top:60px}
   #search-input{font-size:12px;padding:12px 14px}
   .sr-item{padding:11px 14px}.sr-name{font-size:11px}.sr-path{font-size:9px}
-  #breadcrumb{top:60px;font-size:8.5px;max-width:80vw}
-  #listview{top:50px}
-  #hifzview{top:50px}
+  #breadcrumb{top:96px;font-size:8.5px;max-width:80vw}
+  #listview{top:90px}
+  #hifzview{top:90px}
   .hz-summary{gap:7px}.hz-stat{padding:12px 5px}.hz-name{font-size:11.5px}
   .lv-lhdr{padding:14px 14px;font-size:11px}
   .lv-shdr{padding:10px 20px;font-size:9.5px}
@@ -751,9 +797,9 @@ body.overlay-open #review-badge .rv-icon{animation-play-state:paused}
   .lv-book{min-height:38px;padding:6px 0;gap:8px}
   .lv-book-name{font-size:10px}
   .lv-btn{width:26px;height:26px;font-size:11px}
-  #controls{bottom:20px;right:12px}.cbtn{width:34px;height:34px;font-size:16px}
+  #controls{display:none !important}
   #hint{display:none}
-  #progress-panel{bottom:20px;left:12px;min-width:150px;max-width:46vw;padding:7px 9px}
+  #progress-panel{bottom:calc(70px + env(safe-area-inset-bottom,0px));left:10px;min-width:0;width:auto;max-width:58vw;padding:8px 10px}
   .prog-label{width:38px;font-size:7px}
   .pf-btn{font-size:6.5px;padding:3px 0}
   .prog-action-btn,.import-lbl{font-size:7px}
@@ -764,6 +810,22 @@ body.overlay-open #review-badge .rv-icon{animation-play-state:paused}
   .madhab-grid{grid-template-columns:1fr}
   .spec-grid{grid-template-columns:1fr}
   .track-title{font-size:18px}.track-bism{font-size:36px}
+  /* ── BOTTOM NAVIGATION ── */
+  #botnav{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:210;
+    background:linear-gradient(180deg,rgba(16,12,6,.92),rgba(7,5,2,.99));
+    border-top:1px solid rgba(201,168,76,.22);
+    padding:6px 8px calc(6px + env(safe-area-inset-bottom,0px));
+    box-shadow:0 -8px 26px rgba(0,0,0,.55);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+  .bn{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;
+    background:none;border:none;cursor:pointer;padding:7px 0 4px;border-radius:13px;
+    color:var(--muted);transition:color .2s,background .2s;-webkit-tap-highlight-color:transparent}
+  .bn svg{width:23px;height:23px;fill:none;stroke:currentColor;stroke-width:1.7;
+    stroke-linecap:round;stroke-linejoin:round;transition:filter .25s}
+  .bn svg .dot{fill:currentColor;stroke:none}
+  .bn span{font-family:'IBM Plex Mono',monospace;font-size:8.5px;letter-spacing:.09em;text-transform:uppercase}
+  .bn.active{color:var(--gold2)}
+  .bn.active svg{filter:drop-shadow(0 0 6px rgba(201,168,76,.55))}
+  .bn:active{background:rgba(201,168,76,.1)}
 }
 @supports(padding:max(0px)){
   #header{padding-left:max(12px,env(safe-area-inset-left));padding-right:max(12px,env(safe-area-inset-right))}
@@ -781,6 +843,7 @@ body.overlay-open #review-badge .rv-icon{animation-play-state:paused}
 <meta name="apple-mobile-web-app-title" content="Talib al-Ilm">
 </head>
 <body>
+<noscript><div style="position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;background:#0c0904;color:#e8d5b7;font-family:'IBM Plex Mono',monospace;text-align:center;padding:24px;line-height:1.7">This interactive roadmap needs JavaScript enabled to run, in shaa ALLAH.</div></noscript>
 
 <!-- SPLASH -->
 <div id="splash" onclick="dismissSplash()">
@@ -942,6 +1005,7 @@ body.overlay-open #review-badge .rv-icon{animation-play-state:paused}
 
 <!-- PANEL -->
 <div id="panel">
+  <div id="panel-grip"></div>
   <button id="panel-close" onclick="closePanel()">&#x2715;</button>
   <div id="panel-path"></div>
   <div id="panel-title"></div>
@@ -1046,14 +1110,36 @@ body.overlay-open #review-badge .rv-icon{animation-play-state:paused}
   <button class="cbtn" id="zi">+</button>
   <button class="cbtn" id="zo">&#8722;</button>
 </div><div id="hint">Click level / subject to expand &nbsp;&bull;&nbsp; Click book for details &nbsp;&bull;&nbsp; Drag &amp; scroll to navigate</div>
+<nav id="botnav" aria-label="Views">
+  <button class="bn active" id="bn-tree" onclick="setView('tree')" aria-label="Tree view">
+    <svg viewBox="0 0 24 24"><circle class="dot" cx="12" cy="5" r="2.2"/><circle class="dot" cx="5" cy="19" r="2.2"/><circle class="dot" cx="19" cy="19" r="2.2"/><path d="M12 7.2V12M12 12H5v4.8M12 12h7v4.8"/></svg>
+    <span>Tree</span>
+  </button>
+  <button class="bn" id="bn-list" onclick="setView('list')" aria-label="List view">
+    <svg viewBox="0 0 24 24"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg>
+    <span>List</span>
+  </button>
+  <button class="bn" id="bn-hifz" onclick="setView('hifz')" aria-label="Ḥifẓ memorization view">
+    <svg viewBox="0 0 24 24"><ellipse cx="12" cy="6.4" rx="2.2" ry="3.2"/><ellipse cx="12" cy="17.6" rx="2.2" ry="3.2"/><ellipse cx="6.4" cy="12" rx="3.2" ry="2.2"/><ellipse cx="17.6" cy="12" rx="3.2" ry="2.2"/><circle class="dot" cx="12" cy="12" r="2.1"/></svg>
+    <span>Ḥifẓ</span>
+  </button>
+</nav>
 
 <!-- ═══ GUIDED TUTORIAL ═══ -->
 <div id="tutorial">
   <div id="tut-spotlight"></div>
   <div id="tut-tip">
-    <div class="tut-step-count" id="tut-step-count">1 / 9</div>
-    <div class="tut-title" id="tut-title"></div>
-    <div class="tut-text" id="tut-text"></div>
+    <div class="tut-pbar"><i id="tut-pbar-fill"></i></div>
+    <div class="tut-pad">
+      <div class="tut-top">
+        <span class="tut-step-count" id="tut-step-count">1 / 13</span>
+        <div class="tut-dots" id="tut-dots"></div>
+      </div>
+      <div class="tut-body" id="tut-body">
+        <div class="tut-title" id="tut-title"></div>
+        <div class="tut-text" id="tut-text"></div>
+      </div>
+    </div>
     <div class="tut-controls">
       <button class="tut-skip" onclick="endTutorial()">Skip tour</button>
       <div class="tut-nav">
@@ -1061,6 +1147,7 @@ body.overlay-open #review-badge .rv-icon{animation-play-state:paused}
         <button class="tut-next" id="tut-next" onclick="tutNext()">Next</button>
       </div>
     </div>
+    <div class="tut-hint">click anywhere to continue · ← → keys</div>
   </div>
 </div>
 
@@ -1498,6 +1585,11 @@ const TREE={name:"Talib al-Ilm",type:"root",children:[
       "https://a-alqasim.com/books/081401asshaatibiyyah/",
       "https://www.youtube.com/watch?v=9Lit-qDnJko&list=PLkp_nTPTqp0yIAXM2CXdA85MfaWJxOOke"),
   ]),
+  s("ʿIlm al-Fawasil",SC.tajweed,[
+    b("Nazimat al-Zuhr — al-Shatibi",true,"#",
+      "https://a-alqasim.com/books/0826nazimatuzzuhr/",
+      "https://www.youtube.com/watch?v=PVNuuAmgB1Q",null,null,{noInfo:true}),
+  ]),
   s("Tafsir",SC.tafsir,[
     b("Tafsir al-Sa'di — Taysir al-Karim al-Rahman",false,
       "https://www.sifatusafwa.com/en/entire-tafsir/taysir-al-karim-al-rahman-tafseer-as-sa-di.html",
@@ -1602,6 +1694,9 @@ const TREE={name:"Talib al-Ilm",type:"root",children:[
       "https://www.sifatusafwa.com/en/salaf-books-on-sunnah/ar-risalah-at-tadmuriyyah-of-shaykh-al-islam-ibn-taymiyyah.html",
       "https://a-alqasim.com/books/0821attadmuriyyah/",
       "https://www.youtube.com/watch?v=1tZqJ4PStYk"),
+    b("Mukhtasar Qawa'id al-Asma wal-Sifat",true,"#",
+      "https://a-alqasim.com/books/0824qawaaidalasmawassifaat_mukhtasar/",
+      "https://www.youtube.com/watch?v=4rNq-yZc95o",null,null,{noInfo:true}),
     b("Sullam al-Wusool ila Ilm al-Usool",true,
       "https://www.sifatusafwa.com/en/matn-of-aqeedah/sullam-al-wusool-ila-ilm-al-usool-hafiz-hakimi.html",
       "https://d1.islamhouse.com/data/ar/ih_books/single/ar_Salim_AlWosool.pdf",
@@ -1731,8 +1826,12 @@ const TREE={name:"Talib al-Ilm",type:"root",children:[
       "https://www.youtube.com/watch?v=z3Hf924YIKk",
       null,null,{noInfo:true}),
   ]),
+  s("ʿArud wal-Qafiya",SC.balagha,[
+    b("Al-Khazrajiyya — al-Ramiza fi ʿIlmay al-ʿArud wal-Qafiya",true,"#",
+      "https://a-alqasim.com/books/0825alkhazrajiyah/",
+      "https://www.youtube.com/watch?v=CntUTsS4gxw",null,null,{noInfo:true}),
+  ]),
   s("Qawa'id Fiqhiyya",SC.qawaid,[
-    b("Al-Mandhuma al-Fadghariyya",true),
     b("Al-Fara'id al-Bahiyya — Abu Bakr al-Ahdal",true,
       "#",
       "https://archive.org/details/20200714_20200714_1000/mode/2up",
@@ -1926,28 +2025,58 @@ const TREE={name:"Talib al-Ilm",type:"root",children:[
       "https://www.sifatusafwa.com/en/usool-al-fiqh/bulghat-al-wusul-ila-ilm-al-usul-mukhtasar-al-bulbul-al-kinani.html",
       "https://drive.google.com/file/d/1UtJ5_Bcs_q-vf9F5SOirYUfDEDrYRJUP/view",
       "#",null,null,{noVideo:true}),
-    b("Rawdat al-Nadhir — Ibn Qudama"),
-    b("Hanbalat Tashil al-Turuqat"),
+    b("Rawdat al-Nadhir — Ibn Qudama",false,
+      "https://www.sifatusafwa.com/en/usool-al-fiqh/rawdatu-nadhir-usul-fiqh-ibn-qudama.html",
+      "https://archive.org/details/20230901_20230901_1506/روضة_الناظر_وجنة_المناظر_١_طبعة_إثراء_المتون_ملون/",
+      "https://www.youtube.com/watch?v=YlzSMpPGB14&list=PLn_8pZxJyaFDMovI6JNIWjZ2kBYm17AYL"),
   ]),
   s("Tafsir — Complete",SC.tafsir,[
-    b("Tafsir Ibn Kathir — Full (4 volumes)"),
-    b("Tafsir al-Tabari — Full (Jami' al-Bayan)"),
+    b("Tafsir Ibn Kathir",false,
+      "https://www.sifatusafwa.com/en/entire-tafsir/tafsir-ibn-kathir-authenticated.html",
+      "https://archive.org/details/tafsir-ibn-kathir/tqa0/",
+      "#",null,null,{noVideo:true}),
+    b("Tafsir al-Tabari",false,
+      "https://www.sifatusafwa.com/en/entire-tafsir/tafsir-ibn-jarir-at-tabari-jami-al-bayan-an-ta-wil-al-quran.html",
+      "https://archive.org/details/TafsirTabariTurki/taftabry00/",
+      "https://www.youtube.com/watch?v=EP-cMUAI04U&list=PL_HCJsf8NRrSAhsJxsfqvSvx0i_e-ESLc",
+      "Note: the linked recording covers the Khulasa (summary), not the full Jami' al-Bayan."),
     b("At-Tafsir al-Muharrar — al-Durar al-Saniyya",false,
       "https://www.sifatusafwa.com/en/entire-tafsir/at-tafsir-al-muharrar-by-ad-durar-as-sanniyah-44-volumes.html",
       "https://archive.org/details/at-tafsir-al-muharrar-06-sura-al-araf/at-tafsir%20al-muharrar%2000/",
       "#",null,null,{noVideo:true}),
   ]),
   s("Qawa'id Fiqhiyya — Advanced",SC.qawaid,[
-    b("Nadhm al-Qawa'id wal-Usool al-Jami'a",true),
-    b("Al-Mandhuma fi Usool al-Fiqh wa Qawa'iduhu",true),
-    b("Taqrib al-Mutaba'id"),
+    b("Nadhm al-Qawa'id wal-Usool al-Jami'a",true,
+      "https://www.sifatusafwa.com/en/usool-al-fiqh/al-qawaa-id-wal-usool-al-jaami-ah-as-sa-di.html",
+      "https://d1.islamhouse.com/data/ar/ih_books/single2/ar_university_rules_and_assets.pdf",
+      "https://www.youtube.com/watch?v=x476SIaRaWo&list=PL8YbRawUybXT81F9GvGeBBJLBbODuECcr"),
+    b("Al-Mandhuma fi Usool al-Fiqh wa Qawa'iduhu",true,
+      "https://www.sifatusafwa.com/en/matn-of-fiqh/2-risala-on-usool-fiqh-with-harakat-sa-dee-and-uthaymeen.html",
+      "#",
+      "https://www.youtube.com/watch?v=g3Iy0qM86cI",null,null,{noPdf:true}),
+    b("Taqrib al-Mutaba'id",false,"#","#",
+      "https://www.youtube.com/watch?v=ko43g0k7N4o",
+      "A concise versification (nazm) by Dr. Amer Bahjat al-Hanbali on the five major legal maxims (al-Qawa'id al-Khams al-Kubra) and their related rules.",
+      32,{noInfo:true,noPdf:true}),
   ]),
   s("Islamic History",SC.history,[
-    b("Al-Bidaya wal-Nihaya — Ibn Kathir (14 volumes)"),
-    b("Tarikh al-Tabari"),
-    b("Siyar A'lam al-Nubala' — al-Dhahabi (25 volumes)"),
+    b("Al-Bidaya wal-Nihaya — Ibn Kathir",false,
+      "https://www.sifatusafwa.com/en/islamic-history/al-bidaayah-wa-an-nihaayah-ibn-katheer.html",
+      "https://archive.org/details/2_20250802_202508/البداية%20والنهاية%20للامام%20ابن%20كثير%20جلد%201/",
+      "#",null,null,{noVideo:true}),
+    b("Tarikh al-Tabari",false,
+      "https://www.sifatusafwa.com/en/biography-history/tarikh-at-tabari-tarikh-al-umam-wal-muluk-ibn-jarir-at-tabari.html",
+      "https://archive.org/details/trm01/trm01/",
+      "#",null,null,{noVideo:true}),
+    b("Siyar A'lam al-Nubala' — al-Dhahabi",false,
+      "https://www.sifatusafwa.com/en/biographies/siyar-alaam-an-nubalaae-by-imam-adh-dhahabee.html",
+      "https://archive.org/details/siar_noblaa/00/",
+      "#",null,null,{noVideo:true}),
   ]),
-  s("Adab / Tazkiyya",SC.adab,[b("Al-Wabil al-Sayyib — Ibn al-Qayyim")]),
+  s("Adab / Tazkiyya",SC.adab,[b("Al-Wabil al-Sayyib — Ibn al-Qayyim",false,
+    "https://www.sifatusafwa.com/en/adhkar-and-duah/al-wabil-as-sayyib-min-al-kalim-at-tayyib-ibnul-qayyim.html",
+    "https://archive.org/details/ELWBILUAJJIBWeRfiuLKelimiajjibIbnQajjimElDewzijjeh",
+    "#",null,null,{noVideo:true})]),
 ]}
 ]};
 
@@ -1984,6 +2113,7 @@ const SPEC_MAP={
   "Sharh al-Aqeeda at-Tahawiyyah li Ibn Abil-'Izz al-Hanafi":"aqida",
   "Al-Fatawa al-Hamawiyya — Ibn Taymiyya":"aqida",
   "Al-Risala al-Tadmuriyya — Ibn Taymiyya":"aqida",
+  "Mukhtasar Qawa'id al-Asma wal-Sifat":"aqida",
   "Sullam al-Wusool ila Ilm al-Usool":"aqida",
   "Al-Qasida al-Nuniyya — al-Qahtani al-Andalusi":"aqida",
   "Bulugh al-Maram — Ibn Hajar al-Asqalani":"hadith",
@@ -2001,7 +2131,6 @@ const SPEC_MAP={
   "Al-Nadhm al-Jali ma al-Ahmirar":"fiqh",
   "Minhaj al-Talibin — Imam al-Nawawi":"fiqh",
   "Maraqi al-Su'ud — al-Shinqiti":"fiqh",
-  "Al-Mandhuma al-Fadghariyya":"fiqh",
   "Al-Fara'id al-Bahiyya — Abu Bakr al-Ahdal":"fiqh",
   "Malh al-Nad fi Nadhm Zad al-Mustaqni'":"fiqh",
   "Rasm al-Mufti al-Hanbali":"fiqh",
@@ -2014,10 +2143,12 @@ const SPEC_MAP={
   "Lamiyyat al-Arab — al-Shanfara":"arabic",
   "Alfiyyat Ibn Malik — 1002 verses":"arabic",
   "Mi'at al-Ma'ani wal-Bayan":"arabic",
+  "Al-Khazrajiyya — al-Ramiza fi ʿIlmay al-ʿArud wal-Qafiya":"arabic",
   "Uqud al-Juman — al-Suyuti":"arabic",
   "Al-Maqamat al-Hariri — al-Hariri":"arabic",
   "Al-Mu'allaqat — Pre-Islamic Odes":"arabic",
   "Hirz al-Amani — Al-Shatibiyya (7 Qira'at)":"tafsir",
+  "Nazimat al-Zuhr — al-Shatibi":"tafsir",
   "Al-Durra al-Mudiyya — Ibn al-Jazari":"tafsir",
   "Tayyibat al-Nashr fi al-Qira'at al-Ashr — Ibn al-Jazari":"tafsir",
   "Al-Urjuza al-Mi'iyya":"sira",
@@ -2868,20 +2999,15 @@ function openPanel(data,treeNode){
   document.getElementById("pb-finished").classList.toggle("is-active",p==="finished");
   renderPanelReview(data.name);
 
-  // Description mode: hide Info button, show description text
+  // Description text (shown if present) — independent of the Info link button
   const hasDesc=!!data.desc;
   const descEl=document.getElementById("panel-desc");
   const descText=document.getElementById("panel-desc-text");
   const btnInfo=document.getElementById("btn-info");
-  if(hasDesc){
-    descEl.style.display="block";
-    descText.textContent=data.desc;
-    btnInfo.style.display="none";
-  } else {
-    descEl.style.display="none";
-    btnInfo.style.display=data.noInfo?"none":"flex";
-    btnInfo.href=data.info||"#";
-  }
+  if(hasDesc){ descEl.style.display="block"; descText.textContent=data.desc; }
+  else { descEl.style.display="none"; }
+  btnInfo.href=data.info||"#";
+  btnInfo.style.display=(data.noInfo||!data.info||data.info==="#")?"none":"flex";
 
   // Hide all action buttons for Quran Hifz
   document.getElementById("panel-btns").style.display=isQuran?"none":"flex";
@@ -2889,8 +3015,8 @@ function openPanel(data,treeNode){
   const btnVid=document.getElementById("btn-video");
   btnPdf.href=data.pdf||"#";
   btnVid.href=data.video||"#";
-  btnPdf.style.display=data.noPdf?"none":"flex";
-  btnVid.style.display=data.noVideo?"none":"flex";
+  btnPdf.style.display=(data.noPdf||!data.pdf||data.pdf==="#")?"none":"flex";
+  btnVid.style.display=(data.noVideo||!data.video||data.video==="#")?"none":"flex";
 
   // Sources disclaimer — shown only when at least one external link is present
   const hasInfoLink = !hasDesc && !data.noInfo && data.info && data.info!=="#";
@@ -2936,6 +3062,30 @@ function closePanel(){
   document.getElementById("hint").style.opacity="1";
   clearFocus();
 }
+/* Mobile: drag the grip down to dismiss the panel sheet */
+(function(){
+  var grip=document.getElementById("panel-grip");
+  if(!grip)return;
+  var y0=null,dragging=false;
+  grip.addEventListener("touchstart",function(e){y0=e.touches[0].clientY;dragging=true;},{passive:true});
+  grip.addEventListener("touchmove",function(e){
+    if(!dragging)return;
+    var dy=e.touches[0].clientY-y0;
+    if(dy>0){
+      var p=document.getElementById("panel");
+      p.style.transition="none";
+      p.style.transform="translateY("+Math.min(dy,500)+"px)";
+    }
+  },{passive:true});
+  grip.addEventListener("touchend",function(e){
+    if(!dragging)return;dragging=false;
+    var p=document.getElementById("panel");
+    var dy=e.changedTouches[0].clientY-(y0||0);
+    p.style.transition="";p.style.transform="";
+    if(dy>56)closePanel();
+    y0=null;
+  },{passive:true});
+})();
 let _kbNode=null; // currently keyboard-focused node OBJECT (not id)
 
 document.addEventListener("keydown",e=>{
@@ -3153,23 +3303,31 @@ window.addEventListener("resize",closeAllHdd);
 /* ═══ GUIDED TUTORIAL ═══════════════════════════════════ */
 const TUT_STEPS=[
   {el:null, title:"Welcome to your roadmap",
-   text:"This is your complete path of Islamic study, from the first steps to mastery — and to becoming a Ḥāfiẓ. Let me show you around in a few seconds."},
+   text:"This is your complete path of Islamic study — from the first steps to mastery, and to becoming a Ḥāfiẓ of the Book of Allah, in shaa ALLAH. Let me show you around in a few moments."},
   {el:()=>document.querySelector('.nd'), title:"The knowledge tree",
-   text:"Each level branches into the sciences. Click a level, then a subject, to reveal its texts. Click any text to open its details, links, and progress options.",fit:true},
+   text:"Six levels, each branching into its sciences. Tap a level, then a subject, to unfold its texts. The ⋯ menu can expand every branch or recenter the map.",fit:true},
+  {el:null, title:"Inside each text",
+   text:"Tap any text to open it. You'll find a short description, the matn itself (PDF ⇣), a recording (▶), an info link (ⓘ) where available, the verse count for memorized texts, and buttons to mark it Started or Finished."},
+  {el:()=>document.getElementById(window.matchMedia("(max-width:700px)").matches?"bn-list":"btn-list"), title:"Three ways to study",
+   text:"Switch views here: Tree — this living map; List — a clean checklist by level; and Ḥifẓ — your memorization dashboard."},
+  {el:()=>document.getElementById(window.matchMedia("(max-width:700px)").matches?"bn-hifz":"btn-hifz"), title:"Ḥifẓ — the road to becoming Ḥāfiẓ",
+   text:"This dashboard gathers every text marked with a flower ❀ for memorization — over a hundred mutūn plus the thirty ajzāʾ of the Qurʾān — grouped by level so you always know what comes next."},
   {el:"#chips", title:"Filter by science",
-   text:"Tap any category to highlight only those texts across the whole roadmap — Aqeedah, Fiqh, Hadith, Quran, and more. Swipe to see them all."},
+   text:"Tap any category to highlight only those texts across the whole roadmap — ʿAqīda, Fiqh, Hadith, Qurʾān, and more. Swipe to see them all."},
+  {el:"#btn-spec", title:"Choose your specialization",
+   text:"Pursuing a takhaṣṣuṣ? Choose your path here and the memorization set tailors itself to it, while the shared core texts always remain."},
   {el:"#btn-search", title:"Search instantly",
    text:"Find any of the 190+ texts by name. Selecting a result flies you straight to it in the tree. (Shortcut: Ctrl/Cmd + F.)"},
   {el:"#madhab-badge", title:"Your madhab",
    text:"This shows your chosen fiqh school. Tap it anytime to switch — the roadmap dims the other schools while keeping every shared science fully visible."},
   {el:"#progress-panel", title:"Track your progress",
-   text:"Mark each text Started or Finished from its panel. These bars show your overall progress, and each level node carries its own completion ring."},
+   text:"Mark each text Started or Finished from its panel. These bars show your overall progress, each level node carries its own completion ring, and you can export a backup of everything from here."},
   {el:"#review-badge", title:"Spaced repetition",
-   text:"When you finish a text, it enters a review schedule (1 → 3 → 7 → 16 days, and beyond). When texts are due, this green review badge appears — tap it to revise and lock knowledge into long-term memory.",forceShow:"#review-badge"},
+   text:"When you finish a text, it enters a review schedule (1 → 3 → 7 → 16 days, and beyond). When texts are due, this green badge appears — tap it to revise and settle knowledge into long-term memory.",forceShow:"#review-badge"},
   {el:"#btn-notes", title:"Companion apps",
-   text:"Open your companion tools from here — Notes, to record benefits and explanations from your Shaykh, and the Planner, to order your day around the prayers."},
+   text:"Open your companion tools here — Notes, to record the benefits and explanations of your Shaykh, and the Planner, to order your day around the prayers."},
   {el:".prog-reset", title:"A fresh start, anytime",
-   text:"If you ever need to begin again, you can reset all progress here — export a backup first. May Allah make this knowledge a proof for you, not against you. Āmīn.",last:true},
+   text:"If you ever need to begin again, you can reset all progress here — export a backup first. May Allah bless your journey, grant you to complete it, in shaa ALLAH, and make this knowledge a proof for you, not against you. Āmīn.",last:true},
 ];
 let _tutWasList=false;
 let _tutIdx=0;
@@ -3177,18 +3335,63 @@ function startTutorial(){
   _tutWasList=document.getElementById("listview").classList.contains("show");
   setView('tree'); // tutorial highlights tree-view elements
   _tutIdx=0;
+  buildTutDots();
+  wireTutInteractions();
   document.getElementById("tutorial").classList.add("show");
   showTutStep();
+}
+function buildTutDots(){
+  const wrap=document.getElementById("tut-dots");
+  if(!wrap||wrap.childElementCount===TUT_STEPS.length)return;
+  wrap.innerHTML="";
+  TUT_STEPS.forEach((s,i)=>{
+    const d=document.createElement("button");
+    d.className="tut-dot";d.type="button";
+    d.setAttribute("aria-label","Step "+(i+1));
+    d.onclick=()=>jumpTut(i);
+    wrap.appendChild(d);
+  });
+}
+let _tutWired=false;
+function wireTutInteractions(){
+  if(_tutWired)return;_tutWired=true;
+  // Click the dimmed backdrop (not the tip card) to advance
+  document.getElementById("tutorial").addEventListener("click",e=>{
+    if(e.target.closest("#tut-tip"))return;
+    tutNext();
+  });
+  // Keyboard navigation while the tour is open
+  document.addEventListener("keydown",e=>{
+    if(!document.getElementById("tutorial").classList.contains("show"))return;
+    if(e.key==="ArrowRight"||e.key==="Enter"){e.preventDefault();tutNext();}
+    else if(e.key==="ArrowLeft"){e.preventDefault();tutPrev();}
+    else if(e.key==="Escape"){e.preventDefault();endTutorial();}
+  });
+}
+function jumpTut(i){
+  if(i<0||i>=TUT_STEPS.length||i===_tutIdx)return;
+  _tutIdx=i;showTutStep();
 }
 function showTutStep(){
   const step=TUT_STEPS[_tutIdx];
   const tip=document.getElementById("tut-tip");
   const spot=document.getElementById("tut-spotlight");
-  document.getElementById("tut-step-count").textContent=`${_tutIdx+1} / ${TUT_STEPS.length}`;
+  const total=TUT_STEPS.length;
+  document.getElementById("tut-step-count").textContent=`${_tutIdx+1} / ${total}`;
+  document.getElementById("tut-pbar-fill").style.width=((_tutIdx+1)/total*100)+"%";
+  // progress dots state
+  const dots=document.getElementById("tut-dots").children;
+  for(let i=0;i<dots.length;i++){
+    dots[i].classList.toggle("active",i===_tutIdx);
+    dots[i].classList.toggle("done",i<_tutIdx);
+  }
   document.getElementById("tut-title").textContent=step.title;
   document.getElementById("tut-text").textContent=step.text;
   document.getElementById("tut-prev").classList.toggle("hidden",_tutIdx===0);
-  document.getElementById("tut-next").textContent=step.last?"Finish":"Next";
+  document.getElementById("tut-next").innerHTML=step.last?"Finish":'Next<span class="ar">›</span>';
+  // replay content rise animation
+  const body=document.getElementById("tut-body");
+  body.classList.remove("in");void body.offsetWidth;body.classList.add("in");
 
   // Reset any previously forced element (e.g. review badge) unless this step forces it
   if(!step.forceShow){updateReviewBadge();}
@@ -3376,6 +3579,9 @@ function setView(v){
   document.getElementById("btn-tree").classList.toggle("active",v==="tree");
   document.getElementById("btn-list").classList.toggle("active",v==="list");
   document.getElementById("btn-hifz").classList.toggle("active",v==="hifz");
+  document.getElementById("bn-tree").classList.toggle("active",v==="tree");
+  document.getElementById("bn-list").classList.toggle("active",v==="list");
+  document.getElementById("bn-hifz").classList.toggle("active",v==="hifz");
   document.getElementById("canvas").style.display=v==="tree"?"block":"none";
   document.getElementById("listview").classList.toggle("show",v==="list");
   document.getElementById("hifzview").classList.toggle("show",v==="hifz");
@@ -3403,9 +3609,9 @@ function buildList(){
         const idx=regBook(book,level.name,subj.name);
         const isQuran=subj.color===SC.quran;
         const mc=effMem(book)?" is-mem":"",st=effMem(book)?"":`style="color:${sc}bb"`;
-        const infoBtn=(book.desc||book.noInfo)?"":`<a class="lv-btn" href="${book.info||"#"}" target="_blank" rel="noopener" onclick="event.stopPropagation()" title="Information">&#9432;</a>`;
-        const pdfBtn=book.noPdf?"":`<a class="lv-btn" href="${book.pdf||"#"}" target="_blank" rel="noopener" onclick="event.stopPropagation()" title="PDF">&#8659;</a>`;
-        const vidBtn=book.noVideo?"":`<a class="lv-btn" href="${book.video||"#"}" target="_blank" rel="noopener" onclick="event.stopPropagation()" title="Recording">&#9654;</a>`;
+        const infoBtn=(book.noInfo||!book.info||book.info==="#")?"":`<a class="lv-btn" href="${book.info}" target="_blank" rel="noopener" onclick="event.stopPropagation()" title="Information">&#9432;</a>`;
+        const pdfBtn=(book.noPdf||!book.pdf||book.pdf==="#")?"":`<a class="lv-btn" href="${book.pdf}" target="_blank" rel="noopener" onclick="event.stopPropagation()" title="PDF">&#8659;</a>`;
+        const vidBtn=(book.noVideo||!book.video||book.video==="#")?"":`<a class="lv-btn" href="${book.video}" target="_blank" rel="noopener" onclick="event.stopPropagation()" title="Recording">&#9654;</a>`;
         const actionsHtml=isQuran?"":`<div class="lv-book-actions">${infoBtn}${pdfBtn}${vidBtn}</div>`;
         html+=`<div class="lv-book"><span class="lv-book-num" style="color:${sc}44">${bi+1}</span><span class="lv-book-name${mc}" ${st} onclick="openBI(${idx})">${book.name}</span>${actionsHtml}</div>`;
       });
