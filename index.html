@@ -218,6 +218,7 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;opac
 .chip .ld{width:5px;height:5px;border-radius:50%;flex-shrink:0}
 .brand{display:flex;align-items:center;gap:7px;flex-shrink:0}
 .hbtn{display:flex;gap:4px;flex-shrink:0;align-items:center}
+.lang-btn{font-family:'Cinzel',serif;font-size:11px;font-weight:600;letter-spacing:.04em}
 .hbtn .ic{width:32px;height:32px;display:flex;align-items:center;justify-content:center;position:relative;
   background:transparent;border:1px solid transparent;border-radius:11px;color:var(--muted);
   cursor:pointer;transition:color .16s,background .16s,border-color .16s,transform .1s;padding:0;flex-shrink:0}
@@ -977,6 +978,7 @@ body.overlay-open #review-badge .rv-icon{animation-play-state:paused}
   <div class="hsep"></div>
   <div class="legend" id="chips"></div>
   <div class="hbtn">
+    <button class="ic lang-btn" id="btn-lang" onclick="goAltLang()" title="Auf Deutsch anzeigen" aria-label="Switch to German">DE</button>
     <button class="ic" id="btn-search" onclick="toggleSearch()" title="Search (Ctrl/&#8984;+F)" aria-label="Search">
       <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><line x1="20" y1="20" x2="16.5" y2="16.5"/></svg>
     </button>
@@ -1291,6 +1293,11 @@ const TREE={name:"Talib al-Ilm",type:"root",children:[
       20,{cat:SC.seerah}),
   ]),
   s("Adab — Entry",SC.adab,[
+    b("al-Khulāṣa al-Ḥasnāʾ fī Adhkār aṣ-Ṣabāḥ wa-l-Masāʾ",false,
+      "#",
+      "https://d1.islamhouse.com/data/ar/ih_articles/single_01/ar_AlKholasah_AlHasna_fee_Azkar_AlSba7_w_AlMsa.pdf",
+      "https://www.youtube.com/watch?v=P0XmWGImnu4&list=PLjmCBC6YwAF8wfcob8ahKk1mLH9UvbKVN",
+      null,null,{noInfo:true}),
     b("Khulasa Ta'dhim al-Ilm — al-Usaymi",true,
       "https://www.sifatusafwa.com/en/al-ilm-wa-talab-al-ilm/sharh-khulasah-ta-dhim-al-ilm-salih-al-usaymi.html",
       "https://drive.google.com/file/d/1ZHsl7sdmrLkmug6oOyCwIKBRMQHmRcK2/view",
@@ -1922,8 +1929,8 @@ const TREE={name:"Talib al-Ilm",type:"root",children:[
   ]),
 ]},
 
-/* ── LEVEL V — Mastery ────────────────────────────── */
-{name:"Level V",subtitle:"Mastery",level:5,type:"level",children:[
+/* ── LEVEL V — Vertiefung ────────────────────────────── */
+{name:"Level V",subtitle:"Vertiefung",level:5,type:"level",children:[
   s("Qur'an — Hifdh",SC.quran,[
     b("Juz 16",true),b("Juz 17",true),b("Juz 18",true),b("Juz 19",true),
     b("Juz 20",true),b("Juz 21",true),b("Juz 22",true),b("Juz 23",true),
@@ -1948,7 +1955,7 @@ const TREE={name:"Talib al-Ilm",type:"root",children:[
       "https://d1.islamhouse.com/data/ar/ih_books/single-03/ar-Alkafih-Alshshafih2.pdf",
       "https://www.youtube.com/watch?v=uVKfDXsSVck&list=PLblfdRYnJ-oz9Xx3h508FyOLGey6LXDXR"),
   ]),
-  s("Nahw — Mastery",SC.nahw,[
+  s("Nahw — Vertiefung",SC.nahw,[
     b("Sharh Ibn Aqil ala al-Alfiyya",false,
       "https://www.sifatusafwa.com/en/grammar-an-nahw/sharh-alfiat-ibn-maalik-by-ibn-aqeel.html",
       "https://archive.org/details/12_20200416/شرح%20ابن%20عقيل%201-2%20%28S%29/mode/2up",
@@ -3382,7 +3389,7 @@ window.addEventListener("resize",closeAllHdd);
 /* ═══ GUIDED TUTORIAL ═══════════════════════════════════ */
 const TUT_STEPS=[
   {el:null, title:"Welcome to your roadmap",
-   text:"This is your complete path of Islamic study — from the first steps to mastery, and to becoming a Ḥāfiẓ of the Book of Allah, in shaa ALLAH. Let me show you around in a few moments."},
+   text:"This is your complete path of Islamic study — from the first steps to Vertiefung, and to becoming a Ḥāfiẓ of the Book of Allah, in shaa ALLAH. Let me show you around in a few moments."},
   {el:()=>document.querySelector('.nd'), title:"The knowledge tree",
    text:"Six levels, each branching into its sciences. Tap a level, then a subject, to unfold its texts. The ⋯ menu can expand every branch or recenter the map.",fit:true},
   {el:null, title:"Inside each text",
@@ -3686,6 +3693,13 @@ function expandAll(){root.descendants().forEach(d=>{if(d._children){d.children=d
 function collapseToLevels(){root.descendants().forEach(d=>{if(d.depth>=1&&d.children){d._children=d.children;d.children=null;}});clearFocus();update(root);}
 
 /* ═══ VIEW TOGGLE ════════════════════════════════════ */
+/* ===== SPRACHWECHSEL / LANGUAGE SWITCH =====================
+   URL of the GERMAN edition — set REPO-NAME to your new repo.
+   Beim Wechsel bleibt der Fortschritt erhalten (gleiche Domain).
+======================================================== */
+const ALT_LANG_URL = "https://talibalilm.github.io/REPO-NAME/talibul_ilm_tree_de.html";
+function goAltLang(){ try{ location.href = ALT_LANG_URL; }catch(e){} }
+
 function setView(v){
   if(typeof closeAllHdd==="function")closeAllHdd();
   document.getElementById("btn-tree").classList.toggle("active",v==="tree");
