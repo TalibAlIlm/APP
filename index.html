@@ -1293,7 +1293,7 @@ const TREE={name:"Talib al-Ilm",type:"root",children:[
       20,{cat:SC.seerah}),
   ]),
   s("Adab — Entry",SC.adab,[
-    b("al-Khulāṣa al-Ḥasnāʾ fī Adhkār aṣ-Ṣabāḥ wa-l-Masāʾ",false,
+    b("al-Khulāṣa al-Ḥasnāʾ fī Adhkār aṣ-Ṣabāḥ wa-l-Masāʾ",true,
       "#",
       "https://d1.islamhouse.com/data/ar/ih_articles/single_01/ar_AlKholasah_AlHasna_fee_Azkar_AlSba7_w_AlMsa.pdf",
       "https://www.youtube.com/watch?v=P0XmWGImnu4&list=PLjmCBC6YwAF8wfcob8ahKk1mLH9UvbKVN",
@@ -1929,8 +1929,8 @@ const TREE={name:"Talib al-Ilm",type:"root",children:[
   ]),
 ]},
 
-/* ── LEVEL V — Vertiefung ────────────────────────────── */
-{name:"Level V",subtitle:"Vertiefung",level:5,type:"level",children:[
+/* ── LEVEL V — Deepening ────────────────────────────── */
+{name:"Level V",subtitle:"Deepening",level:5,type:"level",children:[
   s("Qur'an — Hifdh",SC.quran,[
     b("Juz 16",true),b("Juz 17",true),b("Juz 18",true),b("Juz 19",true),
     b("Juz 20",true),b("Juz 21",true),b("Juz 22",true),b("Juz 23",true),
@@ -1955,7 +1955,7 @@ const TREE={name:"Talib al-Ilm",type:"root",children:[
       "https://d1.islamhouse.com/data/ar/ih_books/single-03/ar-Alkafih-Alshshafih2.pdf",
       "https://www.youtube.com/watch?v=uVKfDXsSVck&list=PLblfdRYnJ-oz9Xx3h508FyOLGey6LXDXR"),
   ]),
-  s("Nahw — Vertiefung",SC.nahw,[
+  s("Nahw — Deepening",SC.nahw,[
     b("Sharh Ibn Aqil ala al-Alfiyya",false,
       "https://www.sifatusafwa.com/en/grammar-an-nahw/sharh-alfiat-ibn-maalik-by-ibn-aqeel.html",
       "https://archive.org/details/12_20200416/شرح%20ابن%20عقيل%201-2%20%28S%29/mode/2up",
@@ -2150,6 +2150,7 @@ const SPEC_MAP={
   "Mandhuma al-Tawhid wal-Iman":"core",
   "Mandhuma Ahsan al-Akhlaq":"core",
   "Al-Mandhuma al-Munira fi Muhimm Ilm al-Sira":"core",
+  "al-Khulāṣa al-Ḥasnāʾ fī Adhkār aṣ-Ṣabāḥ wa-l-Masāʾ":"core",
   "Khulasa Ta'dhim al-Ilm — al-Usaymi":"core",
   "Adhkar wal-Adaab — Mutoon Series":"core",
   "Al-Qasida al-Ha'iyyah — Ibn Abi Dawud":"core",
@@ -3389,7 +3390,7 @@ window.addEventListener("resize",closeAllHdd);
 /* ═══ GUIDED TUTORIAL ═══════════════════════════════════ */
 const TUT_STEPS=[
   {el:null, title:"Welcome to your roadmap",
-   text:"This is your complete path of Islamic study — from the first steps to Vertiefung, and to becoming a Ḥāfiẓ of the Book of Allah, in shaa ALLAH. Let me show you around in a few moments."},
+   text:"This is your complete path of Islamic study — from the first steps to deepening, and to becoming a Ḥāfiẓ of the Book of Allah, in shaa ALLAH. Let me show you around in a few moments."},
   {el:()=>document.querySelector('.nd'), title:"The knowledge tree",
    text:"Six levels, each branching into its sciences. Tap a level, then a subject, to unfold its texts. The ⋯ menu can expand every branch or recenter the map.",fit:true},
   {el:null, title:"Inside each text",
@@ -3697,7 +3698,7 @@ function collapseToLevels(){root.descendants().forEach(d=>{if(d.depth>=1&&d.chil
    URL of the GERMAN edition — set REPO-NAME to your new repo.
    Beim Wechsel bleibt der Fortschritt erhalten (gleiche Domain).
 ======================================================== */
-const ALT_LANG_URL = "https://talibalilm.github.io/REPO-NAME/talibul_ilm_tree_de.html";
+const ALT_LANG_URL = "https://talibalilm.github.io/APP_DE/";
 function goAltLang(){ try{ location.href = ALT_LANG_URL; }catch(e){} }
 
 function setView(v){
